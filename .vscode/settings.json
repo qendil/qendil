@@ -1,0 +1,22 @@
+{
+  // Exclude node_modules from search results
+  "search.exclude": {
+    "**/node_modules": true
+  },
+  // Always add a newline at the end of the file
+  "files.insertFinalNewline": true,
+  // Remove trailing whitespace
+  "files.trimTrailingWhitespace": true,
+  // Enable format on save for javascript/typescript
+  "[javascript][typescript][typescriptreact][json][jsonc][yaml][html][css][postcss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  // Enable format on save for some files
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "editor.rulers": [80]
+}

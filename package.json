@@ -1,0 +1,14 @@
+{
+  "name": "qendil",
+  "author": "Said Dermoumi <hi@sdrm.me>",
+  "license": "./LICENSE",
+  "packageManager": "pnpm@7.1.7",
+  "engines": {
+    "node": ">=v16.15.1",
+    "pnpm": ">=7.1.7"
+  },
+  "workspaces": [],
+  "volta": {
+    "node": "16.15.1"
+  }
+}
