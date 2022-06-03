@@ -4,9 +4,6 @@ Thank you for your interest in contributing to this project.
 
 ## Setup
 
-> **Note**
-> This repository has yet to contain any code. Chill, sheesh...
-
 The package manager used to install and lock dependencies on this project
 must be [`pnpm`](https://pnpm.io/).
 
