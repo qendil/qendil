@@ -10,7 +10,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
   // Load .env files
-  const env = loadEnv(mode, path.join(__dirname, ".."));
+  const env = loadEnv(mode, path.join(__dirname, ".."), "CLIENT_");
 
   const PROD_DEBUG = String(env.CLIENT_PROD_DEBUG ?? "false").toLowerCase();
 
@@ -38,7 +38,6 @@ export default defineConfig(async ({ mode }) => {
   } as const;
 
   return {
-    root: "src",
     base: "",
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
@@ -60,7 +59,7 @@ export default defineConfig(async ({ mode }) => {
     build: {
       rollupOptions,
       sourcemap: "hidden",
-      outDir: "../www",
+      outDir: "www",
     },
     worker: {
       format: "es",
