@@ -15,7 +15,8 @@ export default defineConfig(async ({ mode }) => {
   // Load .env files
   const environment: Record<string, string | undefined> = loadEnv(
     mode,
-    path.join(currentDirectory, "..")
+    path.join(currentDirectory, ".."),
+    "CLIENT_"
   );
 
   console.log(environment);
@@ -51,7 +52,6 @@ export default defineConfig(async ({ mode }) => {
   } as const;
 
   return {
-    root: "src",
     base: "",
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
@@ -77,7 +77,7 @@ export default defineConfig(async ({ mode }) => {
     build: {
       rollupOptions,
       sourcemap: "hidden",
-      outDir: "../www",
+      outDir: "www",
     },
     worker: {
       format: "es",
