@@ -37,6 +37,7 @@
   },
   "rules": {
     "object-shorthand": ["error", "properties"],
+    "complexity": "warn",
     "no-dupe-class-members": "off", // Overridden by @typescript-eslint
     "no-loop-func": "off", // Overridden by @typescript-eslint
     "no-loss-of-precision": "off", // Overridden by @typescript-eslint
@@ -46,6 +47,7 @@
     "no-use-before-define": "off", // Overridden by @typescript-eslint
     "no-useless-constructor": "off", // Overridden by @typescript-eslint
     "no-return-await": "off", // Overridden by @typescript-eslint
+    "no-unused-vars": "off", // Overridden by @typescript-eslint
 
     "@typescript-eslint/array-type": ["error", { "default": "array-simple" }],
     "@typescript-eslint/ban-ts-comment": [
