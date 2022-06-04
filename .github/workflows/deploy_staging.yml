@@ -9,6 +9,7 @@ on:
 jobs:
   deploy_cloudflare:
     name: Deploy to CF pages
+    needs: [lint-typecheck, lint-format, lint-practices]
     environment:
       name: Staging
       url: ${{ steps.publish-client.outputs.url }}
