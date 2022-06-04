@@ -43,4 +43,4 @@ jobs:
           title: "Release ${{ github.sha }}"
           automatic_release_tag: latest
           draft: true
-          files: client/build/*
+          files: client/dist/*

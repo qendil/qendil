@@ -94,7 +94,7 @@ module.exports = async (context) => {
       ),
       collectIfExists(
         `${sourceDirectory}/*.exe`,
-        `${BASE_NAME}_win-x64-portable.exe`
+        `${BASE_NAME}_windows-x64-portable.exe`
       ),
     ]);
   }
