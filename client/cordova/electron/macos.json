@@ -1,0 +1,8 @@
+{
+  "electron": {
+    "mac": {
+      "package": ["zip"],
+      "arch": ["x64", "arm64"]
+    }
+  }
+}

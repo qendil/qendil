@@ -53,7 +53,7 @@ function getPlatformConfigPath(projectRoot, platform) {
   if (matches.length > 0) return matches[0];
 }
 
-module.exports = async function (context) {
+module.exports = async (context) => {
   const { projectRoot, platforms, options } = context.opts;
   const { serve } = options;
 

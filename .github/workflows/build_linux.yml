@@ -1,4 +1,4 @@
-name: Deploy Electron
+name: Build Linux binaries
 
 on:
   push:
@@ -8,8 +8,8 @@ permissions:
 
 jobs:
   build_electron:
-    name: Build-Electron
-    runs-on: macos-latest
+    name: Build Linux
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -34,15 +34,13 @@ jobs:
         run: |
           pnpm build
           pnpm prepare:cordova
-          pnpm build:electron
+          pnpm build:linux
 
       - name: Make release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "Release ${{ github.run_id }}"
+          title: "Release ${{ github.sha }}"
           draft: true
           files: |
-            client/platforms/electron/build/*.zip
-            client/platforms/electron/build/*.tar.gz
-            client/platforms/electron/build/*.exe
+            client/build/*

@@ -10,6 +10,9 @@
     "dev": "vite",
     "build": "vite build",
     "build:electron": "cordova build electron --no-telemetry --release",
+    "build:macos": "pnpm build:electron --buildConfig=client/cordova/electron/macos.json",
+    "build:linux": "pnpm build:electron --buildConfig=client/cordova/electron/linux.json",
+    "build:windows": "pnpm build:electron --buildConfig=client/cordova/electron/windows.json",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
     "prepare:cordova": "mkdir -p www && cordova prepare --no-telemetry"

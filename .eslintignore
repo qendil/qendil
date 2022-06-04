@@ -1,2 +1,4 @@
-client/www/
 client/platforms/
+client/plugins/
+client/dist/
+client/www/
