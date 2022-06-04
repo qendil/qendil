@@ -58,6 +58,7 @@ export default defineConfig(async ({ mode }) => {
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
       __APP_VERSION__: JSON.stringify(appConfig.version),
+      __APP_PLATFORM__: JSON.stringify(environment.CLIENT_PLATFORM),
     },
     plugins: [react()],
     esbuild: {

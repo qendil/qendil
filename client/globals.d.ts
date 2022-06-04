@@ -1,5 +1,10 @@
 declare const __APP_NAME__: string;
 declare const __APP_VERSION__: string;
+declare const __APP_PLATFORM__:
+  | "cdv-electron-linux"
+  | "cdv-electron-macos"
+  | "cdv-electron-window"
+  | undefined;
 
 // Prefixed fullscreen APIs
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
