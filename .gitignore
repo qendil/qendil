@@ -1,9 +1,11 @@
 # Node and pnpm
-node_modules
+node_modules/
 pnpm-debug.log*
 
 # Local env files and other local files
 *.local
 
-# Tsc -b artifacts
-ts-out
+# Build artifacts
+.eslintcache
+ts-out/
+

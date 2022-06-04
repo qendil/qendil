@@ -1,10 +1,7 @@
 # Node and pnpm
-node_modules
-pnpm-debug.log*
+node_modules/
 pnpm-lock.yaml
 
-# Local env files and other local files
-*.local
-
-# Tsc -b artifacts
-ts-out
+# Build artifacts
+ts-out/
+client/www/

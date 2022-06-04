@@ -2,19 +2,21 @@ declare const __APP_NAME__: string;
 declare const __APP_VERSION__: string;
 
 // Prefixed fullscreen APIs
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 declare interface Document {
   mozCancelFullScreen?: () => Promise<void>;
   mozExitFullscreen?: () => Promise<void>;
-  msExitFullscreen?: () => Promise<void>;
-  webkitExitFullscreen?: () => Promise<void>;
   mozFullScreenElement?: Element;
   mozFullscreenElement?: Element;
+  msExitFullscreen?: () => Promise<void>;
   msFullscreenElement?: Element;
+  webkitExitFullscreen?: () => Promise<void>;
   webkitFullscreenElement?: Element;
 }
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 declare interface HTMLElement {
-  msRequestFullscreen?: () => Promise<void>;
-  mozRequestFullscreen?: () => Promise<void>;
   mozRequestFullScreen?: () => Promise<void>;
+  mozRequestFullscreen?: () => Promise<void>;
+  msRequestFullscreen?: () => Promise<void>;
   webkitRequestFullscreen?: () => Promise<void>;
 }
