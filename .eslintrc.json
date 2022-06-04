@@ -36,6 +36,7 @@
     "project": ["**/tsconfig.json", "tsconfig.json"]
   },
   "rules": {
+    "no-void": "off",
     "object-shorthand": ["error", "properties"],
     "complexity": "warn",
     "no-dupe-class-members": "off", // Overridden by @typescript-eslint
@@ -187,7 +188,8 @@
           "rel": false
         }
       }
-    ]
+    ],
+    "unicorn/prefer-top-level-await": "off"
   },
   "overrides": [
     {
