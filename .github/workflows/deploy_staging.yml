@@ -20,9 +20,9 @@ jobs:
       - name: Install dependencies
         run: >-
           pnpm install
-            --frozen-lockfile
-            --strict-peer-dependencies
-            --no-optional
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -44,9 +44,9 @@ jobs:
       - name: Install dependencies
         run: >-
           pnpm install
-            --frozen-lockfile
-            --strict-peer-dependencies
-            --no-optional
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -68,9 +68,9 @@ jobs:
       - name: Install dependencies
         run: >-
           pnpm install
-            --frozen-lockfile
-            --strict-peer-dependencies
-            --no-optional
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -107,10 +107,10 @@ jobs:
       - name: Install dependencies
         run: >-
           pnpm install
-            --frozen-lockfile
-            --strict-peer-dependencies
-            --no-optional
-            --production
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
+          --production
 
       - name: Build the client
         working-directory: client/
