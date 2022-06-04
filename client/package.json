@@ -8,8 +8,11 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build:web": "vite build",
+    "build:electron": "cordova build electron --release",
+    "preview": "vite preview",
+    "preview:electron": "cordova run electron --nobuild",
+    "prepare:cordova": "cordova prepare"
   },
   "dependencies": {
     "@types/babel__core": "^7.1.19",
@@ -23,5 +26,18 @@
     "react-dom": "^18.1.0",
     "typescript": "^4.7.3",
     "vite": "^2.9.9"
+  },
+  "devDependencies": {
+    "electron-devtools-installer": "^3.2.0",
+    "xml2js": "^0.4.23"
+  },
+  "optionalDependencies": {
+    "cordova": "^11.0.0",
+    "cordova-electron": "^3.1.0"
+  },
+  "cordova": {
+    "platforms": [
+      "electron"
+    ]
   }
 }

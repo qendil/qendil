@@ -18,7 +18,11 @@ jobs:
         with:
           version: "latest"
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        run: >-
+          pnpm install
+            --frozen-lockfile
+            --strict-peer-dependencies
+            --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -38,7 +42,11 @@ jobs:
         with:
           version: "latest"
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        run: >-
+          pnpm install
+            --frozen-lockfile
+            --strict-peer-dependencies
+            --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -58,7 +66,11 @@ jobs:
         with:
           version: "latest"
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        run: >-
+          pnpm install
+            --frozen-lockfile
+            --strict-peer-dependencies
+            --no-optional
       - name: Setup Node with caching
         uses: actions/setup-node@v3
         with:
@@ -93,11 +105,16 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm i --frozen-lockfile --strict-peer-dependencies --production
+        run: >-
+          pnpm install
+            --frozen-lockfile
+            --strict-peer-dependencies
+            --no-optional
+            --production
 
       - name: Build the client
         working-directory: client/
-        run: pnpm build
+        run: pnpm build:web
 
       - name: Publish client to cloudflare
         id: publish-client
