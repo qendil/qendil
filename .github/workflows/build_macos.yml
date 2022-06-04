@@ -2,6 +2,8 @@ name: Build macOS app
 
 on:
   push:
+    tags:
+      - client/*
 
 permissions:
   contents: write
@@ -36,11 +38,7 @@ jobs:
           pnpm prepare:cordova
           pnpm build:macos
 
-      - name: Make release
-        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.14
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "Release ${{ github.sha }}"
-          automatic_release_tag: latest
-          draft: true
           files: client/dist/*

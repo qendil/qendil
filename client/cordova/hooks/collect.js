@@ -13,7 +13,7 @@ module.exports = async (context) => {
 
   const pkg = require(path.join(projectRoot, `package.json`));
 
-  const BASE_NAME = `Qendil_${pkg.version}`;
+  const BASE_NAME = `qendil_${pkg.version}`;
   const OUTPUT_DIRECTORY = path.join(projectRoot, "dist");
 
   async function collectIfExists(pattern, toName, matchOptions) {
