@@ -4,6 +4,9 @@
   "license": "./LICENSE",
   "scripts": {
     "lint": "tsc -b && eslint --cache --max-warnings=0 . && prettier -c .",
+    "lint:types": "tsc -b",
+    "lint:format": "prettier -c .",
+    "lint:practices": "eslint --cache --max-warnings=0 .",
     "lint:fix": "tsc -b && prettier -wl . && eslint --cache --fix --max-warnings=0 .",
     "prepare": "command -v husky >/dev/null && husky install || true"
   },
