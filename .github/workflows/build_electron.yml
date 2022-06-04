@@ -1,0 +1,54 @@
+name: Deploy Electron
+
+on:
+  push:
+
+jobs:
+  build_electron:
+    name: Build-Electron
+    runs-on: macos-latest
+    steps:
+      - name: Testing docker
+        uses: docker://electronuserland/builder:wine
+        run: |
+          wine --version
+
+      # - name: Checkout git repository
+      #   uses: actions/checkout@v3
+
+      # - name: Setup pnpm
+      #   uses: pnpm/action-setup@v2.2.2
+      #   with:
+      #     version: "latest"
+
+      # - name: Setup Node with caching
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: "lts/*"
+      #     cache: "pnpm"
+
+      # - name: Install dependencies
+      #   run: >-
+      #     pnpm install
+      #     --frozen-lockfile
+      #     --strict-peer-dependencies
+      #     --production
+
+      # - name: Build the clients
+      #   working-directory: client/
+      #   run: |
+      #     pnpm prepare:cordova
+      #     pnpm build:electron
+
+      # - name: Make release
+      #   id: publish-client
+      #   working-directory: client/
+      #   run: |
+      #     pnpm dlx wrangler pages publish www/ \
+      #       --project-name=qendil --branch=main --commit-dirty=true
+
+      #     # Only set the environment URL if the deployment was successful
+      #     echo "::set-output name=url::https://qendil.pages.dev/"
+      #   env:
+      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

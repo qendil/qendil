@@ -9,10 +9,10 @@
   "scripts": {
     "dev": "vite",
     "build:web": "vite build",
-    "build:electron": "cordova build electron --release",
+    "build:electron": "cordova build electron --no-telemetry --release",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
-    "prepare:cordova": "cordova prepare"
+    "prepare:cordova": "cordova prepare --no-telemetry"
   },
   "dependencies": {
     "@types/babel__core": "^7.1.19",
