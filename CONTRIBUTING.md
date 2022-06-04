@@ -54,6 +54,22 @@ To run tests:
 
 [1]: https://vitejs.dev/guide/features.html#import-with-query-suffixes
 
+#### Previewing Cordova targets
+
+> **Warning**<br>
+> Cordova and its target are marked as optional dependencies to avoid
+> installing unecessary heavy dependencies when deploying for staging.
+>
+> If you're planning on running or building Cordova targets,
+> make sure you didn't use `--no-optional` when installing dependencies.
+
+- Run `pnpm prepare:cordova` to install cordova platforms.
+- Run `pnpm dev` to start the development server.
+- Run `pnpm preview:electron --serve=localhost:3000` to run electron
+  on `localhost:3000`.
+- You can always omit `--serve=...` to preview the build in
+  the `www/` directory instead.
+
 ## Pull Request workflow
 
 These are the things reviewers look out for when reviewing a pull request.
@@ -101,7 +117,7 @@ These are the things reviewers look out for when reviewing a pull request.
   correct syntax, but provide polyfills or workarounds for
   missing browser compatiblity.
 
-  > **Warning**
+  > **Warning**<br>
   > The list of supported browser versions is yet to be determined.
 
 - **Unused code**: unused code should be removed. No commented-out code.
