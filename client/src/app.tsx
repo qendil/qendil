@@ -1,6 +1,6 @@
 import { useState, type ReactElement } from "react";
 import logo from "./logo.svg";
-import "./app.css";
+import classes from "./app.module.css";
 
 type AppProps = {
   isAware?: boolean;
@@ -19,9 +19,9 @@ export default function App({ isAware }: AppProps): ReactElement {
     </button>
   );
   return (
-    <div className="App">
-      <header className="App-header">
-        <img alt="logo" className="App-logo" src={logo} />
+    <div className={classes.app}>
+      <header className={classes.appHeader}>
+        <img alt="logo" className={classes.appLogo} src={logo} />
         <p>Hello Vite + React!</p>
         {isAware && <p>You are aware of Vite + React!</p>}
         <p>{renderButtonComponent()}</p>
@@ -30,7 +30,7 @@ export default function App({ isAware }: AppProps): ReactElement {
         </p>
         <p>
           <a
-            className="App-link"
+            className={classes.appLink}
             href="https://reactjs.org"
             rel="noopener noreferrer"
             target="_blank"
@@ -39,7 +39,7 @@ export default function App({ isAware }: AppProps): ReactElement {
           </a>
           {" | "}
           <a
-            className="App-link"
+            className={classes.appLink}
             href="https://vitejs.dev/guide/features.html"
             rel="noopener noreferrer"
             target="_blank"

@@ -54,6 +54,35 @@ To run tests:
 
 [1]: https://vitejs.dev/guide/features.html#import-with-query-suffixes
 
+#### Previewing Cordova targets
+
+- Run `pnpm prepare:cordova` to prepare and install cordova platforms.
+- Run `pnpm preview:<platform>` to preview the build in the `www/`.
+- Run `pnpm preview:<platform> --serve=<url>` to preview the given URL
+  on the given platform.
+  - This is useful to develop the app on a remote device, as you will
+    have access to hot module reloading when using `pnpm dev`.
+
+> **Warning**<br>
+> Cordova and its targets are marked as optional dependencies to avoid
+> installing them when deploying to staging.
+>
+> If you're planning on running or building Cordova targets,
+> make sure you didn't use `--no-optional` when running `pnpm i`.
+
+> **Warning**<br>
+> Running `cordova build` breaks pnpm's `node_modules/` folders,
+> probably because it uses `npm`.
+> If ever you need to run it locally, remember to re-run `pnpm i --force`
+> afterwards.
+
+Here are platform specific instructions:
+
+##### Electron
+
+- Does not have any prerequisites.
+- Run `pnpm preview:electron --serve=localhost:3000`
+
 ## Pull Request workflow
 
 These are the things reviewers look out for when reviewing a pull request.
@@ -101,7 +130,7 @@ These are the things reviewers look out for when reviewing a pull request.
   correct syntax, but provide polyfills or workarounds for
   missing browser compatiblity.
 
-  > **Warning**
+  > **Warning**<br>
   > The list of supported browser versions is yet to be determined.
 
 - **Unused code**: unused code should be removed. No commented-out code.

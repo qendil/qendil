@@ -1,0 +1,46 @@
+name: Build Windows executables
+
+on:
+  push:
+    tags:
+      - client/*
+
+permissions:
+  contents: write
+
+jobs:
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: >-
+          pnpm install --frozen-lockfile --strict-peer-dependencies --production
+
+      - name: Build the clients
+        working-directory: client/
+        run: |
+          pnpm build
+          pnpm prepare:cordova
+          pnpm build:windows
+        env:
+          CLIENT_PLATFORM: cdv-electron-windows
+
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          files: client/dist/*

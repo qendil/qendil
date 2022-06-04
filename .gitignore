@@ -1,11 +1,14 @@
 # Node and pnpm
 node_modules/
-pnpm-debug.log*
+.pnpm-debug.log
 
 # Local env files and other local files
 *.local
 
 # Build artifacts
+client/platforms/
+client/plugins/
+client/dist/
 client/www/
 ts-out/
 .eslintcache

@@ -1,0 +1,11 @@
+{
+  "browserWindow": {
+    "title": "Qendil",
+    "width": 1280,
+    "height": 720,
+    "autoHideMenuBar": true,
+    "webPreferences": {
+      "nativeWindowOpen": true
+    }
+  }
+}

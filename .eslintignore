@@ -1,1 +1,4 @@
+client/platforms/
+client/plugins/
+client/dist/
 client/www/

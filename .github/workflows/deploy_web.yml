@@ -28,7 +28,12 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm i --frozen-lockfile --strict-peer-dependencies --production
+        run: >-
+          pnpm install
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
+          --production
 
       - name: Build the client
         working-directory: client/

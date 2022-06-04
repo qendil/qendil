@@ -36,8 +36,10 @@
     "project": ["**/tsconfig.json", "tsconfig.json"]
   },
   "rules": {
+    "no-void": "off",
     "object-shorthand": ["error", "properties"],
     "complexity": "warn",
+    "no-undef": "off", // Overridden by @typescript-eslint/no-undef
     "no-dupe-class-members": "off", // Overridden by @typescript-eslint
     "no-loop-func": "off", // Overridden by @typescript-eslint
     "no-loss-of-precision": "off", // Overridden by @typescript-eslint
@@ -129,7 +131,9 @@
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/no-var-requires": "off", // handled by @typescript-eslint/no-require-imports
 
     "react/display-name": "off",
     "react/forbid-component-props": [
@@ -185,7 +189,8 @@
           "rel": false
         }
       }
-    ]
+    ],
+    "unicorn/prefer-top-level-await": "off"
   },
   "overrides": [
     {
@@ -198,6 +203,7 @@
         "@typescript-eslint/no-unsafe-call": "error",
         "@typescript-eslint/no-unsafe-member-access": "error",
         "@typescript-eslint/no-unsafe-return": "error",
+        "@typescript-eslint/no-unsafe-argument": "error",
         "@typescript-eslint/restrict-template-expressions": "error"
       }
     }
