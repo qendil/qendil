@@ -5,17 +5,27 @@ import { short as gitShort } from "git-rev";
 
 import react from "@vitejs/plugin-react";
 import packageJson from "./package.json";
-import path from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
+  const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
+
   // Load .env files
-  const env = loadEnv(mode, path.join(__dirname, ".."), "CLIENT_");
+  const environment: Record<string, string | undefined> = loadEnv(
+    mode,
+    path.join(currentDirectory, ".."),
+    "CLIENT_"
+  );
 
-  const PROD_DEBUG = String(env.CLIENT_PROD_DEBUG ?? "false").toLowerCase();
+  const PROD_DEBUG = String(
+    environment.CLIENT_PROD_DEBUG ?? "false"
+  ).toLowerCase();
 
-  const isProd = mode === "production";
-  const isProdDebug = isProd && !["0", "false"].includes(PROD_DEBUG);
+  const isProduction = mode === "production";
+  const isProductionDebug =
+    isProduction && !["0", "false"].includes(PROD_DEBUG);
 
   // Generate the version number
   const commitHash: string = await new Promise(gitShort);
@@ -30,11 +40,17 @@ export default defineConfig(async ({ mode }) => {
 
   // Shared rollup options
   const rollupOptions = {
-    output: {
-      assetFileNames: `assets/${isProdDebug ? "[name]_" : ""}[hash].[ext]`,
-      chunkFileNames: `assets/${isProdDebug ? "[name]_" : ""}[hash].js`,
-      entryFileNames: `assets/${isProdDebug ? "[name]_" : ""}[hash].js`,
-    },
+    output: isProductionDebug
+      ? {
+          assetFileNames: `assets/[name]_[hash].[ext]`,
+          chunkFileNames: `assets/[name]_[hash].js`,
+          entryFileNames: `assets/[name]_[hash].js`,
+        }
+      : {
+          assetFileNames: `assets/[hash].[ext]`,
+          chunkFileNames: `assets/[hash].js`,
+          entryFileNames: `assets/[hash].js`,
+        },
   } as const;
 
   return {
@@ -45,11 +61,15 @@ export default defineConfig(async ({ mode }) => {
     },
     plugins: [react()],
     esbuild: {
-      pure: isProdDebug ? [] : ["console.log", "console.info", "console.debug"],
+      pure: isProductionDebug
+        ? []
+        : ["console.log", "console.info", "console.debug"],
     },
     css: {
       modules: {
-        generateScopedName: isProd ? "[hash:base64:7]" : "[name]__[local]",
+        generateScopedName: isProduction
+          ? "[hash:base64:7]"
+          : "[name]__[local]",
       },
     },
     json: {

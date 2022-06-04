@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/babel__core": "^7.1.19",
     "@types/git-rev": "^0.2.0",
     "@types/node": "^17.0.38",
     "@types/react": "^18.0.11",

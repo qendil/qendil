@@ -1,4 +1,7 @@
 {
-  "include": [],
+  "compilerOptions": {
+    "strict": true
+  },
+  "include": ["lint-staged.config.mjs"],
   "references": [{ "path": "client" }]
 }

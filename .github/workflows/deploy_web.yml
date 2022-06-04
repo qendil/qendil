@@ -6,8 +6,8 @@ on:
       - client/*
 
 jobs:
-  deploy_cloudflare:
-    name: Deploy to CF pages (Production)
+  deploy_to_production:
+    name: Deploy to production
     environment:
       name: Production
       url: ${{ steps.publish-client.outputs.url }}

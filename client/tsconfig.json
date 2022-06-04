@@ -19,5 +19,6 @@
     "jsx": "react-jsx",
     "types": ["vite/client"]
   },
-  "include": ["src", "globals.d.ts"]
+  "include": [".", "globals.d.ts", "package.json"],
+  "exclude": ["node_modules", "www"]
 }
