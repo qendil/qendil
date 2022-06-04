@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy_to_production:
-    name: Deploy to CF pages (Production)
+    name: Deploy to production
     environment:
       name: Production
       url: ${{ steps.publish-client.outputs.url }}

@@ -19,8 +19,6 @@ export default defineConfig(async ({ mode }) => {
     "CLIENT_"
   );
 
-  console.log(environment);
-
   const PROD_DEBUG = String(
     environment.CLIENT_PROD_DEBUG ?? "false"
   ).toLowerCase();
@@ -42,13 +40,17 @@ export default defineConfig(async ({ mode }) => {
 
   // Shared rollup options
   const rollupOptions = {
-    output: {
-      assetFileNames: `assets/${
-        isProductionDebug ? "[name]_" : ""
-      }[hash].[ext]`,
-      chunkFileNames: `assets/${isProductionDebug ? "[name]_" : ""}[hash].js`,
-      entryFileNames: `assets/${isProductionDebug ? "[name]_" : ""}[hash].js`,
-    },
+    output: isProductionDebug
+      ? {
+          assetFileNames: `assets/[name]_[hash].[ext]`,
+          chunkFileNames: `assets/[name]_[hash].js`,
+          entryFileNames: `assets/[name]_[hash].js`,
+        }
+      : {
+          assetFileNames: `assets/[hash].[ext]`,
+          chunkFileNames: `assets/[hash].js`,
+          entryFileNames: `assets/[hash].js`,
+        },
   } as const;
 
   return {

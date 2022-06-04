@@ -6,6 +6,7 @@ pnpm-debug.log*
 *.local
 
 # Build artifacts
-.eslintcache
+client/www/
 ts-out/
+.eslintcache
 
