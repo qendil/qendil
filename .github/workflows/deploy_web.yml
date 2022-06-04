@@ -6,7 +6,7 @@ on:
       - client/*
 
 jobs:
-  deploy_cloudflare:
+  deploy_to_production:
     name: Deploy to CF pages (Production)
     environment:
       name: Production
