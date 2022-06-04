@@ -7,6 +7,10 @@
     "mac": {
       "package": ["zip"],
       "arch": ["x64", "arm64"]
+    },
+    "windows": {
+      "package": ["portable", "zip"],
+      "arch": ["x64", "ia32", "arm64"]
     }
   }
 }

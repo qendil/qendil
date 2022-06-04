@@ -1,3 +1,7 @@
+/**
+ * Collects output files and places them in a `dist/` directory.
+ */
+
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable unicorn/prefer-module */
 

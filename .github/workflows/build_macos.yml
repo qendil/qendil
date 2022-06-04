@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build_electron:
+  build_macos:
     name: Build macOS
     runs-on: macos-latest
     steps:

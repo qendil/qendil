@@ -1,3 +1,10 @@
+/**
+ * Changes cordova config file to point to given URL.
+ *
+ * Usage example:
+ *   cordova run android --serve=http://192.168.1.69:3000
+ */
+
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable unicorn/prefer-module */
 
@@ -39,7 +46,6 @@ function getPlatformConfigPath(projectRoot, platform) {
       }
     } catch {
       // No ios project
-      // console.error("ERR", err);
     }
   }
 

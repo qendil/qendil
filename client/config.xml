@@ -6,8 +6,8 @@
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
 >
   <name>Qendil</name>
-  <description>A game</description>
-  <author email="hi@sdrm.me" href="https://sdrm.me">SAID DERMOUMI</author>
+  <description>WIP game</description>
+  <author email="hi@sdrm.me" href="https://sdrm.me">Said Dermoumi</author>
   <content src="index.html" />
   <allow-intent href="http://*/*" />
   <allow-intent href="https://*/*" />

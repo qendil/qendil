@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build_electron:
+  build_linux:
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
