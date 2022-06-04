@@ -1,11 +1,9 @@
 {
   "browserWindow": {
+    "title": "Qendil",
     "width": 1280,
     "height": 720,
-    "titleBarStyle": "hidden",
-    "titleBarOverlay": true,
     "autoHideMenuBar": true,
-    "fullscreenable": false,
     "webPreferences": {
       "nativeWindowOpen": true
     }

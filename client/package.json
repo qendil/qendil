@@ -10,9 +10,12 @@
     "dev": "vite",
     "build": "vite build",
     "build:electron": "cordova build electron --no-telemetry --release",
+    "build:macos": "pnpm build:electron --buildConfig=$PWD/cordova/electron/macos.json",
+    "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
+    "build:windows": "pnpm build:electron --buildConfig=%cd%\\cordova\\electron\\windows.json",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
-    "prepare:cordova": "mkdir -p www && cordova prepare --no-telemetry"
+    "prepare:cordova": "cordova prepare --no-telemetry"
   },
   "dependencies": {
     "@types/babel__core": "^7.1.19",

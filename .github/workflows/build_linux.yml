@@ -1,0 +1,47 @@
+name: Build Linux binaries
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  build_electron:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: >-
+          pnpm install --frozen-lockfile --strict-peer-dependencies --production
+
+      - name: Build the clients
+        working-directory: client/
+        run: |
+          pnpm build
+          pnpm prepare:cordova
+          pnpm build:linux
+
+      - name: Make release
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "Release ${{ github.sha }}"
+          automatic_release_tag: latest
+          draft: true
+          files: |
+            client/build/*

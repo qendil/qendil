@@ -70,6 +70,12 @@ To run tests:
 > If you're planning on running or building Cordova targets,
 > make sure you didn't use `--no-optional` when running `pnpm i`.
 
+> **Warning**<br>
+> Running `cordova build` breaks pnpm's `node_modules/` folders,
+> probably because it uses `npm`.
+> If ever you need to run it locally, remember to re-run `pnpm i --force`
+> afterwards.
+
 Here are platform specific instructions:
 
 ##### Electron

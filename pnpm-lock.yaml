@@ -21,6 +21,8 @@ importers:
       lint-staged: ^13.0.0
       prettier: ^2.6.2
       typescript: ^4.7.3
+    dependencies:
+      husky: 8.0.1
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.27.0_kor2e3kwnnzugzo3aovmfcq2la
       '@typescript-eslint/parser': 5.27.0_ud6rd4xtew5bv4yhvkvu24pzm4
@@ -35,7 +37,6 @@ importers:
       eslint-plugin-tsdoc: 0.2.16
       eslint-plugin-typescript-sort-keys: 2.1.0_kor2e3kwnnzugzo3aovmfcq2la
       eslint-plugin-unicorn: 42.0.0_eslint@8.17.0
-      husky: 8.0.1
       lint-staged: 13.0.0
       prettier: 2.6.2
       typescript: 4.7.3
@@ -3711,7 +3712,7 @@ packages:
     resolution: {integrity: sha512-xs7/chUH/CKdOCs7Zy0Aev9e/dKOMZf3K1Az1nar3tzlv0jfqnYtu235bstsWTmXOR0EfINrPa97yy4Lz6RiKw==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
+    dev: false
 
   /iconv-corefoundation/1.1.7:
     resolution: {integrity: sha512-T10qvkw0zz4wnm560lOEg0PovVqUXuOFhhHAkixw8/sycy7TJt7v/RrkEKEQnAw2viPSJu6iAkErxnzR0g8PpQ==}

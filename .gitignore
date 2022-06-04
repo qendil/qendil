@@ -6,8 +6,10 @@ node_modules/
 *.local
 
 # Build artifacts
-client/www/
 client/platforms/
+client/plugins/
+client/dist/
+client/www/
 ts-out/
 .eslintcache
 

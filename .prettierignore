@@ -3,6 +3,8 @@ node_modules/
 pnpm-lock.yaml
 
 # Build artifacts
-client/www/
 client/platforms/
+client/plugins/
+client/dist/
+client/www/
 ts-out/

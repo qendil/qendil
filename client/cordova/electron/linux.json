@@ -3,10 +3,6 @@
     "linux": {
       "package": ["tar.gz"],
       "arch": ["x64", "ia32", "armv7l", "arm64"]
-    },
-    "mac": {
-      "package": ["zip"],
-      "arch": ["x64", "arm64"]
     }
   }
 }
