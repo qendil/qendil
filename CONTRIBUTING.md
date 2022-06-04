@@ -56,19 +56,26 @@ To run tests:
 
 #### Previewing Cordova targets
 
+- Run `pnpm prepare:cordova` to prepare and install cordova platforms.
+- Run `pnpm preview:<platform>` to preview the build in the `www/`.
+- Run `pnpm preview:<platform> --serve=<url>` to preview the given URL
+  on the given platform.
+  - This is useful to develop the app on a remote device, as you will
+    have access to hot module reloading when using `pnpm dev`.
+
 > **Warning**<br>
-> Cordova and its target are marked as optional dependencies to avoid
-> installing unecessary heavy dependencies when deploying for staging.
+> Cordova and its targets are marked as optional dependencies to avoid
+> installing them when deploying to staging.
 >
 > If you're planning on running or building Cordova targets,
-> make sure you didn't use `--no-optional` when installing dependencies.
+> make sure you didn't use `--no-optional` when running `pnpm i`.
 
-- Run `pnpm prepare:cordova` to install cordova platforms.
-- Run `pnpm dev` to start the development server.
-- Run `pnpm preview:electron --serve=localhost:3000` to run electron
-  on `localhost:3000`.
-- You can always omit `--serve=...` to preview the build in
-  the `www/` directory instead.
+Here are platform specific instructions:
+
+##### Electron
+
+- Does not have any prerequisites.
+- Run `pnpm preview:electron --serve=localhost:3000`
 
 ## Pull Request workflow
 
