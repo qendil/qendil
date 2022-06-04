@@ -8,11 +8,11 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "build:web": "vite build",
-    "build:electron": "cordova build electron --release",
+    "build": "vite build",
+    "build:electron": "cordova build electron --no-telemetry --release",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
-    "prepare:cordova": "cordova prepare"
+    "prepare:cordova": "mkdir -p www && cordova prepare --no-telemetry"
   },
   "dependencies": {
     "@types/babel__core": "^7.1.19",
@@ -28,12 +28,12 @@
     "vite": "^2.9.9"
   },
   "devDependencies": {
-    "electron-devtools-installer": "^3.2.0",
-    "xml2js": "^0.4.23"
+    "electron-devtools-installer": "^3.2.0"
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",
-    "cordova-electron": "^3.1.0"
+    "cordova-electron": "^3.1.0",
+    "xml2js": "^0.4.23"
   },
   "cordova": {
     "platforms": [

@@ -1,6 +1,6 @@
 # Node and pnpm
 node_modules/
-pnpm-debug.log*
+.pnpm-debug.log
 
 # Local env files and other local files
 *.local

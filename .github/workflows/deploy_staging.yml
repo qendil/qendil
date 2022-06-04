@@ -118,7 +118,7 @@ jobs:
 
       - name: Build the client
         working-directory: client/
-        run: pnpm build:web
+        run: pnpm build
 
       - name: Publish client to cloudflare
         id: publish-client
