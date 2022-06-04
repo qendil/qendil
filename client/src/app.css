@@ -40,15 +40,3 @@
 button {
   font-size: calc(10px + 2vmin);
 }
-
-.titleBar {
-  -webkit-app-region: drag;
-  user-select: none;
-  position: fixed;
-  background: #fc0;
-  left: env(titlebar-area-x);
-  top: env(titlebar-area-y);
-  width: env(titlebar-area-width);
-  height: env(titlebar-area-height);
-  max-width: 100%;
-}
