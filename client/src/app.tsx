@@ -1,5 +1,4 @@
-import type { ReactElement } from "react";
-import { useState } from "react";
+import { useState, type ReactElement } from "react";
 import logo from "./logo.svg";
 import "./app.css";
 
@@ -7,7 +6,7 @@ type AppProps = {
   isAware?: boolean;
 };
 
-function App({ isAware }: AppProps): ReactElement {
+export default function App({ isAware }: AppProps): ReactElement {
   const [count, setCount] = useState(0);
 
   const handleIncrement = (): void => {
@@ -52,5 +51,3 @@ function App({ isAware }: AppProps): ReactElement {
     </div>
   );
 }
-
-export default App;
