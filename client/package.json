@@ -13,8 +13,10 @@
     "build:macos": "pnpm build:electron --buildConfig=$PWD/cordova/electron/macos.json",
     "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
     "build:windows": "pnpm build:electron --buildConfig=%cd%\\cordova\\electron\\windows.json",
+    "build:android": "cordova build android --no-telemetry --release",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
+    "preview:android": "cordova run android",
     "prepare:cordova": "cordova prepare --no-telemetry"
   },
   "dependencies": {
@@ -36,11 +38,13 @@
   "optionalDependencies": {
     "cordova": "^11.0.0",
     "cordova-electron": "^3.1.0",
+    "cordova-android": "^10.1.2",
     "xml2js": "^0.4.23"
   },
   "cordova": {
     "platforms": [
-      "electron"
+      "electron",
+      "android"
     ]
   }
 }

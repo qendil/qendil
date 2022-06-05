@@ -104,12 +104,7 @@ module.exports = async (context) => {
   }
 
   async function collectElectron() {
-    const sourceDirectory = path.join(
-      projectRoot,
-      "platforms",
-      "electron",
-      "build"
-    );
+    const sourceDirectory = path.join(projectRoot, "platforms/electron/build");
 
     return Promise.all([
       collectLinux(sourceDirectory),
@@ -118,10 +113,27 @@ module.exports = async (context) => {
     ]);
   }
 
+  async function collectAndroid() {
+    const sourceDirectory = path.join(
+      projectRoot,
+      "platforms/android/app/build/outputs"
+    );
+
+    return Promise.all([
+      collectIfExists(
+        `${sourceDirectory}/apk/release/*.apk`,
+        `${BASE_NAME}_android.apk`
+      ),
+      collectIfExists(
+        `${sourceDirectory}/bundle/release/*.aab`,
+        `${BASE_NAME}_android.aab`
+      ),
+    ]);
+  }
+
   const pending = platforms.map(async (platform) => {
-    if (platform === "electron") {
-      return collectElectron();
-    }
+    if (platform === "electron") return collectElectron();
+    if (platform === "android") return collectAndroid();
   });
 
   await Promise.all(pending);

@@ -4,6 +4,7 @@ node_modules/
 
 # Local env files and other local files
 *.local
+.sdkmanrc
 
 # Build artifacts
 client/platforms/
