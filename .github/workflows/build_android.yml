@@ -1,4 +1,4 @@
-name: Build Windows executables
+name: Build Android app
 
 on:
   push:
@@ -9,9 +9,9 @@ permissions:
   contents: write
 
 jobs:
-  build_windows:
-    name: Build Windows
-    runs-on: windows-latest
+  build_android:
+    name: Build Android
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -31,14 +31,29 @@ jobs:
         run: >-
           pnpm install --frozen-lockfile --strict-peer-dependencies --production
 
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 8
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2.0.2
+
       - name: Build the clients
         working-directory: client/
         run: |
           pnpm build
           pnpm prepare:cordova
-          pnpm build:windows
+          echo "${{ secrets.ANDROID_KEY }}" | base64 --decode > release.key
+          pnpm build:android -- \
+            --packageType=apk \
+            --keystore=release.key \
+            --storePassword="${{ secrets.ANDROID_KEY_STORE_PASSWORD }}" \
+            --password="${{ secrets.ANDROID_KEY_PASSWORD }}" \
+            --alias=qendil-release
         env:
-          CLIENT_PLATFORM: cdv-electron-windows
+          CLIENT_PLATFORM: cdv-android
 
       - name: GH Release
         uses: softprops/action-gh-release@v0.1.14
