@@ -81,14 +81,62 @@ Here are platform specific instructions:
 ##### Electron
 
 - Does not have any prerequisites.
+- Run `pnpm dev` to start the development server.
 - Run `pnpm preview:electron --serve=localhost:3000`
+
+##### Android
+
+- [Install the requirements of the cordova Android Platform][2].
+  On ubuntu 22.04+, you can:
+
+  ```bash
+  curl -s "https://get.sdkman.io" | bash
+  sdk install java 8.0.332-zulu
+  sdk install gradle
+
+  export ANDROID_SDK_ROOT=$HOME/.android/sdk  # Do not forget to add this to your .bashrc
+  mkdir -p "$ANDROID_SDK_ROOT"
+  sudo apt-get install sdkmanager # Ubuntu 22.04+
+  sdkmanager --sdk_root=~/.android/sdk --install 'platforms;android-30' 'build-tools;30.0.3' platform-tools tools
+  ```
+
+- Connect an android device for remote debugging:
+
+  - You can enable wireless debugging in your android phone's developer options,
+    and then pair and connect to the device with adb.
+    ```bash
+    adb pair <your_phones_IP>:<port>
+    adb connect <your_phones_IP>:<port>
+    adb devices  # Should show your device
+    ```
+  - Since you'll need to be on the same network to access the dev server,
+    USB debugging is obsolete.
+  - You use avdmanager or android studio to make an android virtual device,
+    just make sure you have access to the host's IP.
+  - You can also use Windows Subsystem for Android, it is generally faster.
+
+- Run `pnpm dev --host=0.0.0.0` to start the development server.
+
+  - WSL users will need to [port forward][3] the port to the WSL VM.
+
+- Run `pnpm preview:android --device --serve=192.168.1.94:3000` where
+  `192.168.1.94` is the IP of the host or your computer in the local network.
+
+  - replace `--device` with `--emulator` if using an emulator.
+
+- To debug, you can visit `chrome://inspect/#devices` on Google Chrome,
+  and your device should appear in a few seconds as long as it's connected
+  to the same local network.
+
+[2]: https://cordova.apache.org/docs/en/11.x/guide/platforms/android/
+[3]: https://www.youtube.com/watch?v=ACjlvzw4bVE
 
 ## Pull Request workflow
 
 These are the things reviewers look out for when reviewing a pull request.
 
 - **PR Names**: When merging the pull request, make sure the commit
-  message matches the [seven rules](https://cbea.ms/git-commit/#seven-rules).
+  message matches the [seven rules][4].
 
   - Commits in the PR do not matter, since everything is getting squashed.
   - If it's a bug fix, add `(fixes #xxx[,#xxx])`, where `#xxx` is the
@@ -134,3 +182,5 @@ These are the things reviewers look out for when reviewing a pull request.
   > The list of supported browser versions is yet to be determined.
 
 - **Unused code**: unused code should be removed. No commented-out code.
+
+[4]: https://cbea.ms/git-commit/#seven-rules
