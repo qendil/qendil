@@ -12,5 +12,6 @@
       "package": ["portable", "zip"],
       "arch": ["x64", "ia32", "arm64"]
     }
-  }
+  },
+  "android": {}
 }

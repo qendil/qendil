@@ -16,15 +16,7 @@ function getPlatformConfigPath(projectRoot, platform) {
   const platformRoot = path.join(projectRoot, "platforms", platform);
 
   if (platform === "android") {
-    const filepath = path.join(
-      platformRoot,
-      "app",
-      "src",
-      "main",
-      "res",
-      "xml",
-      "config.xml"
-    );
+    const filepath = path.join(platformRoot, "app/src/main/res/xml/config.xml");
 
     if (fs.existsSync(filepath)) {
       return filepath;
@@ -79,21 +71,39 @@ module.exports = async (context) => {
       fs.writeFileSync(configPath, xml);
 
       if (platform === "electron") {
+        // Update the load URL
         const electronConfigPath = path.join(
           projectRoot,
-          "platforms",
-          "electron",
-          "www",
-          "cdv-electron-settings.json"
+          "platforms/electron/www/cdv-electron-settings.json"
         );
 
         const electronJson = require(electronConfigPath);
+
         electronJson.browserWindowInstance.loadURL.url = url;
+
         fs.writeFileSync(
           electronConfigPath,
           JSON.stringify(electronJson, undefined, 2),
           "utf8"
         );
+      } else if (platform === "android") {
+        const manifestPath = path.join(
+          "platforms/android/app/src/main/AndroidManifest.xml"
+        );
+        const manifestXml = fs.readFileSync(manifestPath, "utf8");
+        const manifestJson = await xmlToJs.parseStringPromise(manifestXml);
+
+        // Add clause to allow non-https urls to be opened on android devices
+        const applicationNode = manifestJson.manifest.application[0];
+        if (serve) {
+          applicationNode.$["android:usesCleartextTraffic"] = "true";
+        } else {
+          delete applicationNode.$["android:usesCleartextTraffic"];
+        }
+
+        const manifestBuilder = new xmlToJs.Builder();
+        const manifestXmlNew = manifestBuilder.buildObject(manifestJson);
+        fs.writeFileSync(manifestPath, manifestXmlNew);
       }
     }
   });

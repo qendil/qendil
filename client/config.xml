@@ -4,15 +4,22 @@
   version="0.0.1-alpha"
   xmlns="http://www.w3.org/ns/widgets"
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android"
 >
   <name>Qendil</name>
   <description>WIP game</description>
   <author email="hi@sdrm.me" href="https://sdrm.me">Said Dermoumi</author>
+
   <content src="index.html" />
+
   <allow-intent href="http://*/*" />
   <allow-intent href="https://*/*" />
 
+  <preference name="Fullscreen" value="true" />
+
   <hook src="cordova/hooks/serve.js" type="after_prepare" />
+  <hook src="cordova/hooks/clean.js" type="before_run" />
+  <hook src="cordova/hooks/clean.js" type="before_build" />
   <hook src="cordova/hooks/collect.js" type="after_build" />
 
   <platform name="electron">
@@ -20,5 +27,26 @@
       name="ElectronSettingsFilePath"
       value="cordova/electron/settings.json"
     />
+  </platform>
+
+  <platform name="android">
+    <!-- Force true fullscreen mode -->
+    <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
+      <activity android:theme="@style/TrueFullscreen" />
+    </edit-config>
+    <edit-config file="strings.xml" mode="add" target="/resources">
+      <style name="TrueFullscreen" parent="@style/Theme.AppCompat.NoActionBar">
+        <!-- Use 100% screen size even on borderless device / notch device -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <!-- Use 100% screen size -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+      </style>
+    </edit-config>
   </platform>
 </widget>
