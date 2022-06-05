@@ -56,6 +56,7 @@ To run tests:
 
 #### Previewing Cordova targets
 
+- Run `pnpm build` to build the web app.
 - Run `pnpm prepare:cordova` to prepare and install cordova platforms.
 - Run `pnpm preview:<platform>` to preview the build in the `www/`.
 - Run `pnpm preview:<platform> --serve=<url>` to preview the given URL
@@ -80,7 +81,6 @@ Here are platform specific instructions:
 
 ##### Electron
 
-- Does not have any prerequisites.
 - Run `pnpm dev` to start the development server.
 - Run `pnpm preview:electron --serve=localhost:3000`
 
@@ -117,6 +117,8 @@ Here are platform specific instructions:
 
 - Run `pnpm dev --host=0.0.0.0` to start the development server.
 
+  - Using `--host=0.0.0.0` is required to allow access from the
+    same local network. You can also use your host's IP address instead.
   - WSL users will need to [port forward][3] the port to the WSL VM.
 
 - Run `pnpm preview:android --device --serve=192.168.1.94:3000` where
@@ -130,6 +132,15 @@ Here are platform specific instructions:
 
 [2]: https://cordova.apache.org/docs/en/11.x/guide/platforms/android/
 [3]: https://www.youtube.com/watch?v=ACjlvzw4bVE
+
+##### iOS
+
+- [Install Xcode](https://apps.apple.com/app/xcode/id497799835).
+- Run `pnpm dev` to start the development server.
+- Run `pnpm preview:ios --serve=localhost:3000` to start the simulator.
+- To debug, the application's developper tools can be accessed from Safari's
+  developer menu.
+  - This assumes Safari's developer mode is enabled.
 
 ## Pull Request workflow
 
