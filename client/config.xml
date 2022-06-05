@@ -11,11 +11,14 @@
   <author email="hi@sdrm.me" href="https://sdrm.me">Said Dermoumi</author>
 
   <content src="index.html" />
-
   <allow-intent href="http://*/*" />
   <allow-intent href="https://*/*" />
 
   <preference name="Fullscreen" value="true" />
+  <preference name="StatusBarStyle" value="lightcontent" />
+
+  <preference name="scheme" value="qendil" />
+  <preference name="hostname" value="localhost" />
 
   <hook src="cordova/hooks/serve.js" type="after_prepare" />
   <hook src="cordova/hooks/clean.js" type="before_run" />

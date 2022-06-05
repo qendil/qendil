@@ -39,6 +39,7 @@
     "no-void": "off",
     "object-shorthand": ["error", "properties"],
     "complexity": "warn",
+    "no-warning-comments": "off",
     "no-undef": "off", // Overridden by @typescript-eslint/no-undef
     "no-dupe-class-members": "off", // Overridden by @typescript-eslint
     "no-loop-func": "off", // Overridden by @typescript-eslint

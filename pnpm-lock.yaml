@@ -52,6 +52,8 @@ importers:
       cordova: ^11.0.0
       cordova-android: ^10.1.2
       cordova-electron: ^3.1.0
+      cordova-ios: ^6.2.0
+      cordova-plugin-statusbar: ^3.0.0
       electron-devtools-installer: ^3.2.0
       git-rev: ^0.2.1
       react: ^18.1.0
@@ -75,6 +77,8 @@ importers:
       cordova: 11.0.0
       cordova-android: 10.1.2
       cordova-electron: 3.1.0
+      cordova-ios: 6.2.0
+      cordova-plugin-statusbar: 3.0.0
       xml2js: 0.4.23
     devDependencies:
       electron-devtools-installer: 3.2.0
@@ -1370,8 +1374,28 @@ packages:
     dev: false
     optional: true
 
+  /bplist-creator/0.1.0:
+    resolution: {integrity: sha512-sXaHZicyEEmY86WyueLTQesbeoH/mquvarJaQNbjuOQO+7gbFcDEWqKmcWA4cOTLzFlfgvkiVxolk1k5bBIpmg==}
+    dependencies:
+      stream-buffers: 2.2.0
+    dev: false
+    optional: true
+
+  /bplist-parser/0.0.6:
+    resolution: {integrity: sha512-fGeghPEH4Eytvf+Mi446aKcDqvkA/+eh6r7QGiZWMQG6TzqrnsToLP379XFfqRSZ41+676hhGIm++maNST1Apw==}
+    dev: false
+    optional: true
+
   /bplist-parser/0.2.0:
     resolution: {integrity: sha512-z0M+byMThzQmD9NILRniCUXYsYpjwnlO8N5uCFaCqIOpqRsJCrQL9NK3JsD67CN5a08nF5oIL2bD6loTdHOuKw==}
+    engines: {node: '>= 5.10.0'}
+    dependencies:
+      big-integer: 1.6.51
+    dev: false
+    optional: true
+
+  /bplist-parser/0.3.1:
+    resolution: {integrity: sha512-PyJxiNtA5T2PlLIeBot4lbp7rj4OadzjnMZD/G5zuBNt8ei/yCU7+wW0h2bag9vr8c+/WuRWmSxbqAl9hL1rBA==}
     engines: {node: '>= 5.10.0'}
     dependencies:
       big-integer: 1.6.51
@@ -1975,6 +1999,25 @@ packages:
     dev: false
     optional: true
 
+  /cordova-ios/6.2.0:
+    resolution: {integrity: sha512-sLjZg2QBI1SpQVwfe0MSn89YNVkBGLW9Q1vcFJBsqKBrhvoEOJ5Ytq0gwqdhgTOGzlwJUfxC6OHM3jcsRjtYrw==}
+    engines: {node: '>=10'}
+    requiresBuild: true
+    dependencies:
+      cordova-common: 4.0.2
+      fs-extra: 9.1.0
+      ios-sim: 8.0.2
+      nopt: 5.0.0
+      plist: 3.0.5
+      semver: 7.3.7
+      underscore: 1.13.4
+      unorm: 1.6.0
+      which: 2.0.2
+      xcode: 3.0.1
+      xml-escape: 1.1.0
+    dev: false
+    optional: true
+
   /cordova-lib/11.0.0:
     resolution: {integrity: sha512-3XSCIAlS060/hzxWKDrF+sMfv3PVU8bglCaL31HMCyj3YrZn1CZhqrRRrW5lwRxtz7Sh4XCxv97rNxF38uj9hg==}
     engines: {node: '>=12'}
@@ -1998,6 +2041,13 @@ packages:
     transitivePeerDependencies:
       - bluebird
       - supports-color
+    dev: false
+    optional: true
+
+  /cordova-plugin-statusbar/3.0.0:
+    resolution: {integrity: sha512-nzkeWeyLA6+1FryzO0aeB6NS8MZ45gnBYeq2VZqfdNbddZEgtpI4XPYdBVxvm9NhcVoJ3tdA1OBnQD9JryoV0Q==}
+    engines: {cordovaDependencies: {0.1.0: {cordova: '>=3.0.0'}, 4.0.0: {cordova: '>100'}}}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -3894,6 +3944,24 @@ packages:
       side-channel: 1.0.4
     dev: true
 
+  /interpret/1.4.0:
+    resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
+    engines: {node: '>= 0.10'}
+    dev: false
+    optional: true
+
+  /ios-sim/8.0.2:
+    resolution: {integrity: sha512-P7nEG771bfd+JoMRjnis1gpZOkjTUUxu+4Ek1Z+eoaEEoT9byllU9pxfQ8Df7hL3gSkIQxNwTSLhos2I8tWUQA==}
+    engines: {node: '>=6'}
+    hasBin: true
+    dependencies:
+      bplist-parser: 0.0.6
+      nopt: 1.0.9
+      plist: 3.0.5
+      simctl: 2.0.3
+    dev: false
+    optional: true
+
   /ip/1.1.8:
     resolution: {integrity: sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==}
     dev: false
@@ -4756,6 +4824,14 @@ packages:
     resolution: {integrity: sha512-U9h1NLROZTq9uE1SNffn6WuPDg8icmi3ns4rEl/oTfIle4iLjTliCzgTsbaIFMq/Xn078/lfY/BL0GWZ+psK4Q==}
     dev: false
 
+  /nopt/1.0.9:
+    resolution: {integrity: sha512-CmUZ3rzN0/4kRHum5pGRiGkhmBMzgtEDxrZVHqRJDSv8qK6s+wzaig/xeyB22Due5aZQeTiEZg/nrmMH2tapDQ==}
+    hasBin: true
+    dependencies:
+      abbrev: 1.1.1
+    dev: false
+    optional: true
+
   /nopt/5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
@@ -5531,6 +5607,14 @@ packages:
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
 
+  /rechoir/0.6.2:
+    resolution: {integrity: sha1-hSBLVNuoLVdC4oyWdW70OvUOM4Q=}
+    engines: {node: '>= 0.10'}
+    dependencies:
+      resolve: 1.22.0
+    dev: false
+    optional: true
+
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
     dev: true
@@ -5862,6 +5946,17 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
+  /shelljs/0.8.5:
+    resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
+    engines: {node: '>=4'}
+    hasBin: true
+    dependencies:
+      glob: 7.2.3
+      interpret: 1.4.0
+      rechoir: 0.6.2
+    dev: false
+    optional: true
+
   /side-channel/1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
     dependencies:
@@ -5871,6 +5966,23 @@ packages:
 
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+
+  /simctl/2.0.3:
+    resolution: {integrity: sha512-kKCak0yszxHae5eVWcmrjV3ouUGac3sjlhjdLWpyPu4eiQcWoHsCrqS34kkgzHN8Ystqkh/LFjzrldk/g3BYJg==}
+    dependencies:
+      shelljs: 0.8.5
+      tail: 0.4.0
+    dev: false
+    optional: true
+
+  /simple-plist/1.3.1:
+    resolution: {integrity: sha512-iMSw5i0XseMnrhtIzRb7XpQEXepa9xhWxGUojHBL43SIpQuDQkh3Wpy67ZbDzZVr6EKxvwVChnVpdl8hEVLDiw==}
+    dependencies:
+      bplist-creator: 0.1.0
+      bplist-parser: 0.3.1
+      plist: 3.0.5
+    dev: false
+    optional: true
 
   /slash/3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -6005,6 +6117,12 @@ packages:
   /statuses/2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+    optional: true
+
+  /stream-buffers/2.2.0:
+    resolution: {integrity: sha1-kdX1Ew0c75bc+n9yaUUYh0HQnuQ=}
+    engines: {node: '>= 0.10.0'}
     dev: false
     optional: true
 
@@ -6196,6 +6314,12 @@ packages:
     engines: {node: '>=8.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
+    dev: false
+    optional: true
+
+  /tail/0.4.0:
+    resolution: {integrity: sha1-0p3nJ1DMmdseBTr/E8NZ7PtxMAI=}
+    engines: {node: '>= 0.4.0'}
     dev: false
     optional: true
 
@@ -6444,6 +6568,12 @@ packages:
     dev: false
     optional: true
 
+  /unorm/1.6.0:
+    resolution: {integrity: sha512-b2/KCUlYZUeA7JFUuRJZPUtr4gZvBh7tavtv4fvk4+KV9pfGiR6CQAQAWl49ZpR3ts2dk4FYkP7EIgDJoiOLDA==}
+    engines: {node: '>= 0.4.0'}
+    dev: false
+    optional: true
+
   /unpipe/1.0.0:
     resolution: {integrity: sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw=}
     engines: {node: '>= 0.8'}
@@ -6514,6 +6644,12 @@ packages:
   /uuid/3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+    dev: false
+    optional: true
+
+  /uuid/7.0.3:
+    resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
     hasBin: true
     dev: false
     optional: true
@@ -6671,9 +6807,23 @@ packages:
     dev: false
     optional: true
 
+  /xcode/3.0.1:
+    resolution: {integrity: sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      simple-plist: 1.3.1
+      uuid: 7.0.3
+    dev: false
+    optional: true
+
   /xdg-basedir/4.0.0:
     resolution: {integrity: sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==}
     engines: {node: '>=8'}
+    dev: false
+    optional: true
+
+  /xml-escape/1.1.0:
+    resolution: {integrity: sha1-OQTBQ/qOs6ADDsZG0pAqLxtwbEQ=}
     dev: false
     optional: true
 
