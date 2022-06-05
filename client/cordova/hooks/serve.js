@@ -56,19 +56,14 @@ module.exports = async (context) => {
   const { serve } = options;
 
   const pending = platforms.map(async (platform) => {
+    const configPath = getPlatformConfigPath(projectRoot, platform);
+    const cordovaConfig = fs.readFileSync(configPath, "utf8");
+    const configJson = await xmlToJs.parseStringPromise(cordovaConfig);
+
     if (serve) {
       const url = /^http(s)?:\/\//.test(serve) ? serve : `http://${serve}`;
 
-      const configPath = getPlatformConfigPath(projectRoot, platform);
-      const cordovaConfig = fs.readFileSync(configPath, "utf8");
-
-      const json = await xmlToJs.parseStringPromise(cordovaConfig);
-
-      json.widget.content[0].$.src = url;
-
-      const builder = new xmlToJs.Builder();
-      const xml = builder.buildObject(json);
-      fs.writeFileSync(configPath, xml);
+      configJson.widget.content[0].$.src = url;
 
       if (platform === "electron") {
         // Update the load URL
@@ -86,26 +81,45 @@ module.exports = async (context) => {
           JSON.stringify(electronJson, undefined, 2),
           "utf8"
         );
-      } else if (platform === "android") {
-        const manifestPath = path.join(
-          "platforms/android/app/src/main/AndroidManifest.xml"
-        );
-        const manifestXml = fs.readFileSync(manifestPath, "utf8");
-        const manifestJson = await xmlToJs.parseStringPromise(manifestXml);
-
-        // Add clause to allow non-https urls to be opened on android devices
-        const applicationNode = manifestJson.manifest.application[0];
-        if (serve) {
-          applicationNode.$["android:usesCleartextTraffic"] = "true";
-        } else {
-          delete applicationNode.$["android:usesCleartextTraffic"];
-        }
-
-        const manifestBuilder = new xmlToJs.Builder();
-        const manifestXmlNew = manifestBuilder.buildObject(manifestJson);
-        fs.writeFileSync(manifestPath, manifestXmlNew);
       }
     }
+
+    if (platform === "android") {
+      const manifestPath = path.join(
+        "platforms/android/app/src/main/AndroidManifest.xml"
+      );
+      const manifestXml = fs.readFileSync(manifestPath, "utf8");
+      const manifestJson = await xmlToJs.parseStringPromise(manifestXml);
+
+      // Add clause to allow non-https urls to be opened on android devices
+      const applicationNode = manifestJson.manifest.application[0];
+      if (serve) {
+        applicationNode.$["android:usesCleartextTraffic"] = "true";
+      } else {
+        delete applicationNode.$["android:usesCleartextTraffic"];
+      }
+
+      const manifestBuilder = new xmlToJs.Builder();
+      const manifestXmlNew = manifestBuilder.buildObject(manifestJson);
+      fs.writeFileSync(manifestPath, manifestXmlNew);
+    }
+
+    if (platform === "ios") {
+      if (serve) {
+        configJson.widget["allow-navigation"] = [
+          { $: { href: "http://*/*" } },
+          { $: { href: "https://*/*" } },
+        ];
+        configJson.widget.access = [{ $: { origin: "*" } }];
+      } else {
+        delete configJson.widget["allow-navigation"];
+        delete configJson.widget.access;
+      }
+    }
+
+    const builder = new xmlToJs.Builder();
+    const xml = builder.buildObject(configJson);
+    fs.writeFileSync(configPath, xml);
   });
 
   await Promise.all(pending);

@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
     "preview:android": "cordova run android",
+    "preview:ios": "cordova run ios",
     "prepare:cordova": "cordova prepare --no-telemetry"
   },
   "dependencies": {
@@ -37,14 +38,20 @@
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",
-    "cordova-electron": "^3.1.0",
     "cordova-android": "^10.1.2",
+    "cordova-electron": "^3.1.0",
+    "cordova-ios": "^6.2.0",
+    "cordova-plugin-statusbar": "^3.0.0",
     "xml2js": "^0.4.23"
   },
   "cordova": {
     "platforms": [
       "electron",
-      "android"
-    ]
+      "android",
+      "ios"
+    ],
+    "plugins": {
+      "cordova-plugin-statusbar": {}
+    }
   }
 }
