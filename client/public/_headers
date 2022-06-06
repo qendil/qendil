@@ -1,0 +1,8 @@
+# Cloudflare pages headers file
+# https://developers.cloudflare.com/pages/platform/headers/
+
+# Fake content-type to force CF to compress these files
+/assets/*.gltf
+    Content-Type: application/json
+/assets/*.bin
+    Content-Type: application/wasm

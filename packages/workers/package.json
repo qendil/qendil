@@ -1,0 +1,16 @@
+{
+  "name": "@qendil/workers",
+  "version": "0.0.1-alpha",
+  "description": "Workers for the qendil client",
+  "author": "Said Dermoumi <hi@sdrm.me>",
+  "private": true,
+  "license": "../../LICENSE",
+  "dependencies": {
+    "vite": "^2.9.9",
+    "workbox-precaching": "^6.5.3",
+    "workbox-routing": "^6.5.3"
+  },
+  "exports": {
+    "./service-worker": "./src/service-worker.ts"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "ts-out/node",
+    "noEmit": true,
+    "target": "esnext",
+    "useDefineForClassFields": true,
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "skipLibCheck": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "lib": []
+  },
+  "include": [
+    "./node.d.ts",
+    "**/vite.config.ts",
+    "**/package.json",
+    "**/cordova/hooks/*.js"
+  ],
+  "exclude": ["node_modules"]
+}
