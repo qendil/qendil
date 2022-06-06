@@ -3,5 +3,9 @@
     "strict": true
   },
   "include": ["lint-staged.config.mjs"],
-  "references": [{ "path": "client" }, { "path": "./tsconfig.node.json" }]
+  "references": [
+    { "path": "client" },
+    { "path": "packages/workers" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

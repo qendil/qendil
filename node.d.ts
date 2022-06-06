@@ -3,8 +3,6 @@
  * VitePWA indirectly imports workbox-core, which uses Webworker types
  */
 
-/// <reference no-default-lib="true"/>
-
 declare type ExtendableEvent = unknown;
 declare type Request = unknown;
 declare type RequestInit = unknown;

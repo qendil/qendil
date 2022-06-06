@@ -28,7 +28,7 @@
     "jsx-a11y"
   ],
   "settings": {
-    "react": { "version": "detect" },
+    "react": { "version": "^18.0.0" },
     "jsdoc": { "mode": "typescript" },
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },

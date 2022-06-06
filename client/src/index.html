@@ -4,7 +4,15 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: gap: https://ssl.gstatic.com https://static.cloudflareinsights.com; connect-src 'self' ws: https://cloudflareinsights.com; style-src 'self' 'unsafe-inline'; media-src *"
+      content="
+        default-src 'self' data: gap:
+          https://ssl.gstatic.com
+          https://static.cloudflareinsights.com;
+        connect-src 'self' ws:
+          https://cloudflareinsights.com;
+        style-src 'self' 'unsafe-inline';
+        media-src *
+      "
     />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
@@ -38,10 +46,10 @@
     <link rel="mask-icon" href="/mask-icon.svg" color="#282425" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./main.tsx"></script>
 
     <style>
-      @import url("/src/index.css");
+      @import url("./critical.css");
     </style>
   </head>
   <body>

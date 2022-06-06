@@ -1,8 +1,11 @@
-import { useState } from "react";
 import type { ReactElement } from "react";
+
+import { useState } from "react";
+
+import useServiceWorker from "../hooks/use-service-worker";
+
 import logo from "./logo.svg";
 import classes from "./app.module.css";
-import useServiceWorker from "./use-service-worker";
 
 type AppProps = {
   isAware?: boolean;
