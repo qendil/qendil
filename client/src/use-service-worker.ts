@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Workbox } from "workbox-window";
+import { Workbox } from "workbox-window/Workbox";
 
 // The service worker path changes depending on the environment
 const SERVICE_WORKER_PATH = import.meta.env.DEV

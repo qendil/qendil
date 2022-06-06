@@ -1,4 +1,5 @@
-import { useState, type ReactElement } from "react";
+import { useState } from "react";
+import type { ReactElement } from "react";
 import logo from "./logo.svg";
 import classes from "./app.module.css";
 import useServiceWorker from "./use-service-worker";
