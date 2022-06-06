@@ -28,12 +28,12 @@
     "jsx-a11y"
   ],
   "settings": {
-    "react": { "version": "detect" },
+    "react": { "version": "^18.0.0" },
     "jsdoc": { "mode": "typescript" },
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },
   "parserOptions": {
-    "project": ["**/tsconfig.json", "tsconfig.json"]
+    "project": ["**/tsconfig.json", "tsconfig.json", "tsconfig.node.json"]
   },
   "rules": {
     "no-void": "off",

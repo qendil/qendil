@@ -19,7 +19,8 @@
     "node": "16.15.1"
   },
   "workspaces": [
-    "client"
+    "client",
+    "packages/*"
   ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.27.0",
