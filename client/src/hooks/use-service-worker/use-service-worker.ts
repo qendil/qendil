@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Workbox } from "workbox-window/Workbox";
+import { Workbox } from "workbox-window";
 
-// The service worker path changes depending on the environment
+// Path changes depending on the environment
 const SERVICE_WORKER_PATH = import.meta.env.DEV
   ? "/src/service-worker.ts"
   : "/service-worker.js";
@@ -13,6 +13,13 @@ const workbox =
 
 void workbox?.register();
 
+/**
+ * Hook to check if there's a new pending version of the service worker,
+ * and if so, returns a handler to activate it.
+ *
+ * @returns a handler to activate the new version of the service worker.
+ *   Or undefined if there's no new version.
+ */
 export default function useServiceWorker(): (() => void) | undefined {
   const [updateHandler, setUpdateHandler] = useState<() => void>();
 

@@ -5,12 +5,24 @@
   "author": "Said Dermoumi <hi@sdrm.me>",
   "private": true,
   "license": "../../LICENSE",
+  "scripts": {
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "exports": {
+    "./service-worker": "./src/service-worker/index.ts"
+  },
   "dependencies": {
-    "vite": "^2.9.10",
     "workbox-precaching": "^6.5.3",
     "workbox-routing": "^6.5.3"
   },
-  "exports": {
-    "./service-worker": "./src/service-worker.ts"
+  "peerDependencies": {
+    "vite": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^2.9.10",
+    "c8": "^7.11.3",
+    "vitest": "^0.14.1"
   }
 }

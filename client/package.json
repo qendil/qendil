@@ -18,7 +18,10 @@
     "preview:electron": "cordova run electron --nobuild",
     "preview:android": "cordova run android",
     "preview:ios": "cordova run ios",
-    "prepare:cordova": "cordova prepare --no-telemetry"
+    "prepare:cordova": "cordova prepare --no-telemetry",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@qendil/workers": "*",
@@ -40,7 +43,15 @@
     "workbox-window": "^6.5.3"
   },
   "devDependencies": {
-    "electron-devtools-installer": "^3.2.0"
+    "@testing-library/dom": "^8.13.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^14.2.0",
+    "@types/testing-library__jest-dom": "^5.14.3",
+    "c8": "^7.11.3",
+    "electron-devtools-installer": "^3.2.0",
+    "jsdom": "^19.0.0",
+    "vitest": "^0.14.1"
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",

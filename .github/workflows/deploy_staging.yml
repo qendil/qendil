@@ -32,8 +32,13 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "pnpm"
+      - name: Cache typescript buildinfo
+        uses: actions/cache@v3
+        with:
+          path: ts-out
+          key: ts-out
       - name: Lint the code
-        run: pnpm lint:types
+        run: pnpm lint:types --write
 
   check_formatting:
     name: Check files formatting
@@ -83,12 +88,41 @@ jobs:
       - name: Lint the code
         run: pnpm lint:practices
 
+  run_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: >-
+          pnpm install
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+      - name: Test the code
+        run: pnpm test:cov
+      - name: Publish code coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   deploy_to_staging:
     name: Deploy to staging
     needs:
       - check_types
       - check_formatting
       - check_linting
+      - run_tests
     environment:
       name: Staging
       url: ${{ steps.publish-client.outputs.url }}

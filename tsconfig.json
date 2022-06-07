@@ -1,11 +1,9 @@
 {
-  "compilerOptions": {
-    "strict": true
-  },
-  "include": ["lint-staged.config.mjs"],
+  "compilerOptions": {},
+  "include": [],
   "references": [
     { "path": "client" },
     { "path": "packages/workers" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "tsconfig.node.json" }
   ]
 }

@@ -14,3 +14,4 @@ client/www/
 ts-out/
 .eslintcache
 
+**/coverage/

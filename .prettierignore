@@ -8,3 +8,5 @@ client/plugins/
 client/dist/
 client/www/
 ts-out/
+
+**/coverage/
