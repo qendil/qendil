@@ -163,7 +163,7 @@ export default defineConfig(async ({ mode }) => {
           authToken: environment.CLIENT_SENTRY_AUTH_TOKEN,
           org: environment.CLIENT_SENTRY_ORG || "sdrmme",
           project: environment.CLIENT_SENTRY_PROJECT || "qendil",
-          release: appVersion,
+          release: `client@${appVersion}`,
           deploy: { env: sentryEnvironment },
           sourceMaps: { include: ["./www"] },
           setCommits: { auto: true },
