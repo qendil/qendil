@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "composite": true,
-    "outDir": "../ts-out/client",
+    "outDir": "../../ts-out/workers-tests",
     "target": "ES2021",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2021"],
+    "lib": [],
     "allowJs": false,
     "skipLibCheck": false,
     "esModuleInterop": false,
@@ -15,10 +15,9 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "types": ["vite/types/importMeta", "vitest/globals"],
+    "noEmit": true
   },
-  "include": ["src", "globals.d.ts", "package.json"],
-  "exclude": ["node_modules", "www", "setuptests.ts", "**/*.spec.ts"]
+  "include": ["src", "setuptests.ts", "tests.d.ts"],
+  "exclude": ["node_modules"]
 }

@@ -17,8 +17,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src", "globals.d.ts", "package.json"],
-  "exclude": ["node_modules", "www", "setuptests.ts", "**/*.spec.ts"]
+  "include": ["src", "globals.d.ts", "setuptests.tsx"],
+  "exclude": ["node_modules", "www"]
 }

@@ -20,6 +20,7 @@
     "node.d.ts",
     "scripts/*.mjs",
     "**/vite.config.ts",
+    "**/vitest.config.ts",
     "**/package.json",
     "**/cordova/hooks/*.js"
   ],
