@@ -38,7 +38,7 @@ jobs:
           pnpm prepare:cordova
           pnpm build:macos
         env:
-          CLIENT_PLATFORM: cdv-electron-macos
+          CLIENT_PLATFORM: cdv-macos
 
       - name: GH Release
         uses: softprops/action-gh-release@v0.1.14

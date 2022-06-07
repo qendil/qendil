@@ -5,11 +5,12 @@
     <meta
       http-equiv="Content-Security-Policy"
       content="
-        default-src 'self' data: gap:
+        default-src 'self' data:
           https://ssl.gstatic.com
           https://static.cloudflareinsights.com;
         connect-src 'self' ws:
-          https://cloudflareinsights.com;
+          https://cloudflareinsights.com
+          https://*.ingest.sentry.io;
         style-src 'self' 'unsafe-inline';
         media-src *
       "
@@ -46,10 +47,10 @@
     <link rel="mask-icon" href="/mask-icon.svg" color="#282425" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
-    <script type="module" src="./main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
 
     <style>
-      @import url("./critical.css");
+      @import url("/src/critical.css");
     </style>
   </head>
   <body>

@@ -34,6 +34,10 @@ Object.defineProperty(globalThis, "location", {
 // We finally import use-service-worker because it runs some code
 import useServiceWorker from "./use-service-worker";
 
+beforeEach(() => {
+  vi.stubGlobal("__APP_PLATFORM__", "browser");
+});
+
 describe("useServiceWorker module", () => {
   it("registers a service worker when imported if they are supported", async () => {
     // Given an environment where service workers are supported
@@ -49,13 +53,27 @@ describe("useServiceWorker module", () => {
     expect(mockedWorkbox.prototype.register).toHaveBeenCalledOnce();
   });
 
-  it("doesn't register a service worker when imported if they're not supported", async () => {
+  it("only registers service workers when they're supported", async () => {
     // Given an environment where service workers are not supported
     // When I import `use-service-worker`
-    // Then the service worker is not registered
+    // Then the service worker should not be registered
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     delete (globalThis.navigator as any).serviceWorker;
+
+    vi.resetModules();
+    await import("./use-service-worker");
+
+    const { Workbox: mockedWorkbox } = await import("workbox-window");
+    expect(mockedWorkbox.prototype.register).not.toHaveBeenCalled();
+  });
+
+  it("only registers service workers when on the browser", async () => {
+    // Given a non-browser environment
+    // When I import `use-service-worker`
+    // Then the service worker should not be registered
+
+    vi.stubGlobal("__APP_PLATFORM__", "cdv-android");
 
     vi.resetModules();
     await import("./use-service-worker");

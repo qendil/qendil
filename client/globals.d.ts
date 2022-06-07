@@ -1,10 +1,14 @@
 declare const __APP_NAME__: string;
 declare const __APP_VERSION__: string;
 declare const __APP_PLATFORM__:
-  | "cdv-electron-linux"
-  | "cdv-electron-macos"
-  | "cdv-electron-window"
-  | undefined;
+  | "browser"
+  | "cdv-android"
+  | "cdv-ios"
+  | "cdv-linux"
+  | "cdv-macos"
+  | "cdv-windows";
+declare const __SENTRY_DSN__: string | undefined;
+declare const __SENTRY_ENVIRONMENT__: string;
 
 // Prefixed fullscreen APIs
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

@@ -7,7 +7,7 @@ const SERVICE_WORKER_PATH = import.meta.env.DEV
   : "/service-worker.js";
 
 const workbox =
-  "serviceWorker" in navigator
+  "serviceWorker" in navigator && __APP_PLATFORM__ === "browser"
     ? new Workbox(SERVICE_WORKER_PATH, { scope: "/", type: "module" })
     : undefined;
 

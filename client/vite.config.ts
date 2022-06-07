@@ -107,7 +107,18 @@ export default defineConfig(async ({ mode }) => {
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
       __APP_VERSION__: JSON.stringify(appConfig.version),
-      __APP_PLATFORM__: JSON.stringify(environment.CLIENT_PLATFORM),
+      __APP_PLATFORM__: JSON.stringify(
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        environment.CLIENT_PLATFORM || "browser"
+      ),
+      __SENTRY_DSN__: JSON.stringify(
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        environment.CLIENT_SENTRY_DSN || undefined
+      ),
+      __SENTRY_ENVIRONMENT__: JSON.stringify(
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        environment.CLIENT_SENTRY_ENVIRONMENT || mode
+      ),
     },
     plugins: [
       react(),
