@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+
 import type { PluginOption } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import { short as gitShort } from "git-rev";
@@ -5,6 +7,7 @@ import { short as gitShort } from "git-rev";
 import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { VitePWA as vitePWA } from "vite-plugin-pwa";
+import viteSentry from "vite-plugin-sentry";
 
 import packageJson from "./package.json";
 
@@ -102,23 +105,21 @@ export default defineConfig(async ({ mode }) => {
         },
   } as const;
 
+  const sentryEnvironment = environment.CLIENT_SENTRY_ENVIRONMENT || mode;
+  const uploadToSentry = Boolean(environment.CLIENT_SENTRY_AUTH_TOKEN);
+
   return {
     base: "",
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
       __APP_VERSION__: JSON.stringify(appConfig.version),
       __APP_PLATFORM__: JSON.stringify(
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         environment.CLIENT_PLATFORM || "browser"
       ),
       __SENTRY_DSN__: JSON.stringify(
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         environment.CLIENT_SENTRY_DSN || undefined
       ),
-      __SENTRY_ENVIRONMENT__: JSON.stringify(
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-        environment.CLIENT_SENTRY_ENVIRONMENT || mode
-      ),
+      __SENTRY_ENVIRONMENT__: JSON.stringify(sentryEnvironment),
     },
     plugins: [
       react(),
@@ -157,6 +158,17 @@ export default defineConfig(async ({ mode }) => {
           injectionPoint: "__WB_MANIFEST",
         },
       }),
+      uploadToSentry &&
+        viteSentry({
+          authToken: environment.CLIENT_SENTRY_AUTH_TOKEN,
+          org: environment.CLIENT_SENTRY_ORG || "sdrmme",
+          project: environment.CLIENT_SENTRY_PROJECT || "qendil",
+          release: appVersion,
+          deploy: { env: sentryEnvironment },
+          sourceMaps: { include: ["./www"] },
+          setCommits: { auto: true },
+          finalize: true,
+        }),
       serviceWorkerDevelopmentServerRootScope(),
     ],
     esbuild: {
@@ -178,6 +190,7 @@ export default defineConfig(async ({ mode }) => {
     build: {
       rollupOptions,
       outDir: "www",
+      sourcemap: uploadToSentry ? "hidden" : false,
     },
     worker: {
       format: "es",

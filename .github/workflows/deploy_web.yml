@@ -37,11 +37,12 @@ jobs:
 
       - name: Build the client
         working-directory: client/
-        run: pnpm build
+        run: pnpm build:browser
         env:
           CLIENT_PLATFORM: browser
           CLIENT_SENTRY_ENVIRONMENT: production
           CLIENT_SENTRY_DSN: "${{ secrets.CLIENT_SENTRY_DSN }}"
+          CLIENT_SENTRY_AUTH_TOKEN: ${{ secrets.CLIENT_SENTRY_AUTH_TOKEN }}
 
       - name: Publish client to cloudflare
         id: publish-client

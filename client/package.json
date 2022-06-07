@@ -14,6 +14,7 @@
     "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
     "build:windows": "pnpm build:electron --buildConfig=%cd%\\cordova\\electron\\windows.json",
     "build:android": "cordova build android --no-telemetry --release",
+    "build:browser": "vite build && find www/ -name '*.js.map' -type f -delete",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
     "preview:android": "cordova run android",
@@ -42,6 +43,7 @@
     "vite": "^2.9.10",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.12.0",
+    "vite-plugin-sentry": "^1.0.16",
     "workbox-window": "^6.5.3"
   },
   "devDependencies": {
