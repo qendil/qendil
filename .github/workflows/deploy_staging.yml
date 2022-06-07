@@ -104,14 +104,18 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "pnpm"
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v3.0.0
+      - name: Test the code
+        run: pnpm test:cov
+      - name: Cache codeclimate reporter
+        id: code-climate-reporter
+        uses: actions/cache@v3
+        with:
+          path: /tmp/cc-reporter
+          key: ${{ runner.os }}-cc-reporter
+      - name: publish code coverage
+        run: pnpm zx scripts/collect-coverage.mjs
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: pnpm test:cov
-          coverageLocations: |
-            ${{github.workspace}}/**/coverage/lcov.info:lcov
 
   deploy_to_staging:
     name: Deploy to staging

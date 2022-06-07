@@ -1,57 +1,56 @@
 #!/usr/bin/env zx
 
-import "zx/globals";
+import { $, cd, globby, path } from "zx";
 import fs from "node:fs/promises";
-import path from "node:path";
-import readline from "node:readline";
-import events from "node:events";
+import { constants as fsConstants } from "node:fs";
 
-await fs.mkdir("coverage", { recursive: true });
+const CC_REPORTER_BINARY_URL =
+  "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64";
 
-const files = await globby([
+// Download codeclimate executable
+const cc = "/tmp/cc-reporter";
+
+try {
+  await fs.access(cc, fsConstants.X_OK);
+} catch {
+  const ccDownload = await fetch(CC_REPORTER_BINARY_URL);
+  const buf = await ccDownload.arrayBuffer();
+  const ccReporterFile = await fs.open(cc, "w");
+  try {
+    await ccReporterFile.write(Buffer.from(buf));
+  } finally {
+    await ccReporterFile.close();
+  }
+}
+
+// Make file executable
+await fs.chmod(cc, 0o755);
+
+// Process lcov coverage reports
+const lcovFiles = await globby([
   "**/coverage/lcov.info",
   "!**/node_modules/**",
-  "!coverage/lcov.info",
 ]);
 
-const outFile = await fs.open("coverage/lcov.info", "w");
+const originalCwd = process.cwd();
 try {
-  const outStream = outFile.createWriteStream({ encoding: "utf8" });
+  await Promise.all(
+    lcovFiles.map(async (file, index) => {
+      const coverageRoot = path.dirname(path.dirname(file));
+      const outFile = `${path.basename(coverageRoot)}-${index}.json`;
 
-  for (const filepath of files) {
-    // Read each file and sequencially write it into the stream
-    // Replacing any paths into paths relative to this directory
+      cd(coverageRoot);
 
-    const coverageRoot = path.dirname(path.dirname(filepath));
-    const relativePath = path.relative(process.cwd(), coverageRoot);
-
-    // eslint-disable-next-line no-await-in-loop
-    const file = await fs.open(filepath);
-    try {
-      const stream = file.createReadStream({ encoding: "utf8" });
-
-      const lineReader = readline.createInterface({
-        input: stream,
-        crlfDelay: Number.POSITIVE_INFINITY,
-      });
-
-      lineReader.on("line", (line) => {
-        if (line.startsWith("SF:")) {
-          const [, fileName] = line.split("SF:");
-          const filePath = path.join(relativePath, fileName);
-          outStream.write(`SF:${filePath}\n`);
-        } else {
-          outStream.write(`${line}\n`);
-        }
-      });
-
-      // eslint-disable-next-line no-await-in-loop
-      await events.once(lineReader, "close");
-    } finally {
-      // eslint-disable-next-line no-await-in-loop
-      await file.close();
-    }
-  }
+      await $`${cc} format-coverage ${file} --input-type lcov --prefix ${coverageRoot}/ --output /tmp/coverage/${outFile}`;
+    })
+  );
 } finally {
-  await outFile.close();
+  cd(originalCwd);
 }
+
+// Aggregate coverage reports
+const coverageFiles = await globby(["/tmp/coverage/*.json"]);
+await $`${cc} sum-coverage ${coverageFiles} --output /tmp/cc-coverage.json`;
+
+// Upload coverage report
+await $`${cc} upload-coverage --input /tmp/cc-coverage.json`;
