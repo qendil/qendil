@@ -83,6 +83,36 @@ jobs:
       - name: Lint the code
         run: pnpm lint:practices
 
+  run_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: >-
+          pnpm install
+          --frozen-lockfile
+          --strict-peer-dependencies
+          --no-optional
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: pnpm test:cov
+          coverageLocations: |
+            ${{github.workspace}}/**/coverage/lcov.info:lcov
+
   deploy_to_staging:
     name: Deploy to staging
     needs:
