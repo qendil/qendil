@@ -1,8 +1,5 @@
 {
-  "compilerOptions": {
-    "noEmit": true,
-    "outDir": "wee"
-  },
+  "compilerOptions": {},
   "include": [],
   "references": [
     { "path": "client" },
