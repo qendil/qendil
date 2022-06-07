@@ -19,6 +19,7 @@
     "./service-worker": "./src/service-worker/index.ts"
   },
   "devDependencies": {
+    "c8": "^7.11.3",
     "vitest": "^0.14.1"
   }
 }
