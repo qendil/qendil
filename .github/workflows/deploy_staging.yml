@@ -119,6 +119,7 @@ jobs:
       - check_types
       - check_formatting
       - check_linting
+      - run_tests
     environment:
       name: Staging
       url: ${{ steps.publish-client.outputs.url }}
