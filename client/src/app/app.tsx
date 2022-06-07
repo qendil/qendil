@@ -11,6 +11,10 @@ type AppProps = {
   isAware?: boolean;
 };
 
+const handleError = (): void => {
+  throw new Error("Danger!? Chupakabra");
+};
+
 export default function App({ isAware }: AppProps): ReactElement {
   const [count, setCount] = useState(0);
 
@@ -47,6 +51,11 @@ export default function App({ isAware }: AppProps): ReactElement {
         {isAware && <p>You are aware of Vite + React!</p>}
         {renderUpdatePrompt()}
         <p>{renderButtonComponent()}</p>
+        <p>
+          <button type="button" onClick={handleError}>
+            Error!?
+          </button>
+        </p>
         <p>
           Edit <code>App.tsx</code> and save to test HMR updates.
         </p>

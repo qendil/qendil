@@ -14,6 +14,7 @@
     "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
     "build:windows": "pnpm build:electron --buildConfig=%cd%\\cordova\\electron\\windows.json",
     "build:android": "cordova build android --no-telemetry --release",
+    "build:browser": "vite build && find www/ -name '*.js.map' -type f -delete",
     "preview": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
     "preview:android": "cordova run android",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@qendil/workers": "*",
+    "@sentry/react": "^7.1.0",
     "@types/babel__core": "^7.1.19",
     "@types/ejs": "^3.1.1",
     "@types/git-rev": "^0.2.0",
@@ -33,6 +35,7 @@
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
     "@vitejs/plugin-react": "^1.3.2",
+    "cookie": "^0.4.1",
     "git-rev": "^0.2.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -40,6 +43,7 @@
     "vite": "^2.9.10",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.12.0",
+    "vite-plugin-sentry": "^1.0.16",
     "workbox-window": "^6.5.3"
   },
   "devDependencies": {
