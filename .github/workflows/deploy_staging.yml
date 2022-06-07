@@ -32,8 +32,13 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "pnpm"
+      - name: Cache typescript buildinfo
+        uses: actions/cache@v3
+        with:
+          path: ts-out
+          key: ts-out
       - name: Lint the code
-        run: pnpm lint:types
+        run: pnpm lint:types --write
 
   check_formatting:
     name: Check files formatting
