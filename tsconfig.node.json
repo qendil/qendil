@@ -18,6 +18,7 @@
   },
   "include": [
     "node.d.ts",
+    "scripts/*.mjs",
     "**/vite.config.ts",
     "**/package.json",
     "**/cordova/hooks/*.js"
