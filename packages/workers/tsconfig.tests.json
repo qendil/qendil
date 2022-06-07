@@ -15,7 +15,7 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["vite/types/importMeta", "vitest/globals"],
+    "types": ["vite/types/importMeta", "vitest/globals", "../../node"],
     "noEmit": true
   },
   "include": ["src", "setuptests.ts", "tests.d.ts"],
