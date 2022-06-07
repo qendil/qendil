@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "outDir": "../../ts-out/workers-tests",
+    "outDir": "../../ts-out/tests/workers",
     "target": "ES2021",
     "useDefineForClassFields": true,
     "lib": [],

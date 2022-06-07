@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "outDir": "../ts-out/client",
+    "outDir": "../ts-out/tests/client",
     "target": "ES2021",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ES2021"],
