@@ -1,10 +1,9 @@
 #!/usr/bin/env zx
 
-import { $, globby, path } from "zx";
+import { globby, path } from "zx";
 import fs from "node:fs/promises";
 import readline from "node:readline";
 import events from "node:events";
-import { ensureCodeClimateReporter } from "./code-climate.mjs";
 
 await fs.mkdir("coverage", { recursive: true });
 
@@ -55,11 +54,3 @@ try {
 } finally {
   await outFile.close();
 }
-
-const cc = await ensureCodeClimateReporter();
-
-// Process lcov coverage reports
-await $`${cc} format-coverage coverage/lcov.info --input-type lcov --output coverage/codeclimate.json`;
-
-// Upload coverage report
-await $`${cc} upload-coverage --input coverage/codeclimate.json`;
