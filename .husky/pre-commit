@@ -2,4 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 pnpm tsc -b
+pnpm -r --stream test -- --changed
 pnpm lint-staged

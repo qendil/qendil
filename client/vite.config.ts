@@ -173,5 +173,14 @@ export default defineConfig(async ({ mode }) => {
       rollupOptions,
     },
     assetsInclude: ["**/*.gltf", "**/*.bin", "**/*.glb", "**/*.ktx2"],
+    test: {
+      root: "src",
+      globals: true,
+      environment: "jsdom",
+      setupFiles: ["setuptests.tsx"],
+      coverage: {
+        reporter: ["lcov", "text"],
+      },
+    },
   };
 });
