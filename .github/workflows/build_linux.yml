@@ -39,6 +39,8 @@ jobs:
           pnpm build:linux
         env:
           CLIENT_PLATFORM: cdv-linux
+          CLIENT_SENTRY_ENVIRONMENT: production
+          CLIENT_SENTRY_DSN: "${{ secrets.CLIENT_SENTRY_DSN }}"
 
       - name: GH Release
         uses: softprops/action-gh-release@v0.1.14
