@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Workbox } from "workbox-window";
 
-/* c8 ignore next 4 */
 // Path changes depending on the environment
 const SERVICE_WORKER_PATH = import.meta.env.DEV
   ? "/src/service-worker.ts"
