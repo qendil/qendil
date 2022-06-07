@@ -11,7 +11,7 @@
       "ES2021"
     ],
     "allowJs": false,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -20,9 +20,9 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "types": ["vite/types/importMeta"]
+    "types": ["vite/types/importMeta", "vitest/globals"],
+    "noEmit": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "setuptests.ts", "**/*.spec.ts"]
+  "include": ["src", "setuptests.ts"],
+  "exclude": ["node_modules"]
 }

@@ -3,11 +3,11 @@
   "author": "Said Dermoumi <hi@sdrm.me>",
   "license": "./LICENSE",
   "scripts": {
-    "lint": "tsc -b && eslint --cache --max-warnings=0 . && prettier -c .",
-    "lint:types": "tsc -b",
+    "lint": "zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier -c .",
+    "lint:types": "zx scripts/typecheck.mjs",
     "lint:format": "prettier -c .",
     "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:fix": "tsc -b && prettier -wl . && eslint --cache --fix --max-warnings=0 .",
+    "lint:fix": "zx scripts/typecheck.mjs && prettier -wl . && eslint --cache --fix --max-warnings=0 .",
     "test": "pnpm -r test",
     "test:cov": "pnpm -r --stream test:cov",
     "prepare": "husky install"
@@ -24,9 +24,15 @@
     "client",
     "packages/*"
   ],
+  "dependencies": {
+    "husky": "^8.0.1",
+    "zx": "^6.2.3"
+  },
   "devDependencies": {
+    "@jgoz/esbuild-plugin-typecheck": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
+    "esbuild": "^0.14.42",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-xo": "^0.41.0",
@@ -41,9 +47,5 @@
     "lint-staged": "^13.0.0",
     "prettier": "^2.6.2",
     "typescript": "^4.7.3"
-  },
-  "dependencies": {
-    "husky": "^8.0.1",
-    "zx": "^6.2.3"
   }
 }
