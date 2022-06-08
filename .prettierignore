@@ -3,10 +3,11 @@ node_modules/
 pnpm-lock.yaml
 
 # Build artifacts
-client/platforms/
-client/plugins/
-client/dist/
-client/www/
+packages/client/platforms/
+packages/client/plugins/
+packages/client/dist/
+packages/client/www/
 ts-out/
 
+# Testing artifacts
 **/coverage/

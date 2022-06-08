@@ -151,7 +151,7 @@ jobs:
           --production
 
       - name: Build the client
-        working-directory: client/
+        working-directory: packages/client/
         run: pnpm build:browser
         env:
           CLIENT_PLATFORM: browser
@@ -161,7 +161,7 @@ jobs:
 
       - name: Publish client to cloudflare
         id: publish-client
-        working-directory: client/
+        working-directory: packages/client/
         run: |
           if [[ "${{ github.ref }}" =~ refs/pull/.+ ]]; then
             # Pull requests deploy to their own staging environments

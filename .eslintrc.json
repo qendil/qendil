@@ -33,7 +33,11 @@
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },
   "parserOptions": {
-    "project": ["**/tsconfig.json", "tsconfig.json", "tsconfig.node.json"]
+    "project": [
+      "packages/*/tsconfig.json",
+      "tsconfig.json",
+      "tsconfig.node.json"
+    ]
   },
   "rules": {
     "no-void": "off",

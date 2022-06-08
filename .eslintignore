@@ -1,7 +1,9 @@
-client/platforms/
-client/plugins/
-client/dist/
-client/www/
+# Build artifacts
+packages/client/platforms/
+packages/client/plugins/
+packages/client/dist/
+packages/client/www/
 
+# Testing artifacts
 **/coverage/
 ts-out/
