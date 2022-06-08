@@ -23,10 +23,10 @@ importers:
       lint-staged: ^13.0.0
       prettier: ^2.6.2
       typescript: ^4.7.3
-      zx: ^6.2.3
+      zx: ^6.2.4
     dependencies:
       husky: 8.0.1
-      zx: 6.2.3
+      zx: 6.2.4
     devDependencies:
       '@jgoz/esbuild-plugin-typecheck': 1.1.0_typescript@4.7.3
       '@typescript-eslint/eslint-plugin': 5.27.1_aq7uryhocdbvbqum33pitcm3y4
@@ -9714,8 +9714,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zx/6.2.3:
-    resolution: {integrity: sha512-KROw4oYCPBXDQn5N1XAaf9UmM5g6UBTjSOGv1JDvU+T0bxcKDlRR4KzLykyjnfRqy4VPX4wRYBO3A7TenDczsA==}
+  /zx/6.2.4:
+    resolution: {integrity: sha512-wBDObcY5tKDOIOuGrg3XwrhCa6V6eeZLQDVbbpgN9pdhiyOJA/So9R9i5vKN7cGGWkcKKHy29i8kJtx02j+kSg==}
     engines: {node: '>= 16.0.0'}
     hasBin: true
     dependencies:
