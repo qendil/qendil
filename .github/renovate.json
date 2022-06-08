@@ -1,0 +1,10 @@
+{
+  "extends": ["config:base"],
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "matchDepTypes": ["peerDependencies"],
+      "rangeStrategy": "widen"
+    }
+  ]
+}
