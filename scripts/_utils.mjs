@@ -15,7 +15,6 @@ export function makeChangelog(options) {
   const command = [
     "docker",
     "run",
-    "-it",
     "--rm",
     "--user",
     `${uid}:${gid}`,
