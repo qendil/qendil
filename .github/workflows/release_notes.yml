@@ -1,18 +1,16 @@
-name: Update changelog
+name: Add release notes
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: [closed]
+  push:
+    tags:
+      - client/*
 
 permissions:
   contents: write
 
 jobs:
-  update_changelog:
-    name: Update changelog
-    if: github.event.pull_request.merged == true
+  add_release_notes:
+    name: Add release notes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
@@ -34,14 +32,18 @@ jobs:
           pnpm i -w --frozen-lockfile --strict-peer-dependencies --production
 
       - name: Generate changelog
-        run: >-
-          pnpm zx scripts/changelog.mjs --repository "${{ github.repository }}"
+        run: |-
+          : "${{ github.ref }}""
+          pnpm zx scripts/changelog.mjs \
+            --repository "${{ github.repository }}" \
+            --for-prefix "${_%%/*}" \
+            --output "RELEASE_NOTES.md" \
+            --last-only
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.14
         with:
-          commit_message: Update changelog
-          file_pattern: "**/CHANGELOG.md"
-          commit_options: "--no-verify --signoff"
-          branch: "${{ github.base_ref }}"
+          body_path: RELEASE_NOTES.md
+          draft: true
