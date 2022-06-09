@@ -1,3 +1,9 @@
+#!/usr/bin/env zx
+
+/**
+ * Uses an eslint typescript plugin to perform type checking on source files.
+ */
+
 import esbuild from "esbuild";
 import { typecheckPlugin } from "@jgoz/esbuild-plugin-typecheck";
 

@@ -33,7 +33,11 @@
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },
   "parserOptions": {
-    "project": ["**/tsconfig.json", "tsconfig.json", "tsconfig.node.json"]
+    "project": [
+      "packages/*/tsconfig.json",
+      "tsconfig.json",
+      "tsconfig.node.json"
+    ]
   },
   "rules": {
     "no-void": "off",
@@ -135,6 +139,7 @@
     "@typescript-eslint/no-unsafe-argument": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/no-var-requires": "off", // handled by @typescript-eslint/no-require-imports
+    "@typescript-eslint/restrict-plus-operands": "off",
 
     "react/display-name": "off",
     "react/forbid-component-props": [
@@ -205,7 +210,8 @@
         "@typescript-eslint/no-unsafe-member-access": "error",
         "@typescript-eslint/no-unsafe-return": "error",
         "@typescript-eslint/no-unsafe-argument": "error",
-        "@typescript-eslint/restrict-template-expressions": "error"
+        "@typescript-eslint/restrict-template-expressions": "error",
+        "@typescript-eslint/restrict-plus-operands": "error"
       }
     },
     {

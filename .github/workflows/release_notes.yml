@@ -1,4 +1,4 @@
-name: Build Windows executables
+name: Add release notes
 
 on:
   push:
@@ -9,9 +9,9 @@ permissions:
   contents: write
 
 jobs:
-  build_windows:
-    name: Build Windows
-    runs-on: windows-latest
+  add_release_notes:
+    name: Add release notes
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -29,23 +29,24 @@ jobs:
 
       - name: Install dependencies
         run: >-
-          pnpm install --frozen-lockfile --strict-peer-dependencies --production
+          pnpm i -w --frozen-lockfile --strict-peer-dependencies --production
 
-      - name: Build the clients
-        working-directory: packages/client/
-        run: |
-          pnpm build
-          pnpm prepare:cordova
-          pnpm build:windows
+      - name: Generate changelog
+        run: |-
+          GIT_TAG="${{ github.ref_name }}"
+          PREFIX="${GIT_TAG%%/*}"
+
+          pnpm zx scripts/changelog.mjs \
+            --repository="${{ github.repository }}" \
+            --for-prefix="${GIT_TAG%%/*}" \
+            --output="RELEASE_NOTES.md" \
+            --last-only
         env:
-          CLIENT_PLATFORM: cdv-windows
-          CLIENT_SENTRY_ENVIRONMENT: production
-          CLIENT_SENTRY_DSN: "${{ secrets.CLIENT_SENTRY_DSN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: GH Release
         uses: softprops/action-gh-release@v0.1.14
         with:
-          files: packages/client/dist/*
+          body_path: RELEASE_NOTES.md
           generate_release_notes: false
-          append_body: true
           draft: true

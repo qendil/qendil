@@ -32,7 +32,7 @@ jobs:
           pnpm install --frozen-lockfile --strict-peer-dependencies --production
 
       - name: Build the clients
-        working-directory: client/
+        working-directory: packages/client/
         run: |
           pnpm build
           pnpm prepare:cordova
@@ -45,5 +45,7 @@ jobs:
       - name: GH Release
         uses: softprops/action-gh-release@v0.1.14
         with:
-          files: client/dist/*
+          files: packages/client/dist/*
+          generate_release_notes: false
+          append_body: true
           draft: true

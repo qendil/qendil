@@ -2,7 +2,7 @@
   "compilerOptions": {},
   "include": [],
   "references": [
-    { "path": "client" },
+    { "path": "packages/client" },
     { "path": "packages/workers" },
     { "path": "tsconfig.node.json" }
   ]

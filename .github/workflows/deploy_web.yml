@@ -36,7 +36,7 @@ jobs:
           --production
 
       - name: Build the client
-        working-directory: client/
+        working-directory: packages/client/
         run: pnpm build:browser
         env:
           CLIENT_PLATFORM: browser
@@ -46,7 +46,7 @@ jobs:
 
       - name: Publish client to cloudflare
         id: publish-client
-        working-directory: client/
+        working-directory: packages/client/
         run: |
           pnpm dlx wrangler pages publish www/ \
             --project-name=qendil --branch=main --commit-dirty=true

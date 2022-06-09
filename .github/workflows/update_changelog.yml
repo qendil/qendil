@@ -1,0 +1,47 @@
+name: Update changelog
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  update_changelog:
+    name: Update changelog
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: >-
+          pnpm i -w --frozen-lockfile --strict-peer-dependencies --production
+
+      - name: Generate changelog
+        run: >-
+          pnpm zx scripts/changelog.mjs --repository "${{ github.repository }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update changelog
+          file_pattern: "**/CHANGELOG.md"
+          commit_options: "--no-verify --signoff"
+          branch: "${{ github.base_ref }}"

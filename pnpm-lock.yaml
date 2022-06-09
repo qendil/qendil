@@ -21,11 +21,13 @@ importers:
       eslint-plugin-unicorn: ^42.0.0
       husky: ^8.0.1
       lint-staged: ^13.0.1
+      minimist: ^1.2.6
       prettier: ^2.6.2
       typescript: ^4.7.3
       zx: ^6.2.4
     dependencies:
       husky: 8.0.1
+      minimist: 1.2.6
       zx: 6.2.4
     devDependencies:
       '@jgoz/esbuild-plugin-typecheck': 1.1.0_typescript@4.7.3
@@ -47,7 +49,7 @@ importers:
       prettier: 2.6.2
       typescript: 4.7.3
 
-  client:
+  packages/client:
     specifiers:
       '@qendil/workers': '*'
       '@sentry/react': ^7.1.1
@@ -84,7 +86,7 @@ importers:
       workbox-window: ^6.5.3
       xml2js: ^0.4.23
     dependencies:
-      '@qendil/workers': link:../packages/workers
+      '@qendil/workers': link:../workers
       '@sentry/react': 7.1.1_react@18.1.0
       '@types/babel__core': 7.1.19
       '@types/ejs': 3.1.1
@@ -8114,7 +8116,7 @@ packages:
       loose-envify: 1.4.0
 
   /semver-compare/1.0.0:
-    resolution: {integrity: sha1-De4hahyUGrN+nvsXiPavxf9VN/w=}
+    resolution: {integrity: sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow==}
     dev: false
     optional: true
 
@@ -8196,11 +8198,11 @@ packages:
     optional: true
 
   /set-blocking/2.0.0:
-    resolution: {integrity: sha1-BF+XgtARrppoA93TgrJDkrPYkPc=}
+    resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
     dev: false
 
   /setimmediate/1.0.5:
-    resolution: {integrity: sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU=}
+    resolution: {integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==}
 
   /setprototypeof/1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
@@ -9121,7 +9123,7 @@ packages:
     dependencies:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
-      extsprintf: 1.3.0
+      extsprintf: 1.4.1
     dev: false
     optional: true
 
