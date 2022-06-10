@@ -1,0 +1,28 @@
+.multipleContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  min-height: 100%;
+
+  & > div {
+    min-height: 200px;
+  }
+
+  & canvas[data-proxy="true"] {
+    border: 2px solid #f00;
+    inset: -2px;
+  }
+}
+
+.controlBar {
+  position: sticky;
+  background-color: #000;
+  color: #fff;
+  top: 0;
+  z-index: 1;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}

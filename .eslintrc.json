@@ -28,7 +28,7 @@
     "jsx-a11y"
   ],
   "settings": {
-    "react": { "version": "^18.0.0" },
+    "react": { "version": "18.0.0" },
     "jsdoc": { "mode": "typescript" },
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },
@@ -182,6 +182,7 @@
     "react/prefer-stateless-function": "error",
     "react/sort-comp": "error",
     "react/sort-prop-types": "error",
+    "react/require-default-props": "off",
 
     "unicorn/prevent-abbreviations": [
       "error",
@@ -196,7 +197,8 @@
         }
       }
     ],
-    "unicorn/prefer-top-level-await": "off"
+    "unicorn/prefer-top-level-await": "off",
+    "unicorn/no-keyword-prefix": ["error", { "disallowedPrefixes": ["new"] }]
   },
   "overrides": [
     {
