@@ -54,7 +54,7 @@
     "c8": "^7.11.3",
     "electron-devtools-installer": "^3.2.0",
     "jsdom": "^19.0.0",
-    "vitest": "^0.14.1"
+    "vitest": "^0.14.2"
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",
