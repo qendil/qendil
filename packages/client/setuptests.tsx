@@ -28,9 +28,6 @@ global._mockClass = <T extends unknown[], R, C extends new (...args: T) => R>(
 
   // For each method of the original class, create a mock
   for (const property of Object.getOwnPropertyNames(prototype)) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (typeof prototype[property] !== "function") continue;
-
     // Turn each of the methods into a mock
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
     prototype[property] = vi.fn(prototype[property]);
