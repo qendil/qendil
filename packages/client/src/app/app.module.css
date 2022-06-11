@@ -1,42 +1,18 @@
 .app {
-  text-align: center;
+  position: absolute;
+  inset: 0;
+  overflow: auto;
 }
 
-.appLogo {
-  height: 40vmin;
-  pointer-events: none;
+.updatePrompt {
+  background: #fc0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .appLogo {
-    animation: appLogoSpin infinite 20s linear;
-  }
-}
-
-.appHeader {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.appLink {
-  color: #61dafb;
-}
-
-@keyframes appLogoSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.app button {
-  font-size: calc(10px + 2vmin);
+.world {
+  background: #000;
+  position: absolute;
+  inset: 0;
 }

@@ -28,7 +28,7 @@
     "jsx-a11y"
   ],
   "settings": {
-    "react": { "version": "^18.0.0" },
+    "react": { "version": "18.0.0" },
     "jsdoc": { "mode": "typescript" },
     "node": { "tryExtensions": [".ts", ".tsx", ".js", ".json"] }
   },
@@ -71,7 +71,7 @@
       "error",
       {
         "assertionStyle": "as",
-        "objectLiteralTypeAssertions": "never"
+        "objectLiteralTypeAssertions": "allow-as-parameter"
       }
     ],
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
@@ -99,7 +99,7 @@
       { "ignoreArrowShorthand": true }
     ],
     "@typescript-eslint/no-dupe-class-members": "error",
-    "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-loop-func": "error",
     "@typescript-eslint/no-loss-of-precision": "error",
     "@typescript-eslint/no-meaningless-void-operator": [
@@ -182,6 +182,12 @@
     "react/prefer-stateless-function": "error",
     "react/sort-comp": "error",
     "react/sort-prop-types": "error",
+    "react/require-default-props": "off",
+
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      { "additionalHooks": "useThreeView" }
+    ],
 
     "unicorn/prevent-abbreviations": [
       "error",
@@ -196,7 +202,12 @@
         }
       }
     ],
-    "unicorn/prefer-top-level-await": "off"
+    "unicorn/prefer-top-level-await": "off",
+    "unicorn/no-keyword-prefix": ["error", { "disallowedPrefixes": ["new"] }],
+    "unicorn/numeric-separators-style": [
+      "error",
+      { "hexadecimal": { "minimumDigits": 9 } }
+    ]
   },
   "overrides": [
     {

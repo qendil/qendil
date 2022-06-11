@@ -2,18 +2,29 @@ import { act, renderHook } from "@testing-library/react";
 
 import { Workbox } from "workbox-window";
 vi.mock("workbox-window", () => {
-  const mockedWorkbox = vi.fn(() => {
-    // Nothing to do here
-  });
+  class WorkboxDummy {
+    public register(): void {
+      // Nothing to do
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  mockedWorkbox.prototype.register = vi.fn();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  mockedWorkbox.prototype.addEventListener = vi.fn();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  mockedWorkbox.prototype.removeEventListener = vi.fn();
+    public addEventListener(): void {
+      // Nothing to do
+    }
 
-  return { Workbox: mockedWorkbox };
+    public removeEventListener(): void {
+      // Nothing to do
+    }
+
+    public getSW(): void {
+      // Nothing to do
+    }
+
+    public messageSkipWaiting(): void {
+      // Nothing to do
+    }
+  }
+
+  return { Workbox: _mockClass(WorkboxDummy) };
 });
 
 // Navigator is read-only, here we force it to be writable
@@ -28,7 +39,7 @@ Object.defineProperty(globalThis, "location", {
 });
 
 // Enable service workers by default for this test
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 (globalThis.navigator as any).serviceWorker = {};
 
 // We finally import use-service-worker because it runs some code
@@ -58,7 +69,7 @@ describe("useServiceWorker module", () => {
     // When I import `use-service-worker`
     // Then the service worker should not be registered
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete (globalThis.navigator as any).serviceWorker;
 
     vi.resetModules();
@@ -85,8 +96,7 @@ describe("useServiceWorker module", () => {
 
 describe("useServiceWorker hook", () => {
   afterEach(() => {
-    Workbox.prototype.addEventListener = vi.fn();
-    Workbox.prototype.getSW = vi.fn();
+    vi.resetAllMocks();
   });
 
   it("sets an update handler if there's already a new version", async () => {
@@ -94,7 +104,9 @@ describe("useServiceWorker hook", () => {
     // When I mount `useServiceWorker`
     // Then we should directly set an update handler
 
-    Workbox.prototype.getSW = vi.fn().mockResolvedValue({ state: "installed" });
+    vi.mocked(Workbox.prototype.getSW).mockResolvedValue({
+      state: "installed",
+    } as ServiceWorker);
 
     const { result } = renderHook(() => useServiceWorker());
     await act(async () => new Promise(process.nextTick));
@@ -108,17 +120,15 @@ describe("useServiceWorker hook", () => {
     // When the service worker triggers the `waiting` listener
     // Then the `useServiceWorker` hook should set an update handler
 
+    vi.mocked(Workbox.prototype.getSW).mockResolvedValue({
+      state: "installing",
+    } as ServiceWorker);
+
     let waitingListener: (() => void) | undefined;
-
-    Workbox.prototype.getSW = vi
-      .fn()
-      .mockResolvedValue({ state: "installing" });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Workbox.prototype.addEventListener as any) = vi.fn(
-      (event: string, listener: () => void): void => {
+    vi.mocked(Workbox.prototype.addEventListener).mockImplementation(
+      (event, listener) => {
         if (event === "waiting") {
-          waitingListener = listener;
+          waitingListener = listener as () => void;
         }
       }
     );
@@ -140,16 +150,21 @@ describe("useServiceWorker hook", () => {
     // When I call the update handler
     // Then we should send a skip waiting message to the service worker
 
-    Workbox.prototype.getSW = vi.fn().mockResolvedValue({ state: "installed" });
-    Workbox.prototype.messageSkipWaiting = vi.fn();
+    vi.mocked(Workbox.prototype.getSW).mockResolvedValue({
+      state: "installed",
+    } as ServiceWorker);
+    const mockMessageSkipWaiting = vi.mocked(
+      Workbox.prototype.messageSkipWaiting
+    );
 
     const { result } = renderHook(() => useServiceWorker());
     await act(async () => new Promise(process.nextTick));
 
     expect(result.current).toBeDefined();
 
+    mockMessageSkipWaiting.mockClear();
     result.current?.();
-    expect(Workbox.prototype.messageSkipWaiting).toHaveBeenCalled();
+    expect(mockMessageSkipWaiting).toHaveBeenCalled();
   });
 
   it("reloads the page when the service worker activates after prompt", async () => {
@@ -158,16 +173,15 @@ describe("useServiceWorker hook", () => {
     // And the service worker activates
     // Then the page should reload
 
-    Workbox.prototype.getSW = vi.fn().mockResolvedValue({ state: "installed" });
-    Workbox.prototype.messageSkipWaiting = vi.fn();
+    vi.mocked(Workbox.prototype.getSW).mockResolvedValue({
+      state: "installed",
+    } as ServiceWorker);
 
     let controllingListener: (() => void) | undefined;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Workbox.prototype.addEventListener as any) = vi.fn(
-      (event: string, listener: () => void): void => {
+    vi.mocked(Workbox.prototype.addEventListener).mockImplementation(
+      (event, listener): void => {
         if (event === "controlling") {
-          controllingListener = listener;
+          controllingListener = listener as () => void;
         }
       }
     );
