@@ -184,6 +184,11 @@
     "react/sort-prop-types": "error",
     "react/require-default-props": "off",
 
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      { "additionalHooks": "useThreeView" }
+    ],
+
     "unicorn/prevent-abbreviations": [
       "error",
       {

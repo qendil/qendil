@@ -213,9 +213,16 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
   }
 );
 
+/**
+ * A "hook" to initialize a Three.js view.
+ *
+ * @param init - The function used to initialize the Three.js view
+ * @param deps - Variables that cause the ThreeView to re-render when changed
+ * @returns A Component to display the created scene
+ */
 export default function useThreeView(
   init: ThreeViewInitalizer,
-  deps: unknown[] = []
+  deps: unknown[]
 ): ComponentType<Omit<ThreeViewProps, "init">> {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initCallback = useCallback(init, deps);

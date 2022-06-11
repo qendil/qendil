@@ -37,7 +37,7 @@ export default function App(): ReactElement {
         cube.rotation.z += frametime;
       },
     };
-  });
+  }, []);
 
   const renderWorld = (): ReactElement => (
     <WorldView className={classes.world} />

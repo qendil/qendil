@@ -120,7 +120,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -143,7 +143,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -168,7 +168,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -199,7 +199,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera, onSetup };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -220,7 +220,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera, onSetup };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -248,7 +248,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -282,7 +282,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -305,7 +305,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -340,7 +340,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
@@ -371,7 +371,7 @@ describe("useThreeView hook", () => {
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
         return { camera };
-      })
+      }, [])
     );
     const { current: ThreeView } = result;
 
