@@ -26,14 +26,14 @@ export type ThreeViewOptions = {
   onDispose?: () => void;
 
   /**
-   * Functio nto be called whenever the renderer has to setup
-   */
-  onRendererSetup?: (renderer: WebGLRenderer) => void;
-
-  /**
    * Function to be called whenever the ThreeView is resized.
    */
   onResize?: (width: number, height: number) => false | undefined;
+
+  /**
+   * Function to be called whenever the renderer has to setup
+   */
+  onSetup?: (renderer: WebGLRenderer) => void;
 
   /**
    * Function to be called each frame.
@@ -120,8 +120,13 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
 
       // Create the renderer
 
-      const { camera, onUpdate, onResize, onDispose, onRendererSetup } =
-        init({ scene, makePerspectiveCamera }) ?? {};
+      const {
+        camera,
+        onUpdate,
+        onResize,
+        onDispose,
+        onSetup: onRendererSetup,
+      } = init({ scene, makePerspectiveCamera }) ?? {};
 
       const { proxy, dispose } = getRenderProxy(
         container,

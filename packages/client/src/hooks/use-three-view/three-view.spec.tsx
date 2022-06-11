@@ -171,13 +171,13 @@ describe("useThreeView hook", () => {
     expect(WebGLRenderer).toHaveBeenCalledTimes(MAX_WEBGL_CONTEXT_COUNT);
   });
 
-  it("calls onRendererSetup on first mount", async () => {
-    const onRendererSetup = vi.fn();
+  it("calls onSetup on first mount", async () => {
+    const onSetup = vi.fn();
 
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
-        return { camera, onRendererSetup };
+        return { camera, onSetup };
       })
     );
     const { current: ThreeView } = result;
@@ -185,16 +185,16 @@ describe("useThreeView hook", () => {
     render(<ThreeView pool={0} />);
     await new Promise(process.nextTick);
 
-    expect(onRendererSetup).toHaveBeenCalledOnce();
+    expect(onSetup).toHaveBeenCalledOnce();
   });
 
-  it("calls onRenderSetup on each render when the renderer shared", async () => {
-    const onRendererSetup = vi.fn();
+  it("calls onSetup on each render when the renderer shared", async () => {
+    const onSetup = vi.fn();
 
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
-        return { camera, onRendererSetup };
+        return { camera, onSetup };
       })
     );
     const { current: ThreeView } = result;
@@ -206,12 +206,12 @@ describe("useThreeView hook", () => {
       </>
     );
 
-    onRendererSetup.mockClear();
+    onSetup.mockClear();
     await new Promise((resolve) => {
       requestAnimationFrame(resolve);
     });
 
-    expect(onRendererSetup).toHaveBeenCalledTimes(2);
+    expect(onSetup).toHaveBeenCalledTimes(2);
   });
 
   it("clears the canvas when rendering transparent backgrounds", async () => {

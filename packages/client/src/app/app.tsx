@@ -1,84 +1,52 @@
 import type { ReactElement } from "react";
-
-import { useState } from "react";
+import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 
 import useServiceWorker from "../hooks/use-service-worker";
+import useThreeView from "../hooks/use-three-view";
 
-import logo from "./logo.svg";
 import classes from "./app.module.css";
 
-type AppProps = {
-  isAware?: boolean;
-};
-
-const handleError = (): void => {
-  throw new Error("Danger!? Chupakabra");
-};
-
-export default function App({ isAware }: AppProps): ReactElement {
-  const [count, setCount] = useState(0);
-
+export default function App(): ReactElement {
   const updateServiceWorker = useServiceWorker();
-
-  const handleIncrement = (): void => {
-    setCount(count + 1);
-  };
-
   const renderUpdatePrompt = (): ReactElement | undefined => {
-    if (!updateServiceWorker) return undefined;
+    if (!updateServiceWorker) return;
 
     return (
-      <p>
+      <div className={classes.updatePrompt}>
         A new update is available:{" "}
         <button type="button" onClick={updateServiceWorker}>
           click to update
         </button>
-      </p>
+      </div>
     );
   };
 
-  const renderButtonComponent = (): ReactElement => (
-    <button type="button" onClick={handleIncrement}>
-      count is: {count}
-    </button>
+  const WorldView = useThreeView(({ scene, makePerspectiveCamera }) => {
+    const camera = makePerspectiveCamera();
+
+    const geometry = new BoxGeometry();
+    const material = new MeshBasicMaterial({ color: 0xffcc00 });
+    const cube = new Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    return {
+      camera,
+      onUpdate(frametime): void {
+        cube.rotation.z += frametime;
+      },
+    };
+  });
+
+  const renderWorld = (): ReactElement => (
+    <WorldView className={classes.world} />
   );
 
   return (
     <div className={classes.app}>
-      <header className={classes.appHeader}>
-        <img alt="logo" className={classes.appLogo} src={logo} />
-        <p>Hello Vite + React!</p>
-        {isAware && <p>You are aware of Vite + React!</p>}
-        {renderUpdatePrompt()}
-        <p>{renderButtonComponent()}</p>
-        <p>
-          <button type="button" onClick={handleError}>
-            Error!?
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className={classes.appLink}
-            href="https://reactjs.org"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className={classes.appLink}
-            href="https://vitejs.dev/guide/features.html"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+      {renderUpdatePrompt()}
+      {renderWorld()}
     </div>
   );
 }

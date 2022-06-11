@@ -198,7 +198,11 @@
       }
     ],
     "unicorn/prefer-top-level-await": "off",
-    "unicorn/no-keyword-prefix": ["error", { "disallowedPrefixes": ["new"] }]
+    "unicorn/no-keyword-prefix": ["error", { "disallowedPrefixes": ["new"] }],
+    "unicorn/numeric-separators-style": [
+      "error",
+      { "hexadecimal": { "minimumDigits": 9 } }
+    ]
   },
   "overrides": [
     {
