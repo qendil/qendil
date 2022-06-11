@@ -45,10 +45,6 @@ declare global {
     constructor: C
   ): SpyInstance<T, R>;
 
-  interface WEBGL_lose_context {
-    restoreContext: () => void;
-  }
-
   // Add jest-dom matchers to vitest's assertions
   namespace Vi {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
