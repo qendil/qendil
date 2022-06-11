@@ -45,7 +45,7 @@
     "react-dom": "^18.1.0",
     "three": "^0.141.0",
     "typescript": "^4.7.3",
-    "vite": "^2.9.10",
+    "vite": "^2.9.12",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.12.0",
     "vite-plugin-sentry": "^1.0.16",
@@ -60,7 +60,7 @@
     "c8": "^7.11.3",
     "electron-devtools-installer": "^3.2.0",
     "jsdom": "^19.0.0",
-    "vitest": "^0.14.1"
+    "vitest": "^0.14.2"
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",
