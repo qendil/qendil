@@ -111,7 +111,11 @@ describe("useThreeView hook", () => {
     );
   });
 
-  it("creates two separate WebGLRenderer instances when Components use different slots", () => {
+  it("creates two separate WebGLRenderer instances when Components use different pools", () => {
+    // Given nothing
+    // When I mount 2 ThreeView components in different pools
+    // Then WebGLRenderer should be instanciated once for each component
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -130,7 +134,11 @@ describe("useThreeView hook", () => {
     expect(WebGLRenderer).toHaveBeenCalledTimes(2);
   });
 
-  it("creates a single WebGLRenderer when multiple Components use the same slot", () => {
+  it("creates a single WebGLRenderer when multiple Components use the same pool", () => {
+    // Given nothing
+    // When I mount 2 ThreeView components in the same pool
+    // Then WebGLRenderer should be instanciated once
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -150,6 +158,10 @@ describe("useThreeView hook", () => {
   });
 
   it("creates no more than 7 WebGLRenderer instances ever", async () => {
+    // Given nothing
+    // When I mount 100 ThreeView components, each in a different pool
+    // Then I should only have 7 WebGLRenderer instances ever
+
     const { MAX_WEBGL_CONTEXT_COUNT } = await import("./render-proxy");
 
     const { result } = renderHook(() =>
@@ -177,8 +189,12 @@ describe("useThreeView hook", () => {
   });
 
   it("calls onSetup on first mount when the renderer is exclusive", async () => {
-    const onSetup = vi.fn();
+    // Given an onSetup callback
+    // When I mount an exclusive ThreeView component (alone in a pool)
+    // And I wait for a frame to render
+    // Then onSetup should be called once
 
+    const onSetup = vi.fn();
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -194,8 +210,12 @@ describe("useThreeView hook", () => {
   });
 
   it("calls onSetup on each render when the renderer is shared", async () => {
-    const onSetup = vi.fn();
+    // Given an onSetup callback
+    // When I mount shared ThreeView component (multiple in the same pool)
+    // And I wait for a frame to render
+    // Then onSetup should be called once for each component
 
+    const onSetup = vi.fn();
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -220,6 +240,10 @@ describe("useThreeView hook", () => {
   });
 
   it("clears the canvas when rendering transparent backgrounds", async () => {
+    // Given two ThreeView component with transparent backgrounds
+    // When I wait for a frame to render
+    // Then the canvas should be cleared once for each component
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -249,6 +273,11 @@ describe("useThreeView hook", () => {
   });
 
   it("cleans up renderers when the last Component is unmounted, after a delay", () => {
+    // Given a mounted ThreeView component
+    // When I unmount the component
+    // And wait a little bit
+    // Then the component should be disposed
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -268,6 +297,10 @@ describe("useThreeView hook", () => {
   });
 
   it("restores context after it has been lost", async () => {
+    // Given a mounted ThreeView component
+    // When the ThreeView's context is lost
+    // Then it should attempt to restore the context
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -290,10 +323,13 @@ describe("useThreeView hook", () => {
   });
 
   it("enlarges a shared renderer if it's too small", async () => {
+    // Given 2 mounted ThreeView components of height 500
+    // And their shared renderer is of height 100
+    // When I wait for a frame to render
+    // Then the shared renderer should be enlarged to height 500
+
     vi.spyOn(HTMLCanvasElement.prototype, "height", "get").mockImplementation(
-      function () {
-        // @ts-expect-error TS2683
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      function (this: HTMLCanvasElement) {
         const { dataset }: { dataset: DOMStringMap } = this;
 
         return dataset._source === "renderer" ? 100 : 500;
@@ -326,6 +362,11 @@ describe("useThreeView hook", () => {
   });
 
   it("forces re-render when the context is restored", () => {
+    // Given a mounted ThreeView component that had lost its context
+    // When its context is restored
+    // Then It should force re-render
+    // ... (by changing its css display and querying the resolved style)
+
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
