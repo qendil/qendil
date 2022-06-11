@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Add a visible orange cube [\#52](https://github.com/qendil/qendil/pull/52)
 - Add Sentry support [\#40](https://github.com/qendil/qendil/pull/40)
 - Add unit tests [\#39](https://github.com/qendil/qendil/pull/39)
 - Add PWA support [\#36](https://github.com/qendil/qendil/pull/36)
