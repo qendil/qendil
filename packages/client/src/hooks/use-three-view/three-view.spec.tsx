@@ -12,6 +12,7 @@ describe("useThreeView hook", () => {
 
       public constructor() {
         this.domElement = document.createElement("canvas");
+        this.domElement.dataset._source = "renderer";
       }
 
       public setSize(width: number, height: number): void {
@@ -46,10 +47,12 @@ describe("useThreeView hook", () => {
     };
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.useRealTimers();
+  const mockRestoreContext = vi.fn();
 
+  beforeEach(() => {
+    vi.useRealTimers();
+    vi.resetModules();
+    vi.clearAllMocks();
     vi.restoreAllMocks();
 
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
@@ -83,7 +86,11 @@ describe("useThreeView hook", () => {
       "WebGL2RenderingContext",
       _mockClass(
         class {
-          public getExtension(): unknown {
+          public getExtension(name: string): unknown {
+            if (name === "WEBGL_lose_context") {
+              return { restoreContext: mockRestoreContext };
+            }
+
             return undefined;
           }
 
@@ -135,6 +142,33 @@ describe("useThreeView hook", () => {
     );
 
     expect(WebGLRenderer).toHaveBeenCalledOnce();
+  });
+
+  it("creates no more than 7 WebGLRenderer instance", async () => {
+    const { MAX_WEBGL_CONTEXT_COUNT } = await import("./render-proxy");
+
+    const { result } = renderHook(() =>
+      useThreeView(({ makePerspectiveCamera }) => {
+        const camera = makePerspectiveCamera();
+        return { camera };
+      })
+    );
+    const { current: ThreeView } = result;
+
+    const THREE_VIEW_INSTANCE_COUNT = 100;
+
+    render(
+      <>
+        {Array.from({ length: THREE_VIEW_INSTANCE_COUNT })
+          .fill(0)
+          .map((_, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <ThreeView key={index} pool={index % MAX_WEBGL_CONTEXT_COUNT} />
+          ))}
+      </>
+    );
+
+    expect(WebGLRenderer).toHaveBeenCalledTimes(MAX_WEBGL_CONTEXT_COUNT);
   });
 
   it("calls onRendererSetup on first mount", async () => {
@@ -209,7 +243,7 @@ describe("useThreeView hook", () => {
     expect(mockClearRect).toHaveBeenCalledTimes(2);
   });
 
-  it("cleans up renderers after a delay", async () => {
+  it("cleans up renderers after a delay", () => {
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -218,16 +252,101 @@ describe("useThreeView hook", () => {
     );
     const { current: ThreeView } = result;
 
-    const { unmount } = render(<ThreeView pool={0} />);
+    const { unmount } = render(<ThreeView />);
+    vi.useFakeTimers();
 
+    unmount();
     expect(WebGLRenderer.prototype.dispose).not.toHaveBeenCalled();
 
-    vi.useFakeTimers();
-    unmount();
     vi.runAllTimers();
-    vi.useRealTimers();
-    await new Promise(process.nextTick);
-
     expect(WebGLRenderer.prototype.dispose).toHaveBeenCalledOnce();
+  });
+
+  it("restores context after it has been lost", async () => {
+    const { result } = renderHook(() =>
+      useThreeView(({ makePerspectiveCamera }) => {
+        const camera = makePerspectiveCamera();
+        return { camera };
+      })
+    );
+    const { current: ThreeView } = result;
+
+    render(<ThreeView />);
+    const mockIsContextLost = vi.mocked(
+      WebGL2RenderingContext.prototype.isContextLost
+    );
+    mockIsContextLost.mockReturnValue(true);
+
+    await new Promise((resolve) => {
+      requestAnimationFrame(resolve);
+    });
+
+    expect(mockRestoreContext).toHaveBeenCalledOnce();
+  });
+
+  it("enlarges a shared renderer if it's too small", async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "height", "get").mockImplementation(
+      function () {
+        // @ts-expect-error TS2683
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const { dataset }: { dataset: DOMStringMap } = this;
+
+        return dataset._source === "renderer" ? 100 : 500;
+      }
+    );
+
+    const { result } = renderHook(() =>
+      useThreeView(({ makePerspectiveCamera }) => {
+        const camera = makePerspectiveCamera();
+        return { camera };
+      })
+    );
+    const { current: ThreeView } = result;
+
+    render(
+      <>
+        <ThreeView pool={0} />
+        <ThreeView pool={0} />
+      </>
+    );
+
+    const mockedSetSize = vi.mocked(WebGLRenderer.prototype.setSize);
+    mockedSetSize.mockClear();
+    await new Promise((resolve) => {
+      requestAnimationFrame(resolve);
+    });
+
+    expect(mockedSetSize).toHaveBeenCalledTimes(2);
+    expect(mockedSetSize).toHaveBeenLastCalledWith(expect.anything(), 500);
+  });
+
+  it("forces re-render when context is restored", () => {
+    const { result } = renderHook(() =>
+      useThreeView(({ makePerspectiveCamera }) => {
+        const camera = makePerspectiveCamera();
+        return { camera };
+      })
+    );
+    const { current: ThreeView } = result;
+
+    render(<ThreeView pool={0} />);
+
+    const mockSetDisplay = vi.spyOn(
+      CSSStyleDeclaration.prototype,
+      "display",
+      "set"
+    );
+    const mockGetOffsetHeight = vi.spyOn(
+      HTMLCanvasElement.prototype,
+      "offsetHeight",
+      "get"
+    );
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const canvas = document.querySelector("canvas");
+    canvas?.dispatchEvent(new Event("webglcontextrestored"));
+
+    expect(mockSetDisplay).toHaveBeenCalled();
+    expect(mockGetOffsetHeight).toHaveBeenCalled();
   });
 });

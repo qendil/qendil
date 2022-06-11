@@ -15,7 +15,7 @@ export const MAX_WEBGL_CONTEXT_COUNT = 7;
 
 // When a renderer pool is no longer used, we do not clear it immediately
 // to allow reuse withing the next N seconds.
-const RENDERER_POOL_CLEANUP_DELAY_MS = 10_000; // 10 seconds
+const RENDERER_POOL_CLEANUP_DELAY_MS = import.meta.env.TEST ? 0 : 10_000; // 10 seconds
 
 export type RendererSetupHandler = (renderer: WebGLRenderer) => void;
 
@@ -68,11 +68,14 @@ class RendererProxy {
       let parentHeight = parentCanvas.height;
       if (parentCanvas.width < width || parentHeight < height) {
         parentHeight = Math.max(height, parentHeight);
-        renderer.setSize(Math.max(width, parentCanvas.width), parentHeight);
-      }
 
-      // Update the rendering viewport. Note: It must be aligned to the bottom
-      renderer.setViewport(0, parentHeight - height, width, height);
+        // Note: .setSize() also updates the viewport
+        renderer.setSize(Math.max(width, parentCanvas.width), parentHeight);
+      } else {
+        // Update the rendering viewport.
+        // Note: It must be aligned to the bottom
+        renderer.setViewport(0, parentHeight - height, width, height);
+      }
 
       this.onRendererSetup?.(renderer);
     }
@@ -228,15 +231,14 @@ class RendererPool {
     this.extLoseContext =
       renderer.getContext().getExtension("WEBGL_lose_context") ?? undefined;
 
-    const canvas = renderer.domElement;
+    const { domElement } = renderer;
 
-    canvas.addEventListener("webglcontextrestored", () => {
+    domElement.addEventListener("webglcontextrestored", () => {
       // Little hack to force a re-paint
       // https://stackoverflow.com/a/3485654
-      canvas.style.display = "inline-block";
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _ = canvas.offsetHeight;
-      canvas.style.display = "";
+      domElement.style.display = "inline-block";
+      void domElement.offsetHeight;
+      domElement.style.display = "";
     });
 
     return renderer;
