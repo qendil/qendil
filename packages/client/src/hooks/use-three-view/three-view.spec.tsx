@@ -2,6 +2,16 @@ import { render, renderHook } from "@testing-library/react";
 import { WebGLRenderer } from "three";
 import useThreeView from "./use-three-view";
 
+type HTMLCanvasElementDummy = HTMLCanvasElement & {
+  _context?: CanvasRenderingContext2D;
+};
+
+function CanvasGetPrototypeDummy(this: HTMLCanvasElementDummy): unknown {
+  this._context ??= new CanvasRenderingContext2D();
+
+  return this._context;
+}
+
 describe("useThreeView hook", () => {
   vi.mock("three", async () => {
     const threeModule = await import("three");
@@ -55,54 +65,49 @@ describe("useThreeView hook", () => {
     vi.clearAllMocks();
     vi.restoreAllMocks();
 
+    // Mock canvas.getContext to return a dummy context object
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
-      function () {
-        // @ts-expect-error TS2683
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this._context ??= new CanvasRenderingContext2D();
-
-        // @ts-expect-error TS2683
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-        return this._context;
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      CanvasGetPrototypeDummy as any
     );
 
+    // Mock the canvas 2d context with some dummy methods
+    class CanvasRenderingContext2DDummy {
+      public drawImage(): void {
+        // Nothing to do
+      }
+
+      public clearRect(): void {
+        // Nothing to do
+      }
+    }
     vi.stubGlobal(
       "CanvasRenderingContext2D",
-      _mockClass(
-        class {
-          public drawImage(): void {
-            // Nothing to do
-          }
-
-          public clearRect(): void {
-            // Nothing to do
-          }
-        }
-      )
+      _mockClass(CanvasRenderingContext2DDummy)
     );
 
+    // Mock the webgl context with some dummy methods
+    class WebGL2RenderingContextDummy {
+      public getExtension(name: string): unknown {
+        // Expose the `WEBGL_lose_context` extension
+        if (name === "WEBGL_lose_context") {
+          return { restoreContext: mockRestoreContext };
+        }
+
+        return undefined;
+      }
+
+      public isContextLost(): boolean {
+        return false;
+      }
+
+      public flush(): void {
+        // Nothing to do
+      }
+    }
     vi.stubGlobal(
       "WebGL2RenderingContext",
-      _mockClass(
-        class {
-          public getExtension(name: string): unknown {
-            if (name === "WEBGL_lose_context") {
-              return { restoreContext: mockRestoreContext };
-            }
-
-            return undefined;
-          }
-
-          public isContextLost(): boolean {
-            return false;
-          }
-
-          public flush(): void {
-            // Nothing to do
-          }
-        }
-      )
+      _mockClass(WebGL2RenderingContextDummy)
     );
   });
 
@@ -144,7 +149,7 @@ describe("useThreeView hook", () => {
     expect(WebGLRenderer).toHaveBeenCalledOnce();
   });
 
-  it("creates no more than 7 WebGLRenderer instance", async () => {
+  it("creates no more than 7 WebGLRenderer instances ever", async () => {
     const { MAX_WEBGL_CONTEXT_COUNT } = await import("./render-proxy");
 
     const { result } = renderHook(() =>
@@ -171,7 +176,7 @@ describe("useThreeView hook", () => {
     expect(WebGLRenderer).toHaveBeenCalledTimes(MAX_WEBGL_CONTEXT_COUNT);
   });
 
-  it("calls onSetup on first mount", async () => {
+  it("calls onSetup on first mount when the renderer is exclusive", async () => {
     const onSetup = vi.fn();
 
     const { result } = renderHook(() =>
@@ -188,7 +193,7 @@ describe("useThreeView hook", () => {
     expect(onSetup).toHaveBeenCalledOnce();
   });
 
-  it("calls onSetup on each render when the renderer shared", async () => {
+  it("calls onSetup on each render when the renderer is shared", async () => {
     const onSetup = vi.fn();
 
     const { result } = renderHook(() =>
@@ -243,7 +248,7 @@ describe("useThreeView hook", () => {
     expect(mockClearRect).toHaveBeenCalledTimes(2);
   });
 
-  it("cleans up renderers after a delay", () => {
+  it("cleans up renderers when the last Component is unmounted, after a delay", () => {
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();
@@ -320,7 +325,7 @@ describe("useThreeView hook", () => {
     expect(mockedSetSize).toHaveBeenLastCalledWith(expect.anything(), 500);
   });
 
-  it("forces re-render when context is restored", () => {
+  it("forces re-render when the context is restored", () => {
     const { result } = renderHook(() =>
       useThreeView(({ makePerspectiveCamera }) => {
         const camera = makePerspectiveCamera();

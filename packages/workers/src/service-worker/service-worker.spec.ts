@@ -2,7 +2,6 @@ describe("Service worker", () => {
   const originalEnvironment = import.meta.env;
 
   afterEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (import.meta.env as any) = originalEnvironment;
   });
 
@@ -12,7 +11,6 @@ describe("Service worker", () => {
     // Then the service worker should skip waiting
 
     vi.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (import.meta.env as any) = { DEV: false, PROD: true, MODE: "production" };
 
     const mockSkipWaiting = vi.fn();
@@ -46,7 +44,6 @@ describe("Service worker", () => {
     // Then the service worker should skip waiting
 
     vi.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (import.meta.env as any) = { DEV: true, PROD: false, MODE: "development" };
 
     const mockSkipWaiting = vi.fn();
