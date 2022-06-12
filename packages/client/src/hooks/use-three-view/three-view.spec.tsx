@@ -116,12 +116,7 @@ describe("useThreeView hook", () => {
     // When I mount 2 ThreeView components in different pools
     // Then WebGLRenderer should be instanciated once for each component
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(
@@ -139,12 +134,7 @@ describe("useThreeView hook", () => {
     // When I mount 2 ThreeView components in the same pool
     // Then WebGLRenderer should be instanciated once
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(
@@ -164,12 +154,7 @@ describe("useThreeView hook", () => {
 
     const { MAX_WEBGL_CONTEXT_COUNT } = await import("./render-proxy");
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     const THREE_VIEW_INSTANCE_COUNT = 100;
@@ -195,12 +180,7 @@ describe("useThreeView hook", () => {
     // Then onSetup should be called once
 
     const onSetup = vi.fn();
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera, onSetup };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({ onSetup }), []));
     const { current: ThreeView } = result;
 
     render(<ThreeView pool={0} />);
@@ -216,12 +196,7 @@ describe("useThreeView hook", () => {
     // Then onSetup should be called once for each component
 
     const onSetup = vi.fn();
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera, onSetup };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({ onSetup }), []));
     const { current: ThreeView } = result;
 
     render(
@@ -244,12 +219,7 @@ describe("useThreeView hook", () => {
     // When I wait for a frame to render
     // Then the canvas should be cleared once for each component
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(
@@ -278,12 +248,7 @@ describe("useThreeView hook", () => {
     // And wait a little bit
     // Then the component should be disposed
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     const { unmount } = render(<ThreeView />);
@@ -301,12 +266,7 @@ describe("useThreeView hook", () => {
     // When the ThreeView's context is lost
     // Then it should attempt to restore the context
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(<ThreeView />);
@@ -336,12 +296,7 @@ describe("useThreeView hook", () => {
       }
     );
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(
@@ -367,12 +322,7 @@ describe("useThreeView hook", () => {
     // Then It should force re-render
     // ... (by changing its css display and querying the resolved style)
 
-    const { result } = renderHook(() =>
-      useThreeView(({ makePerspectiveCamera }) => {
-        const camera = makePerspectiveCamera();
-        return { camera };
-      }, [])
-    );
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
     const { current: ThreeView } = result;
 
     render(<ThreeView pool={0} />);

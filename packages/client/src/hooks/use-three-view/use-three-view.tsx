@@ -18,7 +18,7 @@ export type ThreeViewOptions = {
   /**
    * The camera that's going to be used to render the scene.
    */
-  camera: Camera;
+  camera?: Camera;
 
   /**
    * Function to be called when the ThreeView is disposed.
@@ -121,7 +121,7 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
       // Create the renderer
 
       const {
-        camera,
+        camera = makePerspectiveCamera(),
         onUpdate,
         onResize,
         onDispose,
@@ -143,9 +143,6 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
         // Calculate the time passed since the last render
         const frametime = (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
-
-        // No need to continue if there's no camera
-        if (!camera) return;
 
         // Update and render
         onUpdate?.(frametime);
