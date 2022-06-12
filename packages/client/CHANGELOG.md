@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Implement an InputManager [\#58](https://github.com/qendil/qendil/pull/58)
 - Add a visible orange cube [\#52](https://github.com/qendil/qendil/pull/52)
 - Add Sentry support [\#40](https://github.com/qendil/qendil/pull/40)
 - Add unit tests [\#39](https://github.com/qendil/qendil/pull/39)
@@ -16,4 +17,5 @@
 
 **Other changes:**
 
+- Make ThreeView camera optional [\#57](https://github.com/qendil/qendil/pull/57)
 - Create client [\#2](https://github.com/qendil/qendil/pull/2)
