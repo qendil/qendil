@@ -6,7 +6,8 @@
 
 **Implemented enhancements:**
 
-- Implement an InputManager [\#58](https://github.com/qendil/qendil/pull/58)
+- Add keyboard movement to the cube [\#59](https://github.com/qendil/qendil/pull/59)
+- Add a keyboard InputManager [\#58](https://github.com/qendil/qendil/pull/58)
 - Add a visible orange cube [\#52](https://github.com/qendil/qendil/pull/52)
 - Add Sentry support [\#40](https://github.com/qendil/qendil/pull/40)
 - Add unit tests [\#39](https://github.com/qendil/qendil/pull/39)
