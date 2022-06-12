@@ -1,19 +1,9 @@
 {
+  "extends": "./tsconfig.common.json",
   "compilerOptions": {
     "composite": true,
     "outDir": "ts-out/node",
-    "noEmit": true,
-    "target": "esnext",
-    "useDefineForClassFields": true,
-    "strict": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
+    "target": "ESNext",
     "lib": ["WebWorker"],
     "types": []
   },
