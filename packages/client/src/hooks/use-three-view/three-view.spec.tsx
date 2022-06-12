@@ -13,50 +13,6 @@ function CanvasGetPrototypeDummy(this: HTMLCanvasElementDummy): unknown {
 }
 
 describe("useThreeView hook", () => {
-  vi.mock("three", async () => {
-    const threeModule = await import("three");
-
-    class WebGLRendererDummy {
-      public domElement: HTMLCanvasElement;
-      private readonly context = new WebGL2RenderingContext();
-
-      public constructor() {
-        this.domElement = document.createElement("canvas");
-        this.domElement.dataset._source = "renderer";
-      }
-
-      public setSize(width: number, height: number): void {
-        this.domElement.width = width;
-        this.domElement.height = height;
-      }
-
-      public setViewport(): void {
-        // Nothing to do
-      }
-
-      public render(): void {
-        // Nothing to do
-      }
-
-      public getClearAlpha(): number {
-        return 1;
-      }
-
-      public getContext(): unknown {
-        return this.context;
-      }
-
-      public dispose(): void {
-        // Nothing to do
-      }
-    }
-
-    return {
-      ...threeModule,
-      WebGLRenderer: _mockClass(WebGLRendererDummy),
-    };
-  });
-
   const mockRestoreContext = vi.fn();
 
   beforeEach(() => {
@@ -248,13 +204,17 @@ describe("useThreeView hook", () => {
     // And wait a little bit
     // Then the component should be disposed
 
-    const { result } = renderHook(() => useThreeView(() => ({}), []));
+    const onDispose = vi.fn();
+    const { result } = renderHook(() =>
+      useThreeView(() => ({ onDispose }), [])
+    );
     const { current: ThreeView } = result;
 
     const { unmount } = render(<ThreeView />);
     vi.useFakeTimers();
 
     unmount();
+    expect(onDispose).toHaveBeenCalled();
     expect(WebGLRenderer.prototype.dispose).not.toHaveBeenCalled();
 
     vi.runAllTimers();

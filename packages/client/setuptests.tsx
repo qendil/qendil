@@ -40,6 +40,50 @@ global._mockClass = <T extends unknown[], R, C extends new (...args: T) => R>(
   return ClassMock;
 };
 
+vi.mock("three", async () => {
+  const threeModule = await import("three");
+
+  class WebGLRendererDummy {
+    public domElement: HTMLCanvasElement;
+    private readonly context = new WebGL2RenderingContext();
+
+    public constructor() {
+      this.domElement = document.createElement("canvas");
+      this.domElement.dataset._source = "renderer";
+    }
+
+    public setSize(width: number, height: number): void {
+      this.domElement.width = width;
+      this.domElement.height = height;
+    }
+
+    public setViewport(): void {
+      // Nothing to do
+    }
+
+    public render(): void {
+      // Nothing to do
+    }
+
+    public getClearAlpha(): number {
+      return 1;
+    }
+
+    public getContext(): unknown {
+      return this.context;
+    }
+
+    public dispose(): void {
+      // Nothing to do
+    }
+  }
+
+  return {
+    ...threeModule,
+    WebGLRenderer: _mockClass(WebGLRendererDummy),
+  };
+});
+
 declare global {
   function _mockClass<T extends unknown[], R, C extends new (...args: T) => R>(
     constructor: C

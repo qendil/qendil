@@ -1,27 +1,25 @@
-import type { ReactElement } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
+import { InputAxis } from "../utils/input-manager/input-manager";
+
+import type { ReactElement } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
-import useThreeView from "../hooks/use-three-view";
 
 import classes from "./app.module.css";
+import useGameView from "../hooks/use-game-view";
 
 export default function App(): ReactElement {
   const updateServiceWorker = useServiceWorker();
-  const renderUpdatePrompt = (): ReactElement | undefined => {
-    if (!updateServiceWorker) return;
+  const updatePrompt = updateServiceWorker && (
+    <div className={classes.updatePrompt}>
+      A new update is available:{" "}
+      <button type="button" onClick={updateServiceWorker}>
+        click to update
+      </button>
+    </div>
+  );
 
-    return (
-      <div className={classes.updatePrompt}>
-        A new update is available:{" "}
-        <button type="button" onClick={updateServiceWorker}>
-          click to update
-        </button>
-      </div>
-    );
-  };
-
-  const WorldView = useThreeView(({ scene, makePerspectiveCamera }) => {
+  const WorldView = useGameView(({ scene, input, makePerspectiveCamera }) => {
     const camera = makePerspectiveCamera();
 
     const geometry = new BoxGeometry();
@@ -31,22 +29,28 @@ export default function App(): ReactElement {
 
     camera.position.z = 5;
 
+    let velocityX = 0;
+    let velocityY = 0;
+    const moveSpeed = 3;
+
     return {
       camera,
       onUpdate(frametime): void {
-        cube.rotation.z += frametime;
+        velocityX = input.getAxis(InputAxis.LX) * moveSpeed;
+        velocityY = input.getAxis(InputAxis.LY) * moveSpeed;
+
+        camera.position.x -= velocityX * frametime;
+        camera.position.y += velocityY * frametime;
       },
     };
   }, []);
 
-  const renderWorld = (): ReactElement => (
-    <WorldView className={classes.world} />
-  );
+  const world = <WorldView className={classes.world} />;
 
   return (
     <div className={classes.app}>
-      {renderUpdatePrompt()}
-      {renderWorld()}
+      {updatePrompt}
+      {world}
     </div>
   );
 }
