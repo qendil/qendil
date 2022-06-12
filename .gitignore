@@ -5,6 +5,7 @@ node_modules/
 # Local env files and other local files
 *.local
 .sdkmanrc
+.vscode/launch.json
 
 # Build artifacts
 packages/client/platforms/
