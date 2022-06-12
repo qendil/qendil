@@ -2,11 +2,11 @@ import type { ComponentProps, ComponentType, FunctionComponent } from "react";
 import type { Camera, WebGLRenderer } from "three";
 
 import {
-  useCallback,
   forwardRef,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
+  useMemo,
 } from "react";
 import { PerspectiveCamera, Scene } from "three";
 import { ResizeObserver } from "@juggle/resize-observer";
@@ -115,7 +115,7 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
       ): PerspectiveCamera => new PerspectiveCamera(fov, aspect, near, far);
 
       const scene = new Scene();
-      let lastTimestamp = 0;
+      let lastTimestamp: number | undefined;
       let rafID: ReturnType<typeof requestAnimationFrame> | undefined;
 
       // Create the renderer
@@ -141,7 +141,8 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
         rafID = requestAnimationFrame(render);
 
         // Calculate the time passed since the last render
-        const frametime = (timestamp - lastTimestamp) / 1000;
+        const frametime =
+          lastTimestamp === undefined ? 0 : (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
 
         // Update and render
@@ -168,7 +169,7 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
           }
         }
 
-        render(lastTimestamp);
+        proxy.render(scene, camera);
       };
 
       // Setup a resize observer that resizes the renderer's canvas
@@ -181,8 +182,9 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
       sizeObserver.observe(container);
 
       // Resizing the renderer to fit the container calls `render()`
-      // Which also starts the main loop
       resize(container.clientWidth, container.clientHeight);
+      // Start the main loop
+      rafID = requestAnimationFrame(render);
 
       // Cleanup
       return (): void => {
@@ -221,10 +223,12 @@ export default function useThreeView(
   init: ThreeViewInitalizer,
   deps: unknown[]
 ): ComponentType<Omit<ThreeViewProps, "init">> {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const initCallback = useCallback(init, deps);
-
-  return forwardRef<HTMLDivElement, Omit<ThreeViewProps, "init">>(
-    (props, ref) => <ThreeView {...props} ref={ref} init={initCallback} />
-  ) as FunctionComponent<Omit<ThreeViewProps, "init">>;
+  return useMemo(
+    () =>
+      forwardRef<HTMLDivElement, Omit<ThreeViewProps, "init">>((props, ref) => (
+        <ThreeView {...props} ref={ref} init={init} />
+      )) as FunctionComponent<Omit<ThreeViewProps, "init">>,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    deps
+  );
 }

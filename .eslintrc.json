@@ -185,7 +185,7 @@
 
     "react-hooks/exhaustive-deps": [
       "warn",
-      { "additionalHooks": "useThreeView" }
+      { "additionalHooks": "useThreeView|useGameView" }
     ],
 
     "unicorn/prevent-abbreviations": [
