@@ -224,4 +224,5 @@ jobs:
           urls: ${{ needs.deploy_to_staging.outputs.url }}
           runs: 3
           temporaryPublicStorage: true
-          uploadArtifacts: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
