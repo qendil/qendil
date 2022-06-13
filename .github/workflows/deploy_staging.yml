@@ -17,26 +17,31 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
           version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: >-
           pnpm install
           --frozen-lockfile
           --strict-peer-dependencies
           --no-optional
-      - name: Setup Node with caching
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
+
       - name: Cache typescript buildinfo
         uses: actions/cache@v3
         with:
           path: ts-out
           key: ts-out
+
       - name: Lint the code
         run: pnpm lint:types --write
 
@@ -46,21 +51,25 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
           version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: >-
           pnpm install
           --frozen-lockfile
           --strict-peer-dependencies
           --no-optional
-      - name: Setup Node with caching
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
+
       - name: Lint the code
         run: pnpm lint:format
 
@@ -70,21 +79,25 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
           version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: >-
           pnpm install
           --frozen-lockfile
           --strict-peer-dependencies
           --no-optional
-      - name: Setup Node with caching
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
+
       - name: Lint the code
         run: pnpm lint:practices
 
@@ -94,23 +107,28 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
           version: "latest"
+
+      - name: Setup Node with caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: >-
           pnpm install
           --frozen-lockfile
           --strict-peer-dependencies
           --no-optional
-      - name: Setup Node with caching
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
-          cache: "pnpm"
+
       - name: Test the code
         run: pnpm test:cov
+
       - name: Publish code coverage
         uses: codecov/codecov-action@v3
         with:
@@ -199,6 +217,7 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
       - name: Run Lighthouse
         uses: treosh/lighthouse-ci-action@v9
         with:
