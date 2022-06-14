@@ -18,6 +18,7 @@
 
 **Other changes:**
 
+- Add service worker production file test [\#63](https://github.com/qendil/qendil/pull/63)
 - Add a Lighthouse check on the staging deployment [\#60](https://github.com/qendil/qendil/pull/60)
 - Make ThreeView camera optional [\#57](https://github.com/qendil/qendil/pull/57)
 - Create client [\#2](https://github.com/qendil/qendil/pull/2)
