@@ -14,7 +14,7 @@ importers:
       eslint-config-xo-react: ^0.27.0
       eslint-plugin-jsx-a11y: ^6.5.1
       eslint-plugin-react: ^7.30.0
-      eslint-plugin-react-hooks: ^4.5.0
+      eslint-plugin-react-hooks: ^4.6.0
       eslint-plugin-testing-library: ^5.5.1
       eslint-plugin-tsdoc: ^0.2.16
       eslint-plugin-unicorn: ^42.0.0
@@ -36,10 +36,10 @@ importers:
       eslint: 8.17.0
       eslint-config-prettier: 8.5.0_eslint@8.17.0
       eslint-config-xo: 0.41.0_eslint@8.17.0
-      eslint-config-xo-react: 0.27.0_gxx4ag6maldd2x33bbfjfr4lvq
+      eslint-config-xo-react: 0.27.0_2ogsiv5szvdwj6zj46jned4ioi
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.17.0
       eslint-plugin-react: 7.30.0_eslint@8.17.0
-      eslint-plugin-react-hooks: 4.5.0_eslint@8.17.0
+      eslint-plugin-react-hooks: 4.6.0_eslint@8.17.0
       eslint-plugin-testing-library: 5.5.1_ud6rd4xtew5bv4yhvkvu24pzm4
       eslint-plugin-tsdoc: 0.2.16
       eslint-plugin-unicorn: 42.0.0_eslint@8.17.0
@@ -78,8 +78,8 @@ importers:
       jsdom: ^19.0.0
       postcss: ^8.4.14
       postcss-nesting: ^10.1.8
-      react: ^18.1.0
-      react-dom: ^18.1.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
       three: ^0.141.0
       typescript: ^4.7.3
       vite: ^2.9.12
@@ -92,7 +92,7 @@ importers:
     dependencies:
       '@juggle/resize-observer': 3.3.1
       '@qendil/workers': link:../workers
-      '@sentry/react': 7.1.1_react@18.1.0
+      '@sentry/react': 7.1.1_react@18.2.0
       '@types/babel__core': 7.1.19
       '@types/ejs': 3.1.1
       '@types/git-rev': 0.2.0
@@ -106,8 +106,8 @@ importers:
       git-rev: 0.2.1
       postcss: 8.4.14
       postcss-nesting: 10.1.8_postcss@8.4.14
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       three: 0.141.0
       typescript: 4.7.3
       vite: 2.9.12
@@ -125,7 +125,7 @@ importers:
     devDependencies:
       '@testing-library/dom': 8.13.0
       '@testing-library/jest-dom': 5.16.4
-      '@testing-library/react': 13.3.0_ef5jwxihqo6n7gxfmzogljlgcm
+      '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/user-event': 14.2.0_tlwynutqiyp5mns3woioasuxnq
       '@types/testing-library__jest-dom': 5.14.3
       c8: 7.11.3
@@ -1755,7 +1755,7 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/react/7.1.1_react@18.1.0:
+  /@sentry/react/7.1.1_react@18.2.0:
     resolution: {integrity: sha512-Z7cZvXHIWxg7OhOSy4InhrRgQPRNtHsyOkIAHkgwW32JYOGTg1HdqQ5mFUxQLejhU/YqsxVjTK4CI58FATykLw==}
     engines: {node: '>=8'}
     peerDependencies:
@@ -1765,7 +1765,7 @@ packages:
       '@sentry/types': 7.1.1
       '@sentry/utils': 7.1.1
       hoist-non-react-statics: 3.3.2
-      react: 18.1.0
+      react: 18.2.0
       tslib: 1.14.1
     dev: false
 
@@ -1834,7 +1834,7 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react/13.3.0_ef5jwxihqo6n7gxfmzogljlgcm:
+  /@testing-library/react/13.3.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-DB79aA426+deFgGSjnf5grczDPiL4taK3hFaa+M5q7q20Kcve9eQottOG5kZ74KEr55v0tU2CQormSSDK87zYQ==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -1844,8 +1844,8 @@ packages:
       '@babel/runtime': 7.18.3
       '@testing-library/dom': 8.13.0
       '@types/react-dom': 18.0.5
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /@testing-library/user-event/14.2.0_tlwynutqiyp5mns3woioasuxnq:
@@ -4483,7 +4483,7 @@ packages:
       eslint: 8.17.0
     dev: true
 
-  /eslint-config-xo-react/0.27.0_gxx4ag6maldd2x33bbfjfr4lvq:
+  /eslint-config-xo-react/0.27.0_2ogsiv5szvdwj6zj46jned4ioi:
     resolution: {integrity: sha512-wiV215xQIn71XZyyVfaOXHaFpR1B14IJttwOjMi/eqUK1s+ojJdHr7eHqTLaGUfh6FKgWha1QNwePlIXx7mBUg==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -4493,7 +4493,7 @@ packages:
     dependencies:
       eslint: 8.17.0
       eslint-plugin-react: 7.30.0_eslint@8.17.0
-      eslint-plugin-react-hooks: 4.5.0_eslint@8.17.0
+      eslint-plugin-react-hooks: 4.6.0_eslint@8.17.0
     dev: true
 
   /eslint-config-xo/0.41.0_eslint@8.17.0:
@@ -4527,8 +4527,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /eslint-plugin-react-hooks/4.5.0_eslint@8.17.0:
-    resolution: {integrity: sha512-8k1gRt7D7h03kd+SAAlzXkQwWK22BnK6GKZG+FJA6BAGy22CFvl8kCIXKpVux0cCxMWDQUPqSok0LKaZ0aOcCw==}
+  /eslint-plugin-react-hooks/4.6.0_eslint@8.17.0:
+    resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
@@ -7574,14 +7574,14 @@ packages:
     dev: false
     optional: true
 
-  /react-dom/18.1.0_react@18.1.0:
-    resolution: {integrity: sha512-fU1Txz7Budmvamp7bshe4Zi32d0ll7ect+ccxNu9FlObT605GOEB8BfO4tmRJ39R5Zj831VCpvQ05QPBW5yb+w==}
+  /react-dom/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
-      react: ^18.1.0
+      react: ^18.2.0
     dependencies:
       loose-envify: 1.4.0
-      react: 18.1.0
-      scheduler: 0.22.0
+      react: 18.2.0
+      scheduler: 0.23.0
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -7595,8 +7595,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /react/18.1.0:
-    resolution: {integrity: sha512-4oL8ivCz5ZEPyclFQXaNksK3adutVS8l2xzZU0cqEFrE9Sb7fC0EFK5uEk74wIreL1DERyjvsU915j1pcT2uEQ==}
+  /react/18.2.0:
+    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
@@ -7991,8 +7991,8 @@ packages:
       xmlchars: 2.2.0
     dev: true
 
-  /scheduler/0.22.0:
-    resolution: {integrity: sha512-6QAm1BgQI88NPYymgGQLCZgvep4FyePDWFpXVK+zNSUgHwlqpJy8VEh8Et0KxTACS4VWwMousBElAZOH9nkkoQ==}
+  /scheduler/0.23.0:
+    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
 
