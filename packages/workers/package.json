@@ -23,6 +23,6 @@
   "devDependencies": {
     "vite": "^2.9.12",
     "c8": "^7.11.3",
-    "vitest": "^0.14.2"
+    "vitest": "^0.15.0"
   }
 }
