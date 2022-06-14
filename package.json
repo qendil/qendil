@@ -27,7 +27,7 @@
   "dependencies": {
     "husky": "^8.0.1",
     "minimist": "^1.2.6",
-    "zx": "^6.2.5"
+    "zx": "^7.0.0"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^1.1.0",
