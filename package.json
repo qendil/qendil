@@ -3,11 +3,11 @@
   "author": "Said Dermoumi <hi@sdrm.me>",
   "license": "./LICENSE",
   "scripts": {
-    "lint": "zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier -c .",
+    "lint": "zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
     "lint:types": "zx scripts/typecheck.mjs",
-    "lint:format": "prettier -c .",
+    "lint:format": "prettier --cache -c .",
     "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:fix": "zx scripts/typecheck.mjs && prettier -wl . && eslint --cache --fix --max-warnings=0 .",
+    "lint:fix": "zx scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
     "test": "pnpm -r test",
     "test:cov": "pnpm -r --stream test:cov",
     "prepare": "husky install"
