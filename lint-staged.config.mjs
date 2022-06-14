@@ -16,6 +16,6 @@ export default {
     return [`eslint --max-warnings=0 ${filesToLint}`];
   },
   "*.{ts,tsx,js,jsx,cjs,mjs,json,css,md,html}": [
-    "prettier --write --list-different",
+    "prettier --write --cache --list-different",
   ],
 };
