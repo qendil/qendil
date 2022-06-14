@@ -50,6 +50,12 @@ beforeEach(() => {
 });
 
 describe("useServiceWorker module", () => {
+  afterEach(() => {
+    // Restore service worker
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (globalThis.navigator as any).serviceWorker = {};
+  });
+
   it("registers a service worker when imported if they are supported", async () => {
     // Given an environment where service workers are supported
     // When I import `use-service-worker`
@@ -91,6 +97,24 @@ describe("useServiceWorker module", () => {
 
     const { Workbox: mockedWorkbox } = await import("workbox-window");
     expect(mockedWorkbox.prototype.register).not.toHaveBeenCalled();
+  });
+
+  it("loads the correct service-worker file in production", async () => {
+    // Given a production environment
+    // When I import `use-service-worker`
+    // Then it should  load `service-worker.js`
+
+    vi.resetModules();
+    (import.meta.env as any) = { DEV: false, PROD: true, MODE: "production" };
+
+    const { Workbox: mockedWorkbox } = await import("workbox-window");
+    await import("./use-service-worker");
+
+    expect(mockedWorkbox).toHaveBeenCalled();
+    expect(mockedWorkbox).toHaveBeenCalledWith(
+      "/service-worker.js",
+      expect.anything()
+    );
   });
 });
 
