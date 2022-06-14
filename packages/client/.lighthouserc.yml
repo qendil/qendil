@@ -1,0 +1,13 @@
+ci:
+  collect:
+    numberOfRuns: 3
+    settings:
+      chromeFlags: --no-sandbox
+  assert:
+    preset: lighthouse:recommended
+    assertions:
+      unused-javascript: warn
+      csp-xss: off
+      is-crawlable: off # Staging instances are not crawlable on purpose
+  upload:
+    target: temporary-public-storage

@@ -16,4 +16,5 @@ ts-out/
 .eslintcache
 
 # Testing artifacts
+.lighthouseci/
 **/coverage/
