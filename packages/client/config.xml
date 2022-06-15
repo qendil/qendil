@@ -31,6 +31,8 @@
       name="ElectronSettingsFilePath"
       value="cordova/electron/settings.json"
     />
+
+    <icon src="cordova/electron/icon.png" />
   </platform>
 
   <platform name="android">
