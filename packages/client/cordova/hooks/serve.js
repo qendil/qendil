@@ -5,7 +5,6 @@
  *   cordova run android --serve=http://192.168.1.69:3000
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable unicorn/prefer-module */
 
 const path = require("node:path");

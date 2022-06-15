@@ -21,6 +21,7 @@
   <preference name="hostname" value="localhost" />
 
   <hook src="cordova/hooks/serve.js" type="after_prepare" />
+  <hook src="cordova/hooks/update-version.js" type="after_prepare" />
   <hook src="cordova/hooks/clean.js" type="before_run" />
   <hook src="cordova/hooks/clean.js" type="before_build" />
   <hook src="cordova/hooks/collect.js" type="after_build" />
@@ -33,10 +34,18 @@
   </platform>
 
   <platform name="android">
+    <!-- Icons -->
+    <icon background="cordova/android/ic_launcher_background.xml" density="mdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_mdpi.png" />
+    <icon background="cordova/android/ic_launcher_background.xml" density="hdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_hdpi.png" />
+    <icon background="cordova/android/ic_launcher_background.xml" density="xhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xhdpi.png" />
+    <icon background="cordova/android/ic_launcher_background.xml" density="xxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxhdpi.png" />
+    <icon background="cordova/android/ic_launcher_background.xml" density="xxxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxxhdpi.png" />
+
     <!-- Force true fullscreen mode -->
     <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
       <activity android:theme="@style/TrueFullscreen" />
     </edit-config>
+
     <edit-config file="strings.xml" mode="add" target="/resources">
       <style name="TrueFullscreen" parent="@style/Theme.AppCompat.NoActionBar">
         <!-- Use 100% screen size even on borderless device / notch device -->

@@ -108,7 +108,7 @@
     "@typescript-eslint/no-namespace": ["error", { "allowDeclarations": true }],
     "@typescript-eslint/no-redeclare": "error",
     "@typescript-eslint/no-redundant-type-constituents": "error",
-    "@typescript-eslint/no-require-imports": "warn",
+    "@typescript-eslint/no-require-imports": "off",
     "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/no-unnecessary-condition": [
       "error",
