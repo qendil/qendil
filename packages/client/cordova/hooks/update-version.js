@@ -38,6 +38,37 @@ function getTrimmedVersion(fullVersion) {
   return `${major}.${minor}.${patch}`;
 }
 
+async function updateElectronConfig(projectRoot, version, configXmlPath) {
+  const configPath = path.join(
+    projectRoot,
+    "platforms/electron",
+    configXmlPath
+  );
+  const configXml = await fs.readFile(configPath, "utf8");
+  const configDocument = libxml.parseXml(configXml);
+
+  configDocument.root().attr("version", version);
+
+  return fs.writeFile(configPath, configDocument.toString());
+}
+
+async function updateElectronPackageJson(projectRoot, version) {
+  const packageJsonPath = path.join(
+    projectRoot,
+    "platforms/electron/www/package.json"
+  );
+
+  const packageJson = require(packageJsonPath);
+
+  packageJson.version = version;
+
+  return fs.writeFile(
+    packageJsonPath,
+    JSON.stringify(packageJson, undefined, 2),
+    "utf8"
+  );
+}
+
 async function updateAndroidManifest(projectRoot, version) {
   const manifestPath = path.join(
     projectRoot,
@@ -102,6 +133,14 @@ module.exports = async (context) => {
   const { version } = require(path.join(projectRoot, "package.json"));
 
   const pending = platforms.map(async (platform) => {
+    if (platform === "electron") {
+      return Promise.all([
+        updateElectronConfig(projectRoot, version, "config.xml"),
+        updateElectronConfig(projectRoot, version, "www/config.xml"),
+        updateElectronPackageJson(projectRoot, version),
+      ]);
+    }
+
     if (platform === "android") {
       return updateAndroidManifest(projectRoot, version);
     }
