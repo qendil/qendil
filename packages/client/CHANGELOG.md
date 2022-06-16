@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Sync app version and icons on build [\#68](https://github.com/qendil/qendil/pull/68)
 - Add keyboard movement to the cube [\#59](https://github.com/qendil/qendil/pull/59)
 - Add a keyboard InputManager [\#58](https://github.com/qendil/qendil/pull/58)
 - Add a visible orange cube [\#52](https://github.com/qendil/qendil/pull/52)
