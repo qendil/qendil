@@ -53,7 +53,7 @@ module.exports = async (context) => {
       ),
       collectIfExists(
         `${sourceDirectory}/*-ia32.tar.gz`,
-        `${BASE_NAME}_linux-x32.tar.gz`
+        `${BASE_NAME}_linux-ia32.tar.gz`
       ),
       collectIfExists(
         `${sourceDirectory}/*-armv7l.tar.gz`,
@@ -89,7 +89,7 @@ module.exports = async (context) => {
       ),
       collectIfExists(
         `${sourceDirectory}/*-ia32-win.zip`,
-        `${BASE_NAME}_windows-x32.zip`
+        `${BASE_NAME}_windows-ia32.zip`
       ),
       collectIfExists(
         `${sourceDirectory}/*-arm64-win.zip`,
