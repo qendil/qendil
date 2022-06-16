@@ -5,12 +5,11 @@
  *   cordova run android --serve=http://192.168.1.69:3000
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable unicorn/prefer-module */
 
 const path = require("node:path");
 const fs = require("node:fs");
-const xmlToJs = require("xml2js");
+const libxml = require("libxmljs");
 
 function getPlatformConfigPath(projectRoot, platform) {
   const platformRoot = path.join(projectRoot, "platforms", platform);
@@ -51,37 +50,50 @@ function getPlatformConfigPath(projectRoot, platform) {
   if (matches.length > 0) return matches[0];
 }
 
-module.exports = async (context) => {
+module.exports = (context) => {
   const { projectRoot, platforms, options } = context.opts;
   const { serve } = options;
 
-  const pending = platforms.map(async (platform) => {
+  if (!serve) return;
+
+  for (const platform of platforms) {
     const configPath = getPlatformConfigPath(projectRoot, platform);
     const cordovaConfig = fs.readFileSync(configPath, "utf8");
-    const configJson = await xmlToJs.parseStringPromise(cordovaConfig);
+    const configDocument = libxml.parseXml(cordovaConfig);
 
-    if (serve) {
-      const url = /^http(s)?:\/\//.test(serve) ? serve : `http://${serve}`;
+    const url = /^http(s)?:\/\//.test(serve) ? serve : `http://${serve}`;
 
-      configJson.widget.content[0].$.src = url;
+    configDocument.get("//*[name()='content']").attr("src", url);
 
-      if (platform === "electron") {
-        // Update the load URL
-        const electronConfigPath = path.join(
-          projectRoot,
-          "platforms/electron/www/cdv-electron-settings.json"
-        );
+    if (platform === "electron") {
+      // Update the load URL
+      const electronConfigPath = path.join(
+        projectRoot,
+        "platforms/electron/www/cdv-electron-settings.json"
+      );
 
-        const electronJson = require(electronConfigPath);
+      const electronJson = require(electronConfigPath);
 
-        electronJson.browserWindowInstance.loadURL.url = url;
+      electronJson.browserWindowInstance.loadURL.url = url;
 
-        fs.writeFileSync(
-          electronConfigPath,
-          JSON.stringify(electronJson, undefined, 2),
-          "utf8"
-        );
-      }
+      fs.writeFileSync(
+        electronConfigPath,
+        JSON.stringify(electronJson, undefined, 2),
+        "utf8"
+      );
+    }
+
+    if (platform === "ios") {
+      configDocument
+        .root()
+        .node("allow-navigation")
+        .attr("href", "http://*/*")
+        .parent()
+        .node("allow-navigation")
+        .attr("href", "https://*/*")
+        .parent()
+        .node("access")
+        .attr("origin", "*");
     }
 
     if (platform === "android") {
@@ -89,38 +101,16 @@ module.exports = async (context) => {
         "platforms/android/app/src/main/AndroidManifest.xml"
       );
       const manifestXml = fs.readFileSync(manifestPath, "utf8");
-      const manifestJson = await xmlToJs.parseStringPromise(manifestXml);
+      const manifestDocument = libxml.parseXml(manifestXml);
 
       // Add clause to allow non-https urls to be opened on android devices
-      const applicationNode = manifestJson.manifest.application[0];
-      if (serve) {
-        applicationNode.$["android:usesCleartextTraffic"] = "true";
-      } else {
-        delete applicationNode.$["android:usesCleartextTraffic"];
-      }
+      manifestDocument
+        .get("//application")
+        .attr("android:usesCleartextTraffic", "true");
 
-      const manifestBuilder = new xmlToJs.Builder();
-      const manifestXmlNew = manifestBuilder.buildObject(manifestJson);
-      fs.writeFileSync(manifestPath, manifestXmlNew);
+      fs.writeFileSync(manifestPath, manifestDocument.toString());
     }
 
-    if (platform === "ios") {
-      if (serve) {
-        configJson.widget["allow-navigation"] = [
-          { $: { href: "http://*/*" } },
-          { $: { href: "https://*/*" } },
-        ];
-        configJson.widget.access = [{ $: { origin: "*" } }];
-      } else {
-        delete configJson.widget["allow-navigation"];
-        delete configJson.widget.access;
-      }
-    }
-
-    const builder = new xmlToJs.Builder();
-    const xml = builder.buildObject(configJson);
-    fs.writeFileSync(configPath, xml);
-  });
-
-  await Promise.all(pending);
+    fs.writeFileSync(configPath, configDocument.toString());
+  }
 };

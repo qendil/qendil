@@ -68,7 +68,7 @@
     "cordova-electron": "^3.1.0",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-statusbar": "^3.0.0",
-    "xml2js": "^0.4.23"
+    "libxmljs": "^0.19.10"
   },
   "cordova": {
     "platforms": [

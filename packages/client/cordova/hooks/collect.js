@@ -2,7 +2,6 @@
  * Collects output files and places them in a `dist/` directory.
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable unicorn/prefer-module */
 
 const path = require("node:path");
@@ -54,7 +53,7 @@ module.exports = async (context) => {
       ),
       collectIfExists(
         `${sourceDirectory}/*-ia32.tar.gz`,
-        `${BASE_NAME}_linux-x32.tar.gz`
+        `${BASE_NAME}_linux-ia32.tar.gz`
       ),
       collectIfExists(
         `${sourceDirectory}/*-armv7l.tar.gz`,
@@ -90,7 +89,7 @@ module.exports = async (context) => {
       ),
       collectIfExists(
         `${sourceDirectory}/*-ia32-win.zip`,
-        `${BASE_NAME}_windows-x32.zip`
+        `${BASE_NAME}_windows-ia32.zip`
       ),
       collectIfExists(
         `${sourceDirectory}/*-arm64-win.zip`,
