@@ -1,51 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
-<widget
-  id="me.sdrm.qendil"
-  version="0.0.1-alpha"
-  xmlns="http://www.w3.org/ns/widgets"
-  xmlns:cdv="http://cordova.apache.org/ns/1.0"
-  xmlns:android="http://schemas.android.com/apk/res/android"
->
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="me.sdrm.qendil" version="0.0.1-alpha">
   <name>Qendil</name>
   <description>WIP game</description>
   <author email="hi@sdrm.me" href="https://sdrm.me">Said Dermoumi</author>
 
-  <content src="index.html" />
-  <allow-intent href="http://*/*" />
-  <allow-intent href="https://*/*" />
+  <content src="index.html"/>
+  <allow-intent href="http://*/*"/>
+  <allow-intent href="https://*/*"/>
 
-  <preference name="Fullscreen" value="true" />
-  <preference name="StatusBarStyle" value="lightcontent" />
+  <preference name="Fullscreen" value="true"/>
+  <preference name="StatusBarStyle" value="lightcontent"/>
 
-  <preference name="scheme" value="qendil" />
-  <preference name="hostname" value="localhost" />
+  <preference name="scheme" value="qendil"/>
+  <preference name="hostname" value="localhost"/>
 
-  <hook src="cordova/hooks/serve.js" type="after_prepare" />
-  <hook src="cordova/hooks/update-version.js" type="after_prepare" />
-  <hook src="cordova/hooks/clean.js" type="before_run" />
-  <hook src="cordova/hooks/clean.js" type="before_build" />
-  <hook src="cordova/hooks/collect.js" type="after_build" />
+  <hook src="cordova/hooks/serve.js" type="after_prepare"/>
+  <hook src="cordova/hooks/update-version.js" type="after_prepare"/>
+  <hook src="cordova/hooks/clean.js" type="before_run"/>
+  <hook src="cordova/hooks/clean.js" type="before_build"/>
+  <hook src="cordova/hooks/collect.js" type="after_build"/>
 
   <platform name="electron">
-    <preference
-      name="ElectronSettingsFilePath"
-      value="cordova/electron/settings.json"
-    />
+    <preference name="ElectronSettingsFilePath" value="cordova/electron/settings.json"/>
 
-    <icon src="cordova/electron/icon.png" />
+    <icon src="cordova/electron/icon.png"/>
   </platform>
 
   <platform name="android">
     <!-- Icons -->
-    <icon background="cordova/android/ic_launcher_background.xml" density="mdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_mdpi.png" />
-    <icon background="cordova/android/ic_launcher_background.xml" density="hdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_hdpi.png" />
-    <icon background="cordova/android/ic_launcher_background.xml" density="xhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xhdpi.png" />
-    <icon background="cordova/android/ic_launcher_background.xml" density="xxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxhdpi.png" />
-    <icon background="cordova/android/ic_launcher_background.xml" density="xxxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxxhdpi.png" />
+    <icon background="cordova/android/ic_launcher_background.xml" density="mdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_mdpi.png"/>
+    <icon background="cordova/android/ic_launcher_background.xml" density="hdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_hdpi.png"/>
+    <icon background="cordova/android/ic_launcher_background.xml" density="xhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xhdpi.png"/>
+    <icon background="cordova/android/ic_launcher_background.xml" density="xxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxhdpi.png"/>
+    <icon background="cordova/android/ic_launcher_background.xml" density="xxxhdpi" foreground="cordova/android/ic_launcher_foreground.xml" src="cordova/android/ic_launcher_xxxhdpi.png"/>
 
     <!-- Force true fullscreen mode -->
     <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
-      <activity android:theme="@style/TrueFullscreen" />
+      <activity android:theme="@style/TrueFullscreen"/>
     </edit-config>
 
     <edit-config file="strings.xml" mode="add" target="/resources">
@@ -67,34 +58,34 @@
   <platform name="ios">
     <!-- iOS 8.0+ -->
     <!-- iPhone 6 Plus  -->
-    <icon src="cordova/ios/Icon-60@3x.png" width="180" height="180" />
+    <icon src="cordova/ios/Icon-60@3x.png" width="180" height="180"/>
     <!-- iOS 7.0+ -->
     <!-- iPhone / iPod Touch  -->
-    <icon src="cordova/ios/Icon-60.png" width="60" height="60" />
-    <icon src="cordova/ios/Icon-60@2x.png" width="120" height="120" />
+    <icon src="cordova/ios/Icon-60.png" width="60" height="60"/>
+    <icon src="cordova/ios/Icon-60@2x.png" width="120" height="120"/>
     <!-- iPad -->
-    <icon src="cordova/ios/Icon-76.png" width="76" height="76" />
-    <icon src="cordova/ios/Icon-76@2x.png" width="152" height="152" />
+    <icon src="cordova/ios/Icon-76.png" width="76" height="76"/>
+    <icon src="cordova/ios/Icon-76@2x.png" width="152" height="152"/>
     <!-- Spotlight Icon -->
-    <icon src="cordova/ios/Icon-40.png" width="40" height="40" />
-    <icon src="cordova/ios/Icon-40@2x.png" width="80" height="80" />
+    <icon src="cordova/ios/Icon-40.png" width="40" height="40"/>
+    <icon src="cordova/ios/Icon-40@2x.png" width="80" height="80"/>
     <!-- iOS 6.1 -->
     <!-- iPhone / iPod Touch -->
-    <icon src="cordova/ios/Icon.png" width="57" height="57" />
-    <icon src="cordova/ios/Icon@2x.png" width="114" height="114" />
+    <icon src="cordova/ios/Icon.png" width="57" height="57"/>
+    <icon src="cordova/ios/Icon@2x.png" width="114" height="114"/>
     <!-- iPad -->
-    <icon src="cordova/ios/Icon-72.png" width="72" height="72" />
-    <icon src="cordova/ios/Icon-72@2x.png" width="144" height="144" />
+    <icon src="cordova/ios/Icon-72.png" width="72" height="72"/>
+    <icon src="cordova/ios/Icon-72@2x.png" width="144" height="144"/>
     <!-- iPad Pro -->
-    <icon src="cordova/ios/Icon-167.png" width="167" height="167" />
+    <icon src="cordova/ios/Icon-167.png" width="167" height="167"/>
     <!-- iPhone Spotlight and Settings Icon -->
-    <icon src="cordova/ios/Icon-Small.png" width="29" height="29" />
-    <icon src="cordova/ios/Icon-Small@2x.png" width="58" height="58" />
-    <icon src="cordova/ios/Icon-Small@3x.png" width="87" height="87" />
+    <icon src="cordova/ios/Icon-Small.png" width="29" height="29"/>
+    <icon src="cordova/ios/Icon-Small@2x.png" width="58" height="58"/>
+    <icon src="cordova/ios/Icon-Small@3x.png" width="87" height="87"/>
     <!-- iPad Spotlight and Settings Icon -->
-    <icon src="cordova/ios/Icon-Small-50.png" width="50" height="50" />
-    <icon src="cordova/ios/Icon-Small-50@2x.png" width="100" height="100" />
+    <icon src="cordova/ios/Icon-Small-50.png" width="50" height="50"/>
+    <icon src="cordova/ios/Icon-Small-50@2x.png" width="100" height="100"/>
     <!-- iTunes Marketing Image -->
-    <icon src="cordova/ios/iTunesArtwork@2x.png" width="1024" height="1024" />
+    <icon src="cordova/ios/iTunesArtwork@2x.png" width="1024" height="1024"/>
   </platform>
 </widget>
