@@ -7,19 +7,8 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-fn make_greeting(name: &str) -> String {
+pub fn make_greeting(name: &str) -> String {
     format!("Hello {}!", name)
-}
-
-#[wasm_bindgen]
-pub fn greet(name: Option<String>) {
-    let actual_name = name.unwrap_or_else(|| "stranger".into());
-
-    alert(&make_greeting(&actual_name));
 }
 
 #[cfg(test)]

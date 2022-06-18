@@ -1,6 +1,6 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 import { InputAxis } from "../utils/input-manager/input-manager";
-import coreInit, { greet } from "@qendil/core";
+import coreInit, { make_greeting as makeGreeting } from "@qendil/core";
 
 import type { ReactElement } from "react";
 
@@ -11,7 +11,8 @@ import useWasm from "../hooks/use-wasm";
 import classes from "./app.module.css";
 
 const handleGreeting = (): void => {
-  greet("world");
+  // eslint-disable-next-line no-alert
+  alert(makeGreeting("world"));
 };
 
 export default function App(): ReactElement {
