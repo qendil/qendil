@@ -24,7 +24,8 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
+          override: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -115,7 +116,8 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
+          override: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -160,7 +162,9 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
+          override: true
+          components: llvm-tools-preview
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -192,8 +196,18 @@ jobs:
         with:
           version: "latest"
 
-      - name: Test the code
+      - name: Setup cargo llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Setup nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: Test code
         run: pnpm test:cov
+
+      - name: Create rust code coverage
+        run: |-
+          pnpm test:cov --filter=core -- --no-run --lcov --output-path=lcov.info
 
       - name: Publish code coverage
         uses: codecov/codecov-action@v3
@@ -220,7 +234,8 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
+          override: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2

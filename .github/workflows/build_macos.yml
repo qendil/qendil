@@ -19,7 +19,8 @@ jobs:
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
+          override: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2

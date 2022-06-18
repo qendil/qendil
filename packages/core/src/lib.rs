@@ -11,9 +11,30 @@ extern "C" {
     fn alert(s: &str);
 }
 
+fn make_greeting(name: &str) -> String {
+    format!("Hello {}!", name)
+}
+
 #[wasm_bindgen]
 pub fn greet(name: Option<String>) {
     let actual_name = name.unwrap_or_else(|| "stranger".into());
 
-    alert(&format!("Hello, {actual_name}!"));
+    alert(&make_greeting(&actual_name));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+
+    #[test]
+    fn it_makes_greeting() {
+        let greeting = &make_greeting("world");
+
+        assert_eq!(greeting, "Hello world!");
+    }
 }

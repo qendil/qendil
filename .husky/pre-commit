@@ -3,4 +3,5 @@
 
 pnpm lint:types
 pnpm lint-staged
-pnpm -r --stream test -- --changed
+pnpm test --filter=client --filter=workers -- --changed
+pnpm test --filter=core

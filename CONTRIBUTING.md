@@ -9,7 +9,7 @@ must be [`pnpm`](https://pnpm.io/).
 
 Only the latest LTS version of `node` is supported.
 
-Rust stable is required to build the project:
+Rust nightly is required to build the project:
 
 - Rust: https://rustup.rs/
 - Wasm-pack: https://rustwasm.github.io/wasm-pack/installer/
