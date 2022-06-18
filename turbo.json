@@ -1,0 +1,62 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "baseBranch": "origin/main",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["www/**", "pkg/**"]
+    },
+    "build:web": {
+      "dependsOn": ["^build"],
+      "outputs": ["www/**", "pkg/**"]
+    },
+    "prepare:cordova": {
+      "dependsOn": ["build:web"],
+      "outputs": ["platforms/**"]
+    },
+    "build:macos": {
+      "dependsOn": ["prepare:cordova"],
+      "outputs": ["dist/**"]
+    },
+    "build:linux": {
+      "dependsOn": ["prepare:cordova"],
+      "outputs": ["dist/**"]
+    },
+    "build:windows": {
+      "dependsOn": ["prepare:cordova"],
+      "outputs": ["dist/**"]
+    },
+    "build:ios": {
+      "dependsOn": ["prepare:cordova"],
+      "outputs": ["dist/**"]
+    },
+    "build:android": {
+      "dependsOn": ["prepare:cordova"],
+      "outputs": ["dist/**"]
+    },
+    "preview:web": {
+      "dependsOn": ["build:web"]
+    },
+    "preview:electron": {},
+    "preview:ios": {},
+    "preview:android": {},
+    "dev": {
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": [".eslintcache"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "test:cov": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:watch": {
+      "cache": false
+    }
+  },
+  "globalDependencies": [".env", "tsconfig.json", "tsconfig.common.json"]
+}

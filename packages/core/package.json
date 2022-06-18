@@ -1,0 +1,13 @@
+{
+  "name": "@qendil/core",
+  "private": true,
+  "main": "pkg/qendil_core.js",
+  "types": "pkg/qendil_core.d.ts",
+  "scripts": {
+    "build": "wasm-pack build --target web --release",
+    "dev": "nodemon -w src -e rs -x 'wasm-pack build --target web --dev'"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.16"
+  }
+}

@@ -9,21 +9,21 @@ must be [`pnpm`](https://pnpm.io/).
 
 Only the latest LTS version of `node` is supported.
 
+Rust stable is required to build the project:
+
+- Rust: https://rustup.rs/
+- Wasm-pack: https://rustwasm.github.io/wasm-pack/installer/
+
+The project is separated into multiple packages.
+
 - Run `pnpm install` in the root directory to install all dependencies.
 
-The project is separated into multiple sub-projects that you will have to
-`cd` into before you can work on them.
-
 ### Client
-
-```console
-cd client/
-```
 
 It's a web client mostly, but cordova can be used to deploy as an Elecron,
 iOS or Android app.
 
-- Run `pnpm dev` to start the development server.
+- Run `pnpm dev:web` to start the development server.
   - Changes to the code will be reflected automatically in the browser.
   - Since this project depends heavily on web workers, due to a [vitejs
     limitations][1] you must use a Chromium-based browser for development.
@@ -31,8 +31,7 @@ iOS or Android app.
 In case you need to try a production build locally:
 
 - Run `pnpm i --prod` to remove dev dependencies. (optional)
-- Run `pnpm build` to build the bundle.
-- Run `pnpm preview` to start the preview server.
+- Run `pnpm preview:web` to build and preview the production app.
 
 Debugging:
 
@@ -47,19 +46,29 @@ Debugging:
 To run tests:
 
 - Run `pnpm test` to run all tests.
-- Run `pnpm test -- <test_filename>` to run all tests in a given file.
-- Run `pnpm test -- -t <test_description>` to run a test by description.
 - Run `pnpm test:cov` to run all tests and generate a coverage report,
   it will be available in the `coverage/` directory.
+
+To run specific client tests:
+
+- To run all tests in a given file:
+
+  ```bash
+  pnpm test --filter=client -- <test_file_name>
+  ```
+
+- To run a test using its name/description:
+
+  ```bash
+  pnpm test --filter=client -- -t <test_description>
+  ```
 
 [1]: https://vitejs.dev/guide/features.html#import-with-query-suffixes
 
 #### Previewing Cordova targets
 
-- Run `pnpm build` to build the web app.
-- Run `pnpm prepare:cordova` to prepare and install cordova platforms.
 - Run `pnpm preview:<platform>` to preview the build in the `www/`.
-- Run `pnpm preview:<platform> --serve=<url>` to preview the given URL
+- Run `pnpm preview:<platform> -- --serve=<url>` to preview the given URL
   on the given platform.
   - This is useful to develop the app on a remote device, as you will
     have access to hot module reloading when using `pnpm dev`.
@@ -82,7 +91,7 @@ Here are platform specific instructions:
 ##### Electron
 
 - Run `pnpm dev` to start the development server.
-- Run `pnpm preview:electron --serve=localhost:3000`
+- Run `pnpm preview:electron -- --serve=localhost:3000`
 
 ##### Android
 
@@ -115,13 +124,13 @@ Here are platform specific instructions:
     just make sure you have access to the host's IP.
   - You can also use Windows Subsystem for Android, it is generally faster.
 
-- Run `pnpm dev --host=0.0.0.0` to start the development server.
+- Run `pnpm dev -- --host=0.0.0.0` to start the development server.
 
   - Using `--host=0.0.0.0` is required to allow access from the
     same local network. You can also use your host's IP address instead.
   - WSL users will need to [port forward][3] the port to the WSL VM.
 
-- Run `pnpm preview:android --device --serve=192.168.1.94:3000` where
+- Run `pnpm preview:android -- --device --serve=192.168.1.94:3000` where
   `192.168.1.94` is the IP of the host or your computer in the local network.
 
   - replace `--device` with `--emulator` if using an emulator.
@@ -137,7 +146,7 @@ Here are platform specific instructions:
 
 - [Install Xcode](https://apps.apple.com/app/xcode/id497799835).
 - Run `pnpm dev` to start the development server.
-- Run `pnpm preview:ios --serve=localhost:3000` to start the simulator.
+- Run `pnpm preview:ios -- --serve=localhost:3000` to start the simulator.
 - To debug, the application's developper tools can be accessed from Safari's
   developer menu.
   - This assumes Safari's developer mode is enabled.

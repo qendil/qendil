@@ -139,6 +139,10 @@
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/no-var-requires": "off", // handled by @typescript-eslint/no-require-imports
     "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      { "checksVoidReturn": false }
+    ],
 
     "react/display-name": "off",
     "react/forbid-component-props": [

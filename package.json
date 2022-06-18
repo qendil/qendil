@@ -3,13 +3,24 @@
   "author": "Said Dermoumi <hi@sdrm.me>",
   "license": "./LICENSE",
   "scripts": {
-    "lint": "zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
-    "lint:types": "zx scripts/typecheck.mjs",
-    "lint:format": "prettier --cache -c .",
-    "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:fix": "zx scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
-    "test": "pnpm -r test",
-    "test:cov": "pnpm -r --stream test:cov",
+    "dev:web": "turbo run dev --filter=client --filter=core",
+    "build:web": "turbo run build:web --filter=client",
+    "build:macos": "turbo run build:macos --filter=client",
+    "build:linux": "turbo run build:linux --filter=client",
+    "build:windows": "turbo run build:windows --filter=client",
+    "build:ios": "turbo run build:ios --filter=client",
+    "build:android": "turbo run build:android --filter=client",
+    "preview:web": "turbo run preview:web --filter=client",
+    "preview:electron": "turbo run preview:electron --filter=client",
+    "preview:ios": "turbo run preview:ios --filter=client",
+    "preview:android": "turbo run preview:android --filter=client",
+    "lint": "turbo run build && zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
+    "lint:types": "turbo run build && zx scripts/typecheck.mjs",
+    "lint:format": "turbo run build && prettier --cache -c .",
+    "lint:practices": "turbo run build && eslint --cache --max-warnings=0 .",
+    "lint:fix": "turbo run build && zx scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
+    "test": "turbo run test",
+    "test:cov": "turbo run test:cov",
     "prepare": "husky install",
     "release": "zx scripts/release.mjs"
   },
@@ -22,7 +33,6 @@
     "node": "16.15.1"
   },
   "workspaces": [
-    "client",
     "packages/*"
   ],
   "dependencies": {
@@ -30,6 +40,7 @@
     "husky": "^8.0.1",
     "libxmljs": "^0.19.10",
     "minimist": "^1.2.6",
+    "turbo": "^1.2.16",
     "zx": "^7.0.0"
   },
   "devDependencies": {

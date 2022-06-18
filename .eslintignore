@@ -1,9 +1,13 @@
 # Build artifacts
-packages/client/platforms/
-packages/client/plugins/
-packages/client/dist/
-packages/client/www/
+/packages/client/platforms/
+/packages/client/plugins/
+/packages/client/dist/
+/packages/client/www/
 
 # Testing artifacts
 **/coverage/
-ts-out/
+/ts-out/
+
+# Rust output
+/packages/*/pkg/
+/target/
