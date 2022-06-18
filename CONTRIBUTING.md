@@ -11,8 +11,23 @@ Only the latest LTS version of `node` is supported.
 
 Rust nightly is required to build the project:
 
-- Rust: https://rustup.rs/
-- Wasm-pack: https://rustwasm.github.io/wasm-pack/installer/
+```bash
+# Install rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install rust nightly
+rustup default nightly
+
+# Add the llvm-tools if planning on using coverage
+rustup component add llvm-tools-preview
+cargo install llvm-cov
+
+# Install nextest for faster testing
+cargo install nextest
+
+# Install wasm-pack
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | bash
+```
 
 The project is separated into multiple packages.
 
