@@ -24,7 +24,7 @@
     "lint:staged": "turbo run lint:staged",
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",
-    "test:cov-rust": "turbo run test:rust",
+    "test:cov-rust": "turbo run test:cov-rust",
     "test:watch": "turbo run test:watch",
     "prepare": "husky install",
     "release": "zx scripts/release.mjs"
