@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[wasm_bindgen]
+#[wasm_bindgen(js_name = "makeGreeting")]
 pub fn make_greeting(name: &str) -> String {
     format!("Hello {name}!")
 }

@@ -1,6 +1,6 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 import { InputAxis } from "../utils/input-manager/input-manager";
-import coreInit, { make_greeting as makeGreeting } from "@qendil/core";
+import coreInit, { makeGreeting } from "@qendil/core";
 
 import type { ReactElement } from "react";
 
