@@ -1,3 +1,11 @@
+/**
+ * Removes all sources files from the www/ directory
+ *
+ * Usage:
+ *  zx cleanup-source-maps.mjs
+ *
+ */
+
 import { globby } from "zx";
 import fs from "node:fs/promises";
 
