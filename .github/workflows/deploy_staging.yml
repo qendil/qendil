@@ -129,10 +129,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - uses: actions-rs/clippy-check@v1
+      - name: Lint RS Code (pull request)
+        uses: actions-rs/clippy-check@v1
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features
+
+      - name: Lint RS Code (main branch)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: pnpm lint:clippy
 
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
