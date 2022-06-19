@@ -13,7 +13,7 @@
     "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
     "build:windows": "pnpm build:electron --buildConfig=%cd%\\cordova\\electron\\windows.json",
     "build:android": "cordova build android --no-telemetry --release",
-    "build:web": "vite build && find www/ -name '*.js.map' -type f -delete",
+    "build:web": "vite build && zx ../../scripts/cleanup-source-maps.mjs",
     "preview:web": "vite preview",
     "preview:electron": "cordova run electron --nobuild",
     "preview:android": "cordova run android",
