@@ -15,11 +15,28 @@ permissions:
 
 jobs:
   check_types:
-    name: Typecheck files
+    name: Typecheck JS files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -33,23 +50,24 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: >-
-          pnpm install
-          --frozen-lockfile
-          --strict-peer-dependencies
-          --no-optional
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
       - name: Cache typescript buildinfo
         uses: actions/cache@v3
         with:
-          path: ts-out
-          key: ts-out
+          path: ts-out/
+          key: ${{ runner.os }}-ts-out
 
-      - name: Lint the code
-        run: pnpm lint:types --write
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+
+      - name: Typecheck the code
+        run: pnpm lint:types -- --write
 
   check_formatting:
-    name: Check files formatting
+    name: Check formatting of JS files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
@@ -67,13 +85,9 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: >-
-          pnpm install
-          --frozen-lockfile
-          --strict-peer-dependencies
-          --no-optional
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - name: Lint the code
+      - name: Check code formatting
         run: pnpm lint:format
 
   check_linting:
@@ -83,6 +97,24 @@ jobs:
       - name: Checkout git repository
         uses: actions/checkout@v3
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: clippy
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
@@ -95,14 +127,20 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: >-
-          pnpm install
-          --frozen-lockfile
-          --strict-peer-dependencies
-          --no-optional
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - name: Lint the code
-        run: pnpm lint:practices
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+
+      - name: Lint JS code
+        run: pnpm lint:eslint
 
   run_tests:
     name: Run tests
@@ -111,6 +149,24 @@ jobs:
       - name: Checkout git repository
         uses: actions/checkout@v3
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: llvm-tools-preview
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
@@ -123,14 +179,25 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: >-
-          pnpm install
-          --frozen-lockfile
-          --strict-peer-dependencies
-          --no-optional
+        run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - name: Test the code
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+
+      - name: Setup cargo llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Setup nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: Test code
         run: pnpm test:cov
+
+      - name: Create rust code coverage
+        run: |-
+          pnpm test:cov-rust -- --no-run --lcov --output-path=lcov.info
 
       - name: Publish code coverage
         uses: codecov/codecov-action@v3
@@ -154,6 +221,23 @@ jobs:
       - name: Checkout git repository
         uses: actions/checkout@v3
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
         with:
@@ -167,15 +251,15 @@ jobs:
 
       - name: Install dependencies
         run: >-
-          pnpm install
-          --frozen-lockfile
-          --strict-peer-dependencies
-          --no-optional
-          --production
+          pnpm install --frozen-lockfile --strict-peer-dependencies --production
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
 
       - name: Build the client
-        working-directory: packages/client/
-        run: pnpm build:browser
+        run: pnpm build:web
         env:
           CLIENT_PLATFORM: browser
           CLIENT_SENTRY_ENVIRONMENT: staging

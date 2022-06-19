@@ -1,0 +1,11 @@
+# Node and pnpm
+node_modules/
+
+# Build artifacts
+/platforms/
+/plugins/
+/dist/
+/www/
+
+# Testing artifacts
+/coverage/

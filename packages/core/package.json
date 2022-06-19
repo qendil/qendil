@@ -1,0 +1,19 @@
+{
+  "name": "@qendil/core",
+  "version": "0.0.1",
+  "private": true,
+  "main": "pkg/qendil_core.js",
+  "types": "pkg/qendil_core.d.ts",
+  "scripts": {
+    "build": "wasm-pack build --target web --release",
+    "dev:web": "nodemon -w src -e rs -x 'wasm-pack build --target web --dev'",
+    "test": "cargo nextest run",
+    "test:cov-rust": "cargo llvm-cov nextest",
+    "test:watch": "nodemon -w src -e rs -x 'cargo nextest run'",
+    "lint:clippy": "cargo clippy",
+    "lint:staged": "cargo clippy && cargo nextest run"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.16"
+  }
+}

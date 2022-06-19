@@ -1,21 +1,29 @@
 # Node and pnpm
 node_modules/
 .pnpm-debug.log
+.turbo/
 
 # Local env files and other local files
 .env
 *.local
-.sdkmanrc
-.vscode/launch.json
+/.sdkmanrc
+/.vscode/launch.json
 
 # Build artifacts
-packages/client/platforms/
-packages/client/plugins/
-packages/client/dist/
-packages/client/www/
-ts-out/
+/packages/client/platforms/
+/packages/client/plugins/
+/packages/client/dist/
+/packages/client/www/
+/ts-out/
 .eslintcache
 
 # Testing artifacts
 .lighthouseci/
 **/coverage/
+
+# Rust artifacts
+/packages/*/pkg/
+/target/
+
+# LICENSE keeps getting copied here somehow
+/packages/LICENSE

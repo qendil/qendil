@@ -1,0 +1,5 @@
+# Node and pnpm
+node_modules/
+
+# Testing artifacts
+/coverage/

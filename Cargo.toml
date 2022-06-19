@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "packages/core",
+]
+
+[profile.release]
+opt-level = "s"

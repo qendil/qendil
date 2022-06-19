@@ -3,13 +3,29 @@
   "author": "Said Dermoumi <hi@sdrm.me>",
   "license": "./LICENSE",
   "scripts": {
-    "lint": "zx scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
-    "lint:types": "zx scripts/typecheck.mjs",
-    "lint:format": "prettier --cache -c .",
-    "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:fix": "zx scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
-    "test": "pnpm -r test",
-    "test:cov": "pnpm -r --stream test:cov",
+    "dev:web": "turbo run dev:web",
+    "build:web": "turbo run build:web",
+    "build:macos": "turbo run build:macos",
+    "build:linux": "turbo run build:linux",
+    "build:windows": "turbo run build:windows",
+    "build:ios": "turbo run build:ios",
+    "build:android": "turbo run build:android",
+    "preview:web": "turbo run preview:web",
+    "preview:electron": "turbo run preview:electron",
+    "preview:ios": "turbo run preview:ios",
+    "preview:android": "turbo run preview:android",
+    "lint": "turbo run lint",
+    "lint:types": "turbo run lint:types",
+    "lint:format": "turbo run lint:format",
+    "lint:eslint": "turbo run lint:eslint",
+    "lint:clippy": "turbo run lint:clippy",
+    "lint:practices": "turbo run lint:practices",
+    "lint:fix": "turbo run lint:fix",
+    "lint:staged": "turbo run lint:staged",
+    "test": "turbo run test",
+    "test:cov": "turbo run test:cov",
+    "test:cov-rust": "turbo run test:cov-rust",
+    "test:watch": "turbo run test:watch",
     "prepare": "husky install",
     "release": "zx scripts/release.mjs"
   },
@@ -22,7 +38,6 @@
     "node": "16.15.1"
   },
   "workspaces": [
-    "client",
     "packages/*"
   ],
   "dependencies": {
@@ -30,6 +45,7 @@
     "husky": "^8.0.1",
     "libxmljs": "^0.19.10",
     "minimist": "^1.2.6",
+    "turbo": "^1.2.16",
     "zx": "^7.0.0"
   },
   "devDependencies": {

@@ -1,12 +1,19 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 import { InputAxis } from "../utils/input-manager/input-manager";
+import coreInit, { makeGreeting } from "@qendil/core";
 
 import type { ReactElement } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
+import useGameView from "../hooks/use-game-view";
+import useWasm from "../hooks/use-wasm";
 
 import classes from "./app.module.css";
-import useGameView from "../hooks/use-game-view";
+
+const handleGreeting = (): void => {
+  // eslint-disable-next-line no-alert
+  alert(makeGreeting("world"));
+};
 
 export default function App(): ReactElement {
   const updateServiceWorker = useServiceWorker();
@@ -47,9 +54,19 @@ export default function App(): ReactElement {
 
   const world = <WorldView className={classes.world} />;
 
+  useWasm(coreInit);
+  const wasmTest = (
+    <div>
+      <button type="button" onClick={handleGreeting}>
+        Test
+      </button>
+    </div>
+  );
+
   return (
     <div className={classes.app}>
       {updatePrompt}
+      {wasmTest}
       {world}
     </div>
   );
