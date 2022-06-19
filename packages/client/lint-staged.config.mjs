@@ -11,11 +11,11 @@ const removeIgnoredFiles = async (files) => {
 };
 
 export default {
-  "*.{ts,tsx,js,jsx,cjs,mjs}": async (files) => {
+  "packages/{client,workers}/*.{ts,tsx,js,jsx,cjs,mjs}": async (files) => {
     const filesToLint = await removeIgnoredFiles(files);
-    return [`eslint --max-warnings=0 ${filesToLint}`];
+    return [`eslint --cache --max-warnings=0 ${filesToLint}`];
   },
-  "*.{ts,tsx,js,jsx,cjs,mjs,json,css,md,html}": [
+  "packages/{client,workers}/*.{ts,tsx,js,jsx,cjs,mjs,json,css,md,html}": [
     "prettier --write --cache --list-different",
   ],
 };

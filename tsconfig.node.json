@@ -8,12 +8,13 @@
     "types": []
   },
   "include": [
-    "lint-staged.config.mjs",
-    "scripts/*.mjs",
-    "**/vite.config.ts",
-    "**/vitest.config.ts",
     "**/package.json",
-    "**/cordova/hooks/*.js"
+    ".eslintrc.cjs",
+    "scripts/*.mjs",
+    "packages/*/lint-staged.config.mjs",
+    "packages/*/vite.config.ts",
+    "packages/*/vitest.config.ts",
+    "packages/*/cordova/hooks/*.js"
   ],
   "exclude": ["node_modules"]
 }

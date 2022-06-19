@@ -1,7 +1,9 @@
 {
   // Exclude node_modules from search results
   "search.exclude": {
-    "**/node_modules": true
+    "**/node_modules": true,
+    "**/platforms": true,
+    "/target": true
   },
   // Always add a newline at the end of the file
   "files.insertFinalNewline": true,

@@ -43,7 +43,29 @@
     "dev": {
       "cache": false
     },
+    "lint:practices": {
+      "dependsOn": ["^build"],
+      "outputs": [".eslintcache"]
+    },
+    "lint:types": {
+      "dependsOn": ["^build"]
+    },
+    "lint:format": {},
     "lint": {
+      "dependsOn": ["lint:practices", "lint:types", "lint:format"]
+    },
+    "lint:practices-fix": {
+      "dependsOn": ["^build"],
+      "outputs": [".eslintcache"]
+    },
+    "lint:types-fix": {
+      "dependsOn": ["^build"]
+    },
+    "lint:format-fix": {},
+    "lint:fix": {
+      "dependsOn": ["lint:practices-fix", "lint:types-fix", "lint:format-fix"]
+    },
+    "lint:staged": {
       "dependsOn": ["^build"],
       "outputs": [".eslintcache"]
     },

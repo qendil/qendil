@@ -21,7 +21,13 @@
     "prepare:cordova": "cordova prepare --no-telemetry",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "zx ../../scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
+    "lint:types": "zx ../../scripts/typecheck.mjs",
+    "lint:format": "prettier --cache -c .",
+    "lint:practices": "eslint --cache --max-warnings=0 .",
+    "lint:fix": "zx ../../scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
+    "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",

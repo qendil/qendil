@@ -3,6 +3,9 @@ name = "qendil-core"
 version = "0.0.1"
 authors = ["Said Dermoumi <hi@sdrm.me>"]
 edition = "2018"
+description = "Core shared functionality of the Qendil server"
+repository = "https://github.com/qendil/qendil/"
+license-file = "../../LICENSE"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

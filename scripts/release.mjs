@@ -27,32 +27,60 @@ if (!packageDirectoryStat.isDirectory()) {
   throw new Error(`ERROR: Package "${packageRoot}" does not exist`);
 }
 
-// Update package.json
-const packageJsonPath = `${packageRoot}/package.json`;
-const packageJsonString = await fs.readFile(packageJsonPath);
-const packageJson = JSON.parse(packageJsonString);
-packageJson.version = version;
-await fs.writeFile(
-  `${packageRoot}/package.json`,
-  `${JSON.stringify(packageJson, undefined, 2)}\n`
-);
-
-// Update config.xml
-const configXml = await fs.readFile(`${packageRoot}/config.xml`);
-const configDocument = libxml.parseXml(configXml);
-
-configDocument.root().attr("version", version);
-
-await fs.writeFile(`${packageRoot}/config.xml`, configDocument.toString());
-
-// Update changelog
-const githubToken = argv["github-token"];
-if (githubToken) {
-  process.env.GITHUB_TOKEN = githubToken;
+async function updatePackageJson() {
+  const packageJsonPath = `${packageRoot}/package.json`;
+  const packageJsonString = await fs.readFile(packageJsonPath);
+  const packageJson = JSON.parse(packageJsonString);
+  packageJson.version = version;
+  await fs.writeFile(
+    `${packageRoot}/package.json`,
+    `${JSON.stringify(packageJson, undefined, 2)}\n`
+  );
 }
 
-// eslint-disable-next-line unicorn/prefer-module
-await $`zx ${__dirname}/changelog.mjs --release=client/${version}`;
+async function updateCargoToml() {
+  const cargoTomlPath = `${packageRoot}/Cargo.toml`;
+  const cargoTomlStat = await fs.state(cargoTomlPath);
+  if (!cargoTomlStat.isFile()) return;
+
+  const cargoToml = await fs.readFile(cargoTomlPath);
+  const updatedCargoToml = cargoToml.replace(
+    /^version = ".*"$/m,
+    `version = "${version}"`
+  );
+  await fs.writeFile(cargoTomlPath, updatedCargoToml);
+}
+
+async function updateConfigXml() {
+  const configXmlPath = `${packageRoot}/config.xml`;
+  const configXmlStat = await fs.state(configXmlPath);
+  if (!configXmlStat.isFile()) return;
+
+  const configXml = await fs.readFile(configXmlPath);
+  const configDocument = libxml.parseXml(configXml);
+
+  configDocument.root().attr("version", version);
+
+  await fs.writeFile(configXmlPath, configDocument.toString());
+}
+
+// Update changelog
+async function updateChangelog() {
+  const githubToken = argv["github-token"];
+  if (githubToken) {
+    process.env.GITHUB_TOKEN = githubToken;
+  }
+
+  // eslint-disable-next-line unicorn/prefer-module
+  await $`zx ${__dirname}/changelog.mjs --release=client/${version}`;
+}
+
+await Promise.all([
+  updatePackageJson(),
+  updateCargoToml(),
+  updateConfigXml(),
+  updateChangelog(),
+]);
 
 // Print instructions to commit and release
 const commit = argv.commit ?? argv.c;

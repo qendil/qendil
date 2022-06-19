@@ -7,7 +7,9 @@
     "build": "wasm-pack build --target web --release",
     "dev": "nodemon -w src -e rs -x 'wasm-pack build --target web --dev'",
     "test": "cargo nextest run",
-    "test:cov": "cargo llvm-cov nextest"
+    "test:cov": "cargo llvm-cov nextest",
+    "lint:practices": "cargo clippy",
+    "lint:staged": "cargo clippy && cargo nextest run"
   },
   "dependencies": {
     "nodemon": "^2.0.16"
