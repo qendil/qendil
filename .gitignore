@@ -24,3 +24,6 @@ node_modules/
 # Rust artifacts
 /packages/*/pkg/
 /target/
+
+# LICENSE keeps getting copied here somehow
+/packages/LICENSE
