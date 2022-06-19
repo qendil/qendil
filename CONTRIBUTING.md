@@ -86,7 +86,7 @@ To run specific client tests:
 - Run `pnpm preview:<platform> -- --serve=<url>` to preview the given URL
   on the given platform.
   - This is useful to develop the app on a remote device, as you will
-    have access to hot module reloading when using `pnpm dev`.
+    have access to hot module reloading when using `pnpm dev:web`.
 
 > **Warning**<br>
 > Cordova and its targets are marked as optional dependencies to avoid
@@ -105,7 +105,7 @@ Here are platform specific instructions:
 
 ##### Electron
 
-- Run `pnpm dev` to start the development server.
+- Run `pnpm dev:web` to start the development server.
 - Run `pnpm preview:electron -- --serve=localhost:3000`
 
 ##### Android
@@ -139,7 +139,7 @@ Here are platform specific instructions:
     just make sure you have access to the host's IP.
   - You can also use Windows Subsystem for Android, it is generally faster.
 
-- Run `pnpm dev -- --host=0.0.0.0` to start the development server.
+- Run `pnpm dev:web -- --host=0.0.0.0` to start the development server.
 
   - Using `--host=0.0.0.0` is required to allow access from the
     same local network. You can also use your host's IP address instead.
@@ -160,7 +160,7 @@ Here are platform specific instructions:
 ##### iOS
 
 - [Install Xcode](https://apps.apple.com/app/xcode/id497799835).
-- Run `pnpm dev` to start the development server.
+- Run `pnpm dev:web` to start the development server.
 - Run `pnpm preview:ios -- --serve=localhost:3000` to start the simulator.
 - To debug, the application's developper tools can be accessed from Safari's
   developer menu.
