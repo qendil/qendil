@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   pull-requests: write
+  checks: write
 
 jobs:
   check_types:
