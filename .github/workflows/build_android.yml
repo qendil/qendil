@@ -16,6 +16,17 @@ jobs:
       - name: Checkout git repository
         uses: actions/checkout@v3
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
@@ -45,17 +56,6 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2.0.8
-
-      - name: Cache build artifacts
-        uses: actions/cache@v3
-        with:
-          path: |
-            target/
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0

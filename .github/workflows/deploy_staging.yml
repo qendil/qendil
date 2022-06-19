@@ -21,6 +21,17 @@ jobs:
       - name: Checkout git repository
         uses: actions/checkout@v3
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
@@ -41,17 +52,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - name: Cache build artifacts
-        uses: actions/cache@v3
-        with:
-          path: |
-            target/
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
-
       - name: Cache typescript buildinfo
         uses: actions/cache@v3
         with:
@@ -64,7 +64,7 @@ jobs:
           version: "latest"
 
       - name: Typecheck the code
-        run: pnpm lint:types --write
+        run: pnpm lint:types -- --write
 
   check_formatting:
     name: Check formatting of JS files
@@ -87,6 +87,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+
+      - name: Lint the code
+        run: pnpm lint:format
+
+  check_linting:
+    name: Lint JS files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+
       - name: Cache build artifacts
         uses: actions/cache@v3
         with:
@@ -98,26 +113,12 @@ jobs:
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
-      - name: Setup wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
-        with:
-          version: "latest"
-
-      - name: Lint the code
-        run: pnpm lint:format
-
-  check_linting_js:
-    name: Lint JS files
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout git repository
-        uses: actions/checkout@v3
-
       - name: Setup rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
+          components: clippy
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -133,6 +134,26 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+
+      - name: Lint the code
+        run: pnpm lint:practices --filter=!core
+
+  run_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v3
+
       - name: Cache build artifacts
         uses: actions/cache@v3
         with:
@@ -143,21 +164,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
           key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
-
-      - name: Setup wasm-pack
-        uses: jetli/wasm-pack-action@v0.3.0
-        with:
-          version: "latest"
-
-      - name: Lint the code
-        run: pnpm lint:practices
-
-  run_tests:
-    name: Run tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout git repository
-        uses: actions/checkout@v3
 
       - name: Setup rust
         uses: actions-rs/toolchain@v1
@@ -179,17 +185,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
-
-      - name: Cache build artifacts
-        uses: actions/cache@v3
-        with:
-          path: |
-            target/
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
@@ -219,7 +214,7 @@ jobs:
     needs:
       - check_types
       - check_formatting
-      - check_linting_js
+      - check_linting
       - run_tests
     environment:
       name: Staging
@@ -230,6 +225,17 @@ jobs:
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
+
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            target/
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
       - name: Setup rust
         uses: actions-rs/toolchain@v1
@@ -251,17 +257,6 @@ jobs:
       - name: Install dependencies
         run: >-
           pnpm install --frozen-lockfile --strict-peer-dependencies --production
-
-      - name: Cache build artifacts
-        uses: actions/cache@v3
-        with:
-          path: |
-            target/
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
       - name: Setup wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
