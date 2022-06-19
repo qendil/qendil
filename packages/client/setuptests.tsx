@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
+import "@testing-library/jest-dom/dist/extend-expect";
+
 import type { TestingLibraryMatchers } from "@testing-library/jest-dom/matchers";
 import type { SpyInstance } from "vitest";
 
