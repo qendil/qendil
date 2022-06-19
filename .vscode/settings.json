@@ -3,6 +3,7 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/platforms": true,
+    "**/.turbo": true,
     "/target": true
   },
   // Always add a newline at the end of the file

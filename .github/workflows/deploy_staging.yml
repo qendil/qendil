@@ -139,8 +139,8 @@ jobs:
         with:
           version: "latest"
 
-      - name: Lint the code
-        run: pnpm lint:practices --filter=!core
+      - name: Lint JS code
+        run: pnpm lint:eslint
 
   run_tests:
     name: Run tests
@@ -197,7 +197,7 @@ jobs:
 
       - name: Create rust code coverage
         run: |-
-          pnpm test:cov --filter=core -- --no-run --lcov --output-path=lcov.info
+          pnpm test:cov-rust -- --no-run --lcov --output-path=lcov.info
 
       - name: Publish code coverage
         uses: codecov/codecov-action@v3

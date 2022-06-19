@@ -40,12 +40,16 @@
     "preview:electron": {},
     "preview:ios": {},
     "preview:android": {},
-    "dev": {
+    "dev:web": {
       "cache": false
     },
-    "lint:practices": {
+    "lint:eslint": {
       "dependsOn": ["^build"],
       "outputs": [".eslintcache"]
+    },
+    "lint:clippy": {},
+    "lint:practices": {
+      "dependsOn": ["lint:eslint", "lint:clippy"]
     },
     "lint:types": {
       "dependsOn": ["^build"]
@@ -73,9 +77,10 @@
       "dependsOn": ["^build"]
     },
     "test:cov": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "test:cov-rust"],
       "outputs": ["coverage/**"]
     },
+    "test:cov-rust": {},
     "test:watch": {
       "cache": false
     }

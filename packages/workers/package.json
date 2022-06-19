@@ -12,8 +12,8 @@
     "lint:types": "zx ../../scripts/typecheck.mjs",
     "lint:format": "prettier --cache -c .",
     "lint:format-fix": "prettier --cache -wl .",
-    "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:practices-fix": "eslint --cache --fix --max-warnings=0 .",
+    "lint:eslint": "eslint --cache --max-warnings=0 .",
+    "lint:eslint-fix": "eslint --cache --fix --max-warnings=0 .",
     "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "exports": {

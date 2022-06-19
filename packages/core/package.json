@@ -6,10 +6,11 @@
   "types": "pkg/qendil_core.d.ts",
   "scripts": {
     "build": "wasm-pack build --target web --release",
-    "dev": "nodemon -w src -e rs -x 'wasm-pack build --target web --dev'",
+    "dev:web": "nodemon -w src -e rs -x 'wasm-pack build --target web --dev'",
     "test": "cargo nextest run",
-    "test:cov": "cargo llvm-cov nextest",
-    "lint:practices": "cargo clippy",
+    "test:cov-rust": "cargo llvm-cov nextest",
+    "test:watch": "nodemon -w src -e rs -x 'cargo nextest run'",
+    "lint:clippy": "cargo clippy",
     "lint:staged": "cargo clippy && cargo nextest run"
   },
   "dependencies": {

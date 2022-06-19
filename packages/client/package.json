@@ -7,7 +7,7 @@
   "license": "../LICENSE",
   "main": "index.html",
   "scripts": {
-    "dev": "vite",
+    "dev:web": "vite",
     "build:electron": "cordova build electron --no-telemetry --release",
     "build:macos": "pnpm build:electron --buildConfig=$PWD/cordova/electron/macos.json",
     "build:linux": "pnpm build:electron --buildConfig=$PWD/cordova/electron/linux.json",
@@ -25,8 +25,9 @@
     "lint": "zx ../../scripts/typecheck.mjs && eslint --cache --max-warnings=0 . && prettier --cache -c .",
     "lint:types": "zx ../../scripts/typecheck.mjs",
     "lint:format": "prettier --cache -c .",
-    "lint:practices": "eslint --cache --max-warnings=0 .",
-    "lint:fix": "zx ../../scripts/typecheck.mjs && prettier --cache -wl . && eslint --cache --fix --max-warnings=0 .",
+    "lint:format-fix": "prettier --cache -wl .",
+    "lint:eslint": "eslint --cache --max-warnings=0 .",
+    "lint:eslint-fix": "eslint --cache --fix --max-warnings=0 .",
     "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "dependencies": {
