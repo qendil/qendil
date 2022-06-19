@@ -86,4 +86,5 @@ jobs:
         with:
           files: packages/client/dist/*
           generate_release_notes: false
+          append_body: true
           draft: true

@@ -45,6 +45,8 @@ jobs:
             --for-prefix="${GIT_TAG%%/*}" \
             --output="RELEASE_NOTES.md" \
             --last-only
+
+          cat RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
