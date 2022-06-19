@@ -1,5 +1,6 @@
 {
   "name": "@qendil/core",
+  "version": "0.0.1",
   "private": true,
   "main": "pkg/qendil_core.js",
   "types": "pkg/qendil_core.d.ts",

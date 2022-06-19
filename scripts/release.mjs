@@ -40,21 +40,28 @@ async function updatePackageJson() {
 
 async function updateCargoToml() {
   const cargoTomlPath = `${packageRoot}/Cargo.toml`;
-  const cargoTomlStat = await fs.state(cargoTomlPath);
-  if (!cargoTomlStat.isFile()) return;
+  try {
+    const cargoTomlStat = await fs.stat(cargoTomlPath);
+    if (!cargoTomlStat.isFile()) return;
+  } catch {
+    return;
+  }
 
   const cargoToml = await fs.readFile(cargoTomlPath);
-  const updatedCargoToml = cargoToml.replace(
-    /^version = ".*"$/m,
-    `version = "${version}"`
-  );
+  const updatedCargoToml = cargoToml
+    .toString()
+    .replace(/^version = ".*"$/m, `version = "${version}"`);
   await fs.writeFile(cargoTomlPath, updatedCargoToml);
 }
 
 async function updateConfigXml() {
   const configXmlPath = `${packageRoot}/config.xml`;
-  const configXmlStat = await fs.state(configXmlPath);
-  if (!configXmlStat.isFile()) return;
+  try {
+    const configXmlStat = await fs.stat(configXmlPath);
+    if (!configXmlStat.isFile()) return;
+  } catch {
+    return;
+  }
 
   const configXml = await fs.readFile(configXmlPath);
   const configDocument = libxml.parseXml(configXml);
