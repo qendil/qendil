@@ -5,6 +5,10 @@ on:
     tags:
       - client/*
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy_to_production:
     name: Deploy to production
