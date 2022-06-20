@@ -1,5 +1,5 @@
-import GameComponent from "./game-component";
 import GameWorld from "./game-world";
+import GameComponent from "./game-component";
 
 class Position extends GameComponent {
   public x = 0;

@@ -1,9 +1,5 @@
 export type GameComponentConstructor<T extends GameComponent = GameComponent> =
-  new (...args: unknown[]) => T;
-
-export type GameComponentFilter<T extends GameComponent = GameComponent> =
-  | GameComponentConstructor<T>
-  | GameComponentFilterObject<T>;
+  new (...args: any) => T;
 
 export class GameComponentFilterObject<
   T extends GameComponent = GameComponent
@@ -19,6 +15,10 @@ export class GameComponentFilterObject<
     this.component = component;
   }
 }
+
+export type GameComponentFilter<T extends GameComponent = GameComponent> =
+  | GameComponentConstructor<T>
+  | GameComponentFilterObject<T>;
 
 export default class GameComponent {
   public static less(): GameComponentFilterObject {

@@ -7,8 +7,8 @@ import type {
   GameComponentConstructor,
   GameComponentFilter,
 } from "./game-component";
-import type { EntityQuery } from "./entity-query";
-import type { GameSystem } from "./game-system";
+import type EntityQuery from "./entity-query";
+import type GameSystem from "./game-system";
 export type { default as GameEntity } from "./game-entity";
 
 export default class GameWorld {

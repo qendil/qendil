@@ -1,9 +1,10 @@
-import GameComponent from "./game-component";
 import GameWorld from "./game-world";
+import GameComponent from "./game-component";
 
 class Position extends GameComponent {
-  public x = 0;
-  public y = 0;
+  public constructor(public x = 0, public y = 0) {
+    super();
+  }
 }
 
 class Velocity extends GameComponent {
@@ -141,5 +142,27 @@ describe("GameEntity", () => {
     expect(() => entity.get(Position)).toThrowError(
       `Cannot retrieve component ${Position.name} from entity ${entity.id} because it does not exist.`
     );
+  });
+
+  test("insert() accepts a component with a value", () => {
+    // Given an entity
+    // When I call .add() with a component and a value
+    // Then the entity should have a component with the correct value
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position, { x: 42, y: 144 });
+
+    expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
+  });
+
+  test("insert() accepts an instance of a component", () => {
+    // Given an entity
+    // When I call .add() with an instance of a component
+    // Then the entity should have a component with the correct value
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(new Position(42, 144));
+
+    expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 });

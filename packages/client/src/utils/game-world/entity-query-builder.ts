@@ -1,12 +1,12 @@
 import { GameComponentFilterObject } from "./game-component";
 import { SetMap } from "../default-map";
+import EntityQuery from "./entity-query";
 
-import type { GameEntity } from "./game-world";
+import type GameEntity from "./game-entity";
 import type {
   GameComponentConstructor,
   GameComponentFilter,
 } from "./game-component";
-import { EntityQuery } from "./entity-query";
 
 export default class EntityQueryBuilder extends Set<GameEntity> {
   public readonly filters: GameComponentFilter[];

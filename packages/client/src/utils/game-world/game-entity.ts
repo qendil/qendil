@@ -1,7 +1,5 @@
-import type {
-  default as GameComponent,
-  GameComponentConstructor,
-} from "./game-component";
+import GameComponent from "./game-component";
+import type { GameComponentConstructor } from "./game-component";
 
 export type GameEntityLifecycleHooks = {
   onDispose: (entity: GameEntity) => void;
@@ -37,19 +35,36 @@ export default class GameEntity {
     this.hooks.onDispose(this);
   }
 
+  public insert<T extends GameComponent>(constructorOrComponent: T): this;
+
   public insert<T extends GameComponent>(
-    constructor: GameComponentConstructor<T>,
+    constructorOrComponent: GameComponentConstructor<T>,
+    values?: Partial<Record<keyof T, any>>
+  ): this;
+
+  public insert<T extends GameComponent>(
+    constructorOrComponent: GameComponentConstructor<T> | T,
     values?: Partial<Record<keyof T, any>>
   ): this {
+    let constructor: GameComponentConstructor<T>;
+    let component: T;
+    if (constructorOrComponent instanceof GameComponent) {
+      component = constructorOrComponent;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      constructor = Object.getPrototypeOf(component)
+        .constructor as GameComponentConstructor<T>;
+    } else {
+      constructor = constructorOrComponent;
+      component = new constructor();
+      if (values !== undefined) {
+        Object.assign(component, values);
+      }
+    }
+
     if (this.components.has(constructor)) {
       throw new Error(
         `Cannot add component ${constructor.name} to entity ${this.id} because it already exists.`
       );
-    }
-
-    const component = new constructor();
-    if (values !== undefined) {
-      Object.assign(component, values);
     }
 
     const proxy = new Proxy(component, {

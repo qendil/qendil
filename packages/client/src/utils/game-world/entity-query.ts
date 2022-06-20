@@ -1,6 +1,6 @@
-import type { GameEntity } from "./game-world";
+import type GameEntity from "./game-entity";
 
-export class EntityQuery {
+export default class EntityQuery {
   private readonly entities: Set<GameEntity>;
   private readonly onDispose: () => void;
 
