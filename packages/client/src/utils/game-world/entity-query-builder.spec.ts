@@ -85,10 +85,6 @@ describe("Entity Query Builder", () => {
     // And the query should not contain the entities B and C
 
     const world = new GameWorld();
-    const system = world.watch(
-      [Position, Velocity, Rotation.less()],
-      (query) => query
-    );
     const entity1 = world.spawn().insert(Position).insert(Velocity);
     const entity2 = world.spawn().insert(Position);
     const entity3 = world
@@ -97,11 +93,15 @@ describe("Entity Query Builder", () => {
       .insert(Velocity)
       .insert(Rotation);
 
+    const system = world.watch(
+      [Position, Velocity, Rotation.less()],
+      (query) => [...query]
+    );
     const query = system();
 
-    expect([...query]).toContain(entity1);
-    expect([...query]).not.toContain(entity2);
-    expect([...query]).not.toContain(entity3);
+    expect(query).toContain(entity1);
+    expect(query).not.toContain(entity2);
+    expect(query).not.toContain(entity3);
   });
 
   it("handles entity disposal", () => {
