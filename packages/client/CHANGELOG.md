@@ -12,6 +12,10 @@
 
 - Fix handling of disposal in ECS [\#100](https://github.com/qendil/qendil/pull/100)
 
+**Other changes:**
+
+- Refactor App scene to use ECS [\#104](https://github.com/qendil/qendil/pull/104)
+
 ## [0.0.1](https://github.com/qendil/qendil/tree/client/0.0.1) (2022-06-16)
 
 [Full Changelog](https://github.com/qendil/qendil/compare/9e10223cc8d159a918bdc781818249c84644e133...client/0.0.1)
