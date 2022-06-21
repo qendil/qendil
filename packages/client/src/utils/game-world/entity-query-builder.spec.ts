@@ -23,7 +23,7 @@ class Vehicle extends GameComponent {
   public wheels = 4;
 }
 
-describe("Entity query Builder", () => {
+describe("Entity Query Builder", () => {
   it("keeps track of newly added components", () => {
     // Given a Position query
     // When I create a new entity with a Position component
@@ -35,9 +35,7 @@ describe("Entity query Builder", () => {
 
     expect(query.size).toBe(0);
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect([...query]).toContain(entity);
   });
 
@@ -51,13 +49,10 @@ describe("Entity query Builder", () => {
     const update = world.watch([Position], (query) => query);
     const query = update();
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect([...query]).toContain(entity);
 
     entity.remove(Position);
-
     expect(query.size).toBe(0);
   });
 
@@ -74,38 +69,34 @@ describe("Entity query Builder", () => {
 
     expect(query.size).toBe(0);
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect([...query]).not.toContain(entity);
 
     entity.insert(Rotation);
-
     expect([...query]).toContain(entity);
   });
 
   it("tracks entities created before the query was created", () => {
-    // Given an entity with a Position component
-    // When I create a Position query
-    // Then the query should contain that entity
+    // Given an entity A with Position and Velocity components
+    // And an entity B with only a Position component
+    // And an entity C with Position, Velocity and Rotation components
+    // When I create a Position, Velocity and Rotation-less query
+    // Then the query should contain the entity A
+    // And the query should not contain the entities B and C
 
     const world = new GameWorld();
-    const entity1 = world.spawn();
-    entity1.insert(Position);
-    entity1.insert(Velocity);
-
-    const entity2 = world.spawn();
-    entity2.insert(Position);
-
-    const entity3 = world.spawn();
-    entity3.insert(Position);
-    entity3.insert(Velocity);
-    entity3.insert(Rotation);
-
     const system = world.watch(
       [Position, Velocity, Rotation.less()],
       (query) => query
     );
+    const entity1 = world.spawn().insert(Position).insert(Velocity);
+    const entity2 = world.spawn().insert(Position);
+    const entity3 = world
+      .spawn()
+      .insert(Position)
+      .insert(Velocity)
+      .insert(Rotation);
+
     const query = system();
 
     expect([...query]).toContain(entity1);
@@ -123,26 +114,11 @@ describe("Entity query Builder", () => {
     const system = world.watch([Position], (query) => query);
     const query = system();
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect(query.has(entity)).toBeTruthy();
 
     entity.dispose();
-
     expect(query.size).toBe(0);
-  });
-
-  it("disposes without problems", () => {
-    // Given a Position query
-    // When I dispose the query
-    // Then no error should be thrown
-
-    const world = new GameWorld();
-    const system = world.watch([Position], (query) => query);
-    const query = system();
-
-    query.dispose();
   });
 
   it("handles component exclusion", () => {
@@ -156,13 +132,10 @@ describe("Entity query Builder", () => {
     const update = world.watch([Position, Rotation.less()], (query) => query);
     const query = update();
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect([...query]).toContain(entity);
 
     entity.insert(Rotation);
-
     expect([...query]).not.toContain(entity);
   });
 
@@ -179,18 +152,13 @@ describe("Entity query Builder", () => {
     const update = world.watch([Position.added()], (query) => query);
     const query = update();
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect([...query]).toContain(entity);
 
     update();
-
     expect([...query]).not.toContain(entity);
 
-    entity.remove(Position);
-    entity.insert(Position);
-
+    entity.remove(Position).insert(Position);
     expect([...query]).toContain(entity);
   });
 
@@ -200,9 +168,7 @@ describe("Entity query Builder", () => {
     // Then it should contain the component
 
     const world = new GameWorld();
-
-    const entity = world.spawn();
-    entity.insert(Position);
+    const entity = world.spawn().insert(Position);
 
     const update = world.watch([Position.added()], (query) => {
       expect([...query]).toContain(entity);
@@ -218,17 +184,31 @@ describe("Entity query Builder", () => {
     // Then the query should contain the entity
 
     const world = new GameWorld();
-
     const entity = world.spawn().insert(Position);
-
     const update = world.watch([Position.changed()], (query) => query);
-    const query = update();
 
+    const query = update();
     expect([...query]).not.toContain(entity);
 
     entity.get(Position).x = 1;
-
     expect([...query]).toContain(entity);
+  });
+
+  it("does not consider component updates as changed if the value does not change", () => {
+    // Given an entity with a Position component
+    // And an updated Position-changed query
+    // When I update the value of the Position component to its same value
+    // Then the query should not contain the entity
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position, { x: 144 });
+    const update = world.watch([Position.changed()], (query) => query);
+
+    const query = update();
+    expect([...query]).not.toContain(entity);
+
+    entity.get(Position).x = 144;
+    expect([...query]).not.toContain(entity);
   });
 
   it("handles complex gradual queries", () => {
@@ -266,14 +246,12 @@ describe("Entity query Builder", () => {
     // Add component
     entityA.insert(Position);
     entityB.insert(Position);
-
     expect([...query]).not.toContain(entityA);
     expect([...query]).not.toContain(entityB);
 
     // Change component values
     entityA.get(Velocity).x = 1;
     entityB.get(Velocity).x = 1;
-
     expect([...query]).not.toContain(entityA);
     expect([...query]).toContain(entityB);
 
@@ -282,25 +260,21 @@ describe("Entity query Builder", () => {
 
     // Remove previously added component
     entityB.remove(Velocity);
-
     expect([...query]).not.toContain(entityA);
     expect([...query]).not.toContain(entityB);
 
     // Re-add removed component
     entityB.insert(Velocity, { x: 1 });
-
     expect([...query]).not.toContain(entityA);
     expect([...query]).toContain(entityB);
 
     // Removed filtered-out component
     entityA.remove(Rotation);
-
     expect([...query]).toContain(entityA);
     expect([...query]).toContain(entityB);
 
     // Remove unrelated component
     entityB.remove(Vehicle);
-
     expect([...query]).toContain(entityA);
     expect([...query]).toContain(entityB);
   });
@@ -319,14 +293,10 @@ describe("Entity query Builder", () => {
     );
     const query = update();
 
-    const entity = world.spawn();
-    entity.insert(Position);
-    entity.insert(Velocity);
-
+    const entity = world.spawn().insert(Position).insert(Velocity);
     expect([...query]).not.toContain(entity);
 
     entity.remove(Position);
-
     expect([...query]).not.toContain(entity);
   });
 });

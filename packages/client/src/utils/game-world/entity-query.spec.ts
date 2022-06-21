@@ -7,25 +7,6 @@ class Position extends GameComponent {
 }
 
 describe("Entity Query", () => {
-  it("Disposes the parent query", () => {
-    // Given a query builder
-    // And a query
-    // When I call .dispose() on the wrapper
-    // Then the original query should be disposed
-
-    const world = new GameWorld();
-    const system = world.watch([Position], (query) => query);
-    const query = system();
-
-    /// @ts-expect-error 2341: We need to access the internal queries
-    const queries = world.queries.get(Position);
-
-    expect(queries.size).toBe(1);
-
-    query.dispose();
-    expect(queries.size).toBe(0);
-  });
-
   it("correctly checks for entities", () => {
     // Given a Position query
     // When I create a new entity with a Position component
@@ -33,13 +14,11 @@ describe("Entity Query", () => {
 
     const world = new GameWorld();
     const system = world.watch([Position], (query) => query);
-    const query = system();
 
+    const query = system();
     expect(query.size).toBe(0);
 
-    const entity = world.spawn();
-    entity.insert(Position);
-
+    const entity = world.spawn().insert(Position);
     expect(query.size).toBe(1);
     expect(query.has(entity)).toBe(true);
   });

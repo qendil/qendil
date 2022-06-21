@@ -2,8 +2,14 @@ import GameWorld from "./game-world";
 import GameComponent from "./game-component";
 
 class Position extends GameComponent {
-  public constructor(public x = 0, public y = 0) {
+  public x = 0;
+  public y = 0;
+
+  public constructor(x = 0, y = 0) {
     super();
+
+    this.x = x;
+    this.y = y;
   }
 }
 
@@ -45,11 +51,15 @@ describe("GameEntity", () => {
     const world = new GameWorld();
     const entity = world.spawn().insert(Position).insert(Velocity);
 
+    const components = entity.getComponents();
+    expect(components).toContain(Position);
+    expect(components).toContain(Velocity);
+
     entity.remove(Position);
 
-    const components = entity.getComponents();
-    expect(components).not.toContain(Position);
-    expect(components).toContain(Velocity);
+    const components2 = entity.getComponents();
+    expect(components2).not.toContain(Position);
+    expect(components2).toContain(Velocity);
   });
 
   test("has() returns true when the given component is present", () => {
