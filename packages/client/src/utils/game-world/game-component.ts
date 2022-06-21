@@ -73,4 +73,14 @@ export default class GameComponent {
       this as unknown as GameComponentConstructor
     );
   }
+
+  /**
+   * Disposes and cleans up the component.
+   *
+   * @important This method is only meant for resource clean up,
+   *  avoid running game logic in here.
+   */
+  public dispose(): void {
+    // Nothing to do
+  }
 }

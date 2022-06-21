@@ -20,10 +20,10 @@ rustup default nightly
 
 # Add the llvm-tools if planning on using coverage
 rustup component add llvm-tools-preview
-cargo install llvm-cov
+cargo install cargo-llvm-cov
 
 # Install nextest for faster testing
-cargo install nextest
+cargo install cargo-nextest
 
 # Install wasm-pack
 curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | bash

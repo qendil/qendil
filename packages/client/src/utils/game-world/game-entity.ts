@@ -1,4 +1,4 @@
-import GameComponent from "./game-component";
+import type GameComponent from "./game-component";
 import type { GameComponentConstructor } from "./game-component";
 
 /**
@@ -35,6 +35,7 @@ export type GameEntityLifecycleHooks = {
 export abstract class GameEntity {
   public readonly id: number;
   protected readonly hooks: GameEntityLifecycleHooks;
+  protected disposed = false;
 
   protected readonly components = new Map<
     GameComponentConstructor,
@@ -50,23 +51,15 @@ export abstract class GameEntity {
    * Removes the entity and all of its components from the game world.
    */
   public dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+
+    for (const component of this.components.values()) {
+      component.dispose();
+    }
+
     this.hooks.onDispose(this);
   }
-
-  /**
-   * Add a component instance to the entity.
-   *
-   * @important This instance is wrapped internally to monitor changes,
-   *  do not use this same instance, and instead, retrieve the wrapped
-   *  instance using `.get(component)`.
-   *
-   * @important This does not clone the passed instance, so you should
-   *  avoid reusing the same comopnent instance across multiple entities.
-   *
-   * @param component - The component to add
-   * @returns The entity itself
-   */
-  public insert<T extends GameComponent>(component: T): this;
 
   /**
    * Add a component to the entity.
@@ -78,22 +71,12 @@ export abstract class GameEntity {
   public insert<T extends GameComponent>(
     constructor: GameComponentConstructor<T>,
     values?: Partial<Record<keyof T, any>>
-  ): this;
-
-  public insert<T extends GameComponent>(
-    constructorOrComponent: GameComponentConstructor<T> | T,
-    values?: Partial<Record<keyof T, any>>
   ): this {
-    // Extract the constructor and the component
-    let constructor: GameComponentConstructor<T>;
-    let component: T | undefined;
-    if (constructorOrComponent instanceof GameComponent) {
-      component = constructorOrComponent;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      constructor = Object.getPrototypeOf(component)
-        .constructor as GameComponentConstructor<T>;
-    } else {
-      constructor = constructorOrComponent;
+    // Make sure the entity was not disposed
+    if (this.disposed) {
+      throw new Error(
+        `Cannot insert component ${constructor.name} into entity ${this.id} because it has been disposed.`
+      );
     }
 
     // Make sure the component is not duplacted
@@ -104,11 +87,9 @@ export abstract class GameEntity {
     }
 
     // Instanciate the component if it was not already
-    if (component === undefined) {
-      component = new constructor();
-      if (values !== undefined) {
-        Object.assign(component, values);
-      }
+    const component = new constructor();
+    if (values !== undefined) {
+      Object.assign(component, values);
     }
 
     // Wrap the component with a proxy to monitor changes
@@ -142,12 +123,29 @@ export abstract class GameEntity {
   public remove<T extends GameComponent>(
     constructor: GameComponentConstructor<T>
   ): this {
-    this.components.delete(constructor);
-    this.hooks.onComponentRemoved(this, constructor);
+    if (this.disposed) {
+      throw new Error(
+        `Cannot remove component ${constructor.name} from entity ${this.id} because it has been disposed.`
+      );
+    }
+
+    const component = this.components.get(constructor);
+    if (component !== undefined) {
+      this.components.delete(constructor);
+      component.dispose();
+      this.hooks.onComponentRemoved(this, constructor);
+    }
 
     return this;
   }
 
+  /**
+   * Retrieve a single mapped component from this entity.
+   *
+   * @throws If the component is not mapped to this entity.
+   * @param constructor - The component to retrieve
+   * @returns A component
+   */
   public get<T extends GameComponent>(
     constructor: GameComponentConstructor<T>
   ): T {

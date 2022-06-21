@@ -134,8 +134,8 @@ export default class EntityQueryBuilder extends Set<GameEntity> {
   public wrap(): [EntityQuery, () => void, () => void] {
     const query = new EntityQueryWrapper(this);
 
-    const update = this.update.bind(this);
-    const dispose = this.dispose.bind(this);
+    const update = (): void => this.update();
+    const dispose = (): void => this.dispose();
 
     return [query, update, dispose];
   }

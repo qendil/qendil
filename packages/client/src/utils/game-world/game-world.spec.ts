@@ -6,6 +6,101 @@ class Position extends GameComponent {
   public y = 0;
 }
 
+describe("GameWorld", () => {
+  it("properly disposes of its queries", () => {
+    // Given a world with queries
+    // When I call .dispose() on the world
+    // Then the queries should be disposed
+
+    const world = new GameWorld();
+    world.watch([Position], (query) => query);
+
+    /// @ts-expect-error 2341: We need to access the internal queries set
+    const [query] = world.queries.get(Position);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disposeSpy = vi.spyOn(query!, "dispose");
+
+    world.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("properly disposes of its queries once", () => {
+    // Given a world with queries
+    // When I call .dispose() on the world
+    // And I call .dispose() on the world again
+    // Then the queries should be disposed
+
+    const world = new GameWorld();
+    world.watch([Position], (query) => query);
+
+    /// @ts-expect-error 2341: We need to access the internal queries set
+    const [query] = world.queries.get(Position);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disposeSpy = vi.spyOn(query!, "dispose");
+
+    world.dispose();
+    world.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("properly disposes of its entities", () => {
+    // Given a world with entities
+    // When I call .dispose() on the world
+    // Then the entities should be disposed
+
+    const world = new GameWorld();
+    const entity = world.spawn();
+
+    const disposeSpy = vi.spyOn(entity, "dispose");
+
+    world.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("properly disposes of its entities once", () => {
+    // Given a world with entities
+    // When I call .dispose() on the world
+    // And I call .dispose() on the world again
+    // Then the entities should be disposed
+
+    const world = new GameWorld();
+    const entity = world.spawn();
+
+    const disposeSpy = vi.spyOn(entity, "dispose");
+
+    world.dispose();
+    world.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("fails when attempting to spawn an entity after disposal", () => {
+    // Given a disposed world
+    // When I try to spawn an entity
+    // Then I should get an error
+
+    const world = new GameWorld();
+    world.dispose();
+
+    expect(() => world.spawn()).toThrowError(
+      "Cannot spawn an entity in a disposed world."
+    );
+  });
+
+  it("fails when attempting to create a system after disposal", () => {
+    // Given a disposed world
+    // When I try to create a system
+    // Then I should get an error
+
+    const world = new GameWorld();
+    world.dispose();
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(() => world.watch([], () => {})).toThrowError(
+      "Cannot create a system in a disposed world."
+    );
+  });
+});
+
 describe("GameWorld system", () => {
   it("forwards arguments", () => {
     // Given a system that accepts 2 arguments
@@ -83,5 +178,25 @@ describe("GameWorld system", () => {
 
     system.dispose();
     expect(queries.size).toBe(0);
+  });
+
+  it("properly dispose their queries once", () => {
+    // Given a system that queries for Position components
+    // When I call `.dispose()` on the system
+    // And I call `.dispose()` on the system again
+    // Then the corresponding query should no longer be tracked
+
+    const world = new GameWorld();
+    /// @ts-expect-error 2341: We need to access the internal queries set
+    const queries = world.queries.get(Position);
+    const system = world.watch([Position], (query) => query);
+
+    const [query] = queries;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disposeSpy = vi.spyOn(query!, "dispose");
+
+    system.dispose();
+    system.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
   });
 });
