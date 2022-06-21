@@ -26,14 +26,14 @@ importers:
       prettier: ^2.7.1
       turbo: ^1.2.16
       typescript: ^4.7.4
-      zx: ^7.0.0
+      zx: ^7.0.1
     dependencies:
       dotenv: 16.0.1
       husky: 8.0.1
       libxmljs: 0.19.10
       minimist: 1.2.6
       turbo: 1.2.16
-      zx: 7.0.0
+      zx: 7.0.1
     devDependencies:
       '@jgoz/esbuild-plugin-typecheck': 1.1.0_typescript@4.7.4
       '@typescript-eslint/eslint-plugin': 5.29.0_qqmbkyiaixvppdwswpytuf2hgm
@@ -9863,8 +9863,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zx/7.0.0:
-    resolution: {integrity: sha512-QPUkzM2o/yfr8CnJgR3Uzi4ESW3IhM4iOIrDx2wJ0vZAU4Gz0Bd/wvOWdqAheJgUTc1ecTkOMpdBKCSBvVDnTg==}
+  /zx/7.0.1:
+    resolution: {integrity: sha512-5jCux4+8EL7blqjQZDCV9KiV+TEY9Vn9dkddOYEqdrE79X0jsVDRMt0u2O6UsBkC8Da8flcr6Vx9EmcVX4S5vg==}
     engines: {node: '>= 16.0.0'}
     hasBin: true
     dependencies:
