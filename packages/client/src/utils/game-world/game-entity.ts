@@ -1,4 +1,4 @@
-import GameComponent from "./game-component";
+import type GameComponent from "./game-component";
 import type { GameComponentConstructor } from "./game-component";
 
 /**
@@ -62,21 +62,6 @@ export abstract class GameEntity {
   }
 
   /**
-   * Add a component instance to the entity.
-   *
-   * @important This instance is wrapped internally to monitor changes,
-   *  do not use this same instance, and instead, retrieve the wrapped
-   *  instance using `.get(component)`.
-   *
-   * @important This does not clone the passed instance, so you should
-   *  avoid reusing the same comopnent instance across multiple entities.
-   *
-   * @param component - The component to add
-   * @returns The entity itself
-   */
-  public insert<T extends GameComponent>(component: T): this;
-
-  /**
    * Add a component to the entity.
    *
    * @param constructor - The component to add
@@ -86,24 +71,7 @@ export abstract class GameEntity {
   public insert<T extends GameComponent>(
     constructor: GameComponentConstructor<T>,
     values?: Partial<Record<keyof T, any>>
-  ): this;
-
-  public insert<T extends GameComponent>(
-    constructorOrComponent: GameComponentConstructor<T> | T,
-    values?: Partial<Record<keyof T, any>>
   ): this {
-    // Extract the constructor and the component
-    let constructor: GameComponentConstructor<T>;
-    let component: T | undefined;
-    if (constructorOrComponent instanceof GameComponent) {
-      component = constructorOrComponent;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      constructor = Object.getPrototypeOf(component)
-        .constructor as GameComponentConstructor<T>;
-    } else {
-      constructor = constructorOrComponent;
-    }
-
     // Make sure the entity was not disposed
     if (this.disposed) {
       throw new Error(
@@ -119,11 +87,9 @@ export abstract class GameEntity {
     }
 
     // Instanciate the component if it was not already
-    if (component === undefined) {
-      component = new constructor();
-      if (values !== undefined) {
-        Object.assign(component, values);
-      }
+    const component = new constructor();
+    if (values !== undefined) {
+      Object.assign(component, values);
     }
 
     // Wrap the component with a proxy to monitor changes
@@ -163,7 +129,10 @@ export abstract class GameEntity {
       );
     }
 
-    if (this.components.delete(constructor)) {
+    const component = this.components.get(constructor);
+    if (component !== undefined) {
+      this.components.delete(constructor);
+      component.dispose();
       this.hooks.onComponentRemoved(this, constructor);
     }
 

@@ -94,11 +94,10 @@ describe("GameWorld", () => {
     const world = new GameWorld();
     world.dispose();
 
-    expect(() =>
-      world.watch([], () => {
-        // Nothing to do
-      })
-    ).toThrowError("Cannot create a system in a disposed world.");
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(() => world.watch([], () => {})).toThrowError(
+      "Cannot create a system in a disposed world."
+    );
   });
 });
 

@@ -165,15 +165,36 @@ describe("GameEntity", () => {
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 
-  test("insert() accepts an instance of a component", () => {
-    // Given an entity
-    // When I call .add() with an instance of a component
-    // Then the entity should have a component with the correct value
+  it("disposes of the components when it's removed", () => {
+    // Given an entity with a Position component
+    // When I remove the Position component
+    // Then .dispose() should be called on the Position component
 
     const world = new GameWorld();
-    const entity = world.spawn().insert(new Position(42, 144));
+    const entity = world.spawn().insert(Position);
 
-    expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.remove(Position);
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("disposes of the components when it's removed once", () => {
+    // Given an entity with a Position component
+    // When I remove the Position component
+    // And I attempt to remove the component again
+    // Then .dispose() should be called on the Position component
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.remove(Position);
+    entity.remove(Position);
+    expect(disposeSpy).toHaveBeenCalledOnce();
   });
 
   it("disposes of the components when disposing the entity", () => {
