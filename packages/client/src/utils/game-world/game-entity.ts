@@ -62,6 +62,24 @@ export abstract class GameEntity {
   }
 
   /**
+   * Creates a new component and adds it to the entity.
+   * This is different from `insert` because it calls the component's
+   *  constructor with the passed arguments.
+   *
+   * @param constructor - The component to add
+   * @param args - Values to pass to the constructor when creating the component
+   * @returns The entity itself
+   */
+  public insertNew<T extends GameComponent, TArgs extends any[]>(
+    constructor: GameComponentConstructor<T, TArgs>,
+    ...args: TArgs
+  ): this {
+    const component = new constructor(...args);
+
+    return this.insertComponent(constructor, component);
+  }
+
+  /**
    * Add a component to the entity.
    *
    * @param constructor - The component to add
@@ -71,6 +89,25 @@ export abstract class GameEntity {
   public insert<T extends GameComponent>(
     constructor: GameComponentConstructor<T>,
     values?: Partial<Record<keyof T, any>>
+  ): this {
+    const component = new constructor();
+    if (values !== undefined) {
+      Object.assign(component, values);
+    }
+
+    return this.insertComponent(constructor, component);
+  }
+
+  /**
+   * Used internally to add and wrap a component to the entity
+   *
+   * @param constructor - The constructor of the added component
+   * @param component - The component instance to add
+   * @returns The entity itself
+   */
+  private insertComponent(
+    constructor: GameComponentConstructor,
+    component: GameComponent
   ): this {
     // Make sure the entity was not disposed
     if (this.disposed) {
@@ -84,12 +121,6 @@ export abstract class GameEntity {
       throw new Error(
         `Cannot add component ${constructor.name} to entity ${this.id} because it already exists.`
       );
-    }
-
-    // Instanciate the component if it was not already
-    const component = new constructor();
-    if (values !== undefined) {
-      Object.assign(component, values);
     }
 
     // Wrap the component with a proxy to monitor changes

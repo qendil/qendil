@@ -1,7 +1,9 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
-import { InputAxis } from "../utils/input-manager/input-manager";
+import { BoxGeometry, Mesh as ThreeMesh, MeshBasicMaterial } from "three";
+import { InputAxis } from "../utils/input-manager";
 import coreInit, { makeGreeting } from "@qendil/core";
+import GameWorld, { GameComponent } from "../utils/game-world";
 
+import type InputManager from "../utils/input-manager";
 import type { ReactElement } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
@@ -9,6 +11,79 @@ import useGameView from "../hooks/use-game-view";
 import useWasm from "../hooks/use-wasm";
 
 import classes from "./app.module.css";
+
+const gameWorld = new GameWorld();
+
+class Position extends GameComponent {
+  public x = 0;
+  public y = 0;
+  public z = 0;
+}
+
+class Velocity extends GameComponent {
+  public x = 0;
+  public y = 0;
+  public z = 0;
+  public factor = 1;
+}
+
+class Mesh extends GameComponent {
+  public mesh: ThreeMesh;
+
+  public constructor(...args: ConstructorParameters<typeof ThreeMesh>) {
+    super();
+
+    this.mesh = new ThreeMesh(...args);
+  }
+}
+
+class ThirdPersonController extends GameComponent {
+  // Nothing here
+}
+
+const updatePosition = gameWorld.watch(
+  [Position, Velocity],
+  (query, dt: number) => {
+    for (const entity of query) {
+      const { x, y, z } = entity.get(Velocity);
+      const position = entity.get(Position);
+
+      position.x += x * dt;
+      position.y += y * dt;
+      position.z += z * dt;
+    }
+  }
+);
+
+const updateMeshPosition = gameWorld.watch(
+  [Mesh, Position.changed()],
+  (query) => {
+    for (const entity of query) {
+      const { x, y, z } = entity.get(Position);
+      const { mesh } = entity.get(Mesh);
+
+      mesh.position.x = x;
+      mesh.position.y = y;
+      mesh.position.z = z;
+    }
+  }
+);
+
+const updateStickControl = gameWorld.watch(
+  [ThirdPersonController, Velocity],
+  (query, input: InputManager) => {
+    const lx = input.getAxis(InputAxis.LX);
+    const ly = input.getAxis(InputAxis.LY);
+
+    for (const entity of query) {
+      const velocity = entity.get(Velocity);
+      const { factor: speed } = velocity;
+
+      velocity.x = lx * speed;
+      velocity.y = -ly * speed;
+    }
+  }
+);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -28,31 +103,37 @@ export default function App(): ReactElement {
 
   const WorldView = useGameView(({ scene, input, makePerspectiveCamera }) => {
     const camera = makePerspectiveCamera();
+    camera.position.z = 5;
 
     const geometry = new BoxGeometry();
     const material = new MeshBasicMaterial({ color: 0xffcc00 });
-    const cube = new Mesh(geometry, material);
-    scene.add(cube);
 
-    camera.position.z = 5;
+    const cube = gameWorld
+      .spawn()
+      .insertNew(Mesh, geometry, material)
+      .insert(Position)
+      .insert(Velocity, { factor: 3 })
+      .insert(ThirdPersonController);
 
-    let velocityX = 0;
-    let velocityY = 0;
-    const moveSpeed = 3;
+    const { mesh } = cube.get(Mesh);
+    scene.add(mesh);
 
     return {
       camera,
       onUpdate(frametime): void {
-        velocityX = input.getAxis(InputAxis.LX) * moveSpeed;
-        velocityY = input.getAxis(InputAxis.LY) * moveSpeed;
-
-        camera.position.x -= velocityX * frametime;
-        camera.position.y += velocityY * frametime;
+        updateStickControl(input);
+        updatePosition(frametime);
+        updateMeshPosition();
+      },
+      onDispose(): void {
+        material.dispose();
+        geometry.dispose();
+        cube.dispose();
       },
     };
   }, []);
 
-  const world = <WorldView className={classes.world} />;
+  const worldView = <WorldView className={classes.world} />;
 
   useWasm(coreInit);
   const wasmTest = (
@@ -67,7 +148,7 @@ export default function App(): ReactElement {
     <div className={classes.app}>
       {updatePrompt}
       {wasmTest}
-      {world}
+      {worldView}
     </div>
   );
 }
