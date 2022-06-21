@@ -25,11 +25,37 @@ class GameEntityWrapper extends GameEntity {
  */
 export default class GameWorld {
   private nextEntityID = 0;
+  private disposed = false;
   private readonly entities = new Set<GameEntity>();
   private readonly queries = new SetMap<
     GameComponentConstructor,
     EntityQueryBuilder
   >();
+
+  /**
+   * Disposes of the world and all its entities, components and systems.
+   */
+  public dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+
+    for (const entity of this.entities) {
+      entity.dispose();
+    }
+
+    const disposedBuilders = new Set<EntityQueryBuilder>();
+    for (const builders of this.queries.values()) {
+      for (const builder of builders) {
+        if (!disposedBuilders.has(builder)) {
+          builder.dispose();
+          disposedBuilders.add(builder);
+        }
+      }
+    }
+
+    this.entities.clear();
+    this.queries.clear();
+  }
 
   /**
    * Spawns a new entity in the world.
@@ -40,6 +66,10 @@ export default class GameWorld {
    * @returns A new entity
    */
   public spawn(): GameEntity {
+    if (this.disposed) {
+      throw new Error("Cannot spawn an entity in a disposed world.");
+    }
+
     const entity = new GameEntityWrapper(this.nextEntityID++, {
       onDispose: this._disposeEntity.bind(this),
       onComponentAdded: this._entityComponentAdded.bind(this),
@@ -69,7 +99,12 @@ export default class GameWorld {
     filters: GameComponentFilter[],
     callback: (entities: EntityQuery, ...args: T) => R
   ): GameSystem<T, R> {
+    if (this.disposed) {
+      throw new Error("Cannot create a system in a disposed world.");
+    }
+
     const [query, update, dispose] = this.createQuery(...filters);
+    let disposed = false;
 
     const system: GameSystem<T, R> = (...args: T): R => {
       const result = callback(query, ...args);
@@ -78,6 +113,9 @@ export default class GameWorld {
     };
 
     system.dispose = (): void => {
+      if (disposed) return;
+
+      disposed = true;
       dispose();
     };
 

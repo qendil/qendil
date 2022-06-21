@@ -175,4 +175,64 @@ describe("GameEntity", () => {
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
+
+  it("disposes of the components when disposing the entity", () => {
+    // Given an entity with a Position component
+    // When I call .dispose() on the entity
+    // Then .dispose() should be called on the components too
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("disposes of the components when disposing the entity, once", () => {
+    // Given an entity with a Position component
+    // When I call .dispose() on the entity
+    // And I call .dispose() on the entity again
+    // Then .dispose() should be called on the components too
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.dispose();
+    entity.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("fails when attempting to insert a component into a disposed entity", () => {
+    // Given a disposed entity
+    // When I try to add a component to it
+    // Then I should get an error
+
+    const world = new GameWorld();
+    const entity = world.spawn();
+    entity.dispose();
+
+    expect(() => entity.insert(Position)).toThrowError(
+      `Cannot insert component ${Position.name} into entity ${entity.id} because it has been disposed.`
+    );
+  });
+
+  it("fails when attempting to remove a component from a disposed entity", () => {
+    // Given a disposed entity
+    // When I try to remove a component from it
+    // Then I should get an error
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+    entity.dispose();
+
+    expect(() => entity.remove(Position)).toThrowError(
+      `Cannot remove component ${Position.name} from entity ${entity.id} because it has been disposed.`
+    );
+  });
 });

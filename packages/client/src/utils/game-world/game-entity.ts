@@ -35,6 +35,7 @@ export type GameEntityLifecycleHooks = {
 export abstract class GameEntity {
   public readonly id: number;
   protected readonly hooks: GameEntityLifecycleHooks;
+  protected disposed = false;
 
   protected readonly components = new Map<
     GameComponentConstructor,
@@ -50,6 +51,13 @@ export abstract class GameEntity {
    * Removes the entity and all of its components from the game world.
    */
   public dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+
+    for (const component of this.components.values()) {
+      component.dispose();
+    }
+
     this.hooks.onDispose(this);
   }
 
@@ -94,6 +102,13 @@ export abstract class GameEntity {
         .constructor as GameComponentConstructor<T>;
     } else {
       constructor = constructorOrComponent;
+    }
+
+    // Make sure the entity was not disposed
+    if (this.disposed) {
+      throw new Error(
+        `Cannot insert component ${constructor.name} into entity ${this.id} because it has been disposed.`
+      );
     }
 
     // Make sure the component is not duplacted
@@ -142,12 +157,26 @@ export abstract class GameEntity {
   public remove<T extends GameComponent>(
     constructor: GameComponentConstructor<T>
   ): this {
-    this.components.delete(constructor);
-    this.hooks.onComponentRemoved(this, constructor);
+    if (this.disposed) {
+      throw new Error(
+        `Cannot remove component ${constructor.name} from entity ${this.id} because it has been disposed.`
+      );
+    }
+
+    if (this.components.delete(constructor)) {
+      this.hooks.onComponentRemoved(this, constructor);
+    }
 
     return this;
   }
 
+  /**
+   * Retrieve a single mapped component from this entity.
+   *
+   * @throws If the component is not mapped to this entity.
+   * @param constructor - The component to retrieve
+   * @returns A component
+   */
   public get<T extends GameComponent>(
     constructor: GameComponentConstructor<T>
   ): T {

@@ -212,6 +212,10 @@ module.exports = {
       "error",
       { hexadecimal: { minimumDigits: 9 } },
     ],
+    "unicorn/consistent-function-scoping": [
+      "error",
+      { checkArrowFunctions: false },
+    ],
   },
   overrides: [
     {
