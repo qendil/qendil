@@ -165,6 +165,17 @@ describe("GameEntity", () => {
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 
+  test("insertNew() instanciates and adds a component", () => {
+    // Given an entity
+    // When I call .insertNew() with an instance of a component
+    // Then the entity should have a component with the correct value
+
+    const world = new GameWorld();
+    const entity = world.spawn().insertNew(Position, 42, 144);
+
+    expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
+  });
+
   it("disposes of the components when it's removed", () => {
     // Given an entity with a Position component
     // When I remove the Position component

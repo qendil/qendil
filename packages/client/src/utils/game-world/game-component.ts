@@ -1,8 +1,10 @@
 /**
  * A reference to a component by its constructor.
  */
-export type GameComponentConstructor<T extends GameComponent = GameComponent> =
-  new (...args: any) => T;
+export type GameComponentConstructor<
+  T extends GameComponent = GameComponent,
+  TArgs extends any[] = any
+> = new (...args: TArgs) => T;
 
 /**
  * A class that allows for filtering by a component.
