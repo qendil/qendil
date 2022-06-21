@@ -143,6 +143,11 @@ module.exports = {
       "error",
       { checksVoidReturn: false },
     ],
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-extraneous-class": [
+      "warn",
+      { allowStaticOnly: true },
+    ],
 
     "react/display-name": "off",
     "react/forbid-component-props": [
