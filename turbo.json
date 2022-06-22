@@ -8,7 +8,7 @@
     },
     "build:web": {
       "dependsOn": ["^build"],
-      "outputs": ["www/**", "pkg/**"]
+      "cache": false
     },
     "prepare:cordova": {
       "dependsOn": ["build:web"],
@@ -16,26 +16,27 @@
     },
     "build:macos": {
       "dependsOn": ["prepare:cordova"],
-      "outputs": ["dist/**"]
+      "cache": false
     },
     "build:linux": {
       "dependsOn": ["prepare:cordova"],
-      "outputs": ["dist/**"]
+      "cache": false
     },
     "build:windows": {
       "dependsOn": ["prepare:cordova"],
-      "outputs": ["dist/**"]
+      "cache": false
     },
     "build:ios": {
       "dependsOn": ["prepare:cordova"],
-      "outputs": ["dist/**"]
+      "cache": false
     },
     "build:android": {
       "dependsOn": ["prepare:cordova"],
-      "outputs": ["dist/**"]
+      "cache": false
     },
     "preview:web": {
-      "dependsOn": ["build:web"]
+      "dependsOn": ["build:web"],
+      "outputs": ["dist/**"]
     },
     "preview:electron": {},
     "preview:ios": {},

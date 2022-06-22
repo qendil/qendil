@@ -5,11 +5,11 @@
   "scripts": {
     "dev:web": "turbo run dev:web",
     "build:web": "turbo run build:web",
-    "build:macos": "turbo run build:macos",
-    "build:linux": "turbo run build:linux",
-    "build:windows": "turbo run build:windows",
-    "build:ios": "turbo run build:ios",
-    "build:android": "turbo run build:android",
+    "build:macos": "cross-env CLIENT_PLATFORM=cdv-macos turbo run build:macos",
+    "build:linux": "cross-env CLIENT_PLATFORM=cdv-linux turbo run build:linux",
+    "build:windows": "cross-env CLIENT_PLATFORM=cdv-windows turbo run build:windows",
+    "build:ios": "cross-env CLIENT_PLATFORM=cdv-ios turbo run build:ios",
+    "build:android": "cross-env CLIENT_PLATFORM=cdv-android turbo run build:android",
     "preview:web": "turbo run preview:web",
     "preview:electron": "turbo run preview:electron",
     "preview:ios": "turbo run preview:ios",
@@ -41,6 +41,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "husky": "^8.0.1",
     "libxmljs": "^0.19.10",

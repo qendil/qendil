@@ -1,23 +1,26 @@
 .app {
-  position: absolute;
-  inset: 0;
   overflow: auto;
+  height: 100%;
+}
+
+.uiContent {
+  position: relative;
+  height: calc(100% - var(--safe-area-top) - var(--safe-area-bottom));
+  box-sizing: border-box;
+  inset: 0;
 }
 
 .updatePrompt {
   background: #fc0;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  padding: 0.5rem;
   z-index: 1000;
+  inset: auto 0.5rem;
+  border-radius: 0.2rem;
 }
 
-.world {
-  background: #000;
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
-
-.debug {
-  color: red;
+.worldView {
+  position: fixed;
+  height: 100%;
+  width: 100%;
 }

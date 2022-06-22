@@ -5,13 +5,13 @@
     <meta
       http-equiv="Content-Security-Policy"
       content="
-        default-src 'self' 'unsafe-eval' data:
+        default-src 'self' 'unsafe-eval' data: qendil:
           https://ssl.gstatic.com
           https://static.cloudflareinsights.com;
-        connect-src 'self' ws:
+        connect-src 'self' ws: qendil:
           https://cloudflareinsights.com
           https://*.ingest.sentry.io;
-        style-src 'self' 'unsafe-inline';
+        style-src 'self' 'unsafe-inline' qendil:;
         media-src *
       "
     />
@@ -49,8 +49,18 @@
 
     <script type="module" src="/src/main.tsx"></script>
 
+    <% if (mode === "production" && platform.startsWith("cdv-")) { %>
+    <script src="/cordova.js"></script>
+    <% } else if (platform === "cdv-ios") { %>
+    <script src="/platforms/ios/platform_www/cordova.js"></script>
+    <% } else if (platform === "cdv-android") { %>
+    <script src="/platforms/android/platform_www/cordova.js"></script>
+    <% } else if (platform.startsWith("cdv-")) { %>
+    <script src="/platforms/electron/platform_www/cordova.js"></script>
+    <% } %>
+
     <style>
-      @import url("/src/critical.css");
+      @import url("/src/style/critical.css");
     </style>
   </head>
   <body>

@@ -15,7 +15,7 @@
   <preference name="hostname" value="localhost"/>
 
   <hook src="cordova/hooks/serve.js" type="after_prepare"/>
-  <hook src="cordova/hooks/update-version.js" type="after_prepare"/>
+  <hook src="cordova/hooks/prepare.js" type="after_prepare"/>
   <hook src="cordova/hooks/clean.js" type="before_run"/>
   <hook src="cordova/hooks/clean.js" type="before_build"/>
   <hook src="cordova/hooks/collect.js" type="after_build"/>
