@@ -12,10 +12,10 @@
 
 .updatePrompt {
   background: #fc0;
-  position: absolute;
+  position: fixed;
   padding: 0.5rem;
   z-index: 1000;
-  inset: auto 0;
+  inset: auto 0.5rem;
   border-radius: 0.2rem;
 }
 
@@ -23,5 +23,4 @@
   position: fixed;
   height: 100%;
   width: 100%;
-  z-index: -1;
 }
