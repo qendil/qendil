@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Improve the ThreeView component [\#108](https://github.com/qendil/qendil/pull/108)
 - Add a basic ECS [\#96](https://github.com/qendil/qendil/pull/96)
 
 **Fixed bugs:**
