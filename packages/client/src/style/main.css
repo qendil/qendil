@@ -1,0 +1,6 @@
+:root {
+  --safe-area-top: calc(env(safe-area-inset-top) + 0.5rem);
+  --safe-area-right: max(env(safe-area-inset-right), 0.5rem);
+  --safe-area-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  --safe-area-left: max(env(safe-area-inset-left), 0.5rem);
+}

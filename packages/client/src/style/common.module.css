@@ -1,0 +1,4 @@
+.safeArea {
+  margin: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+    var(--safe-area-left);
+}

@@ -11,6 +11,8 @@ import useGameView from "../hooks/use-game-view";
 import useWasm from "../hooks/use-wasm";
 
 import classes from "./app.module.css";
+import commonClasses from "../style/common.module.css";
+import classNames from "classnames";
 
 const gameWorld = new GameWorld();
 
@@ -96,7 +98,7 @@ export default function App(): ReactElement {
     <div className={classes.updatePrompt}>
       A new update is available:{" "}
       <button type="button" onClick={updateServiceWorker}>
-        click to update
+        Update and Reload
       </button>
     </div>
   );
@@ -120,6 +122,9 @@ export default function App(): ReactElement {
 
     return {
       camera,
+      onSetup(renderer): void {
+        renderer.setClearColor(0x8a326c);
+      },
       onUpdate(frametime): void {
         updateStickControl(input);
         updatePosition(frametime);
@@ -133,7 +138,7 @@ export default function App(): ReactElement {
     };
   }, []);
 
-  const worldView = <WorldView className={classes.world} />;
+  const worldView = <WorldView className={classes.worldView} />;
 
   useWasm(coreInit);
   const wasmTest = (
@@ -146,9 +151,11 @@ export default function App(): ReactElement {
 
   return (
     <div className={classes.app}>
-      {updatePrompt}
-      {wasmTest}
       {worldView}
+      <div className={classNames(classes.uiContent, commonClasses.safeArea)}>
+        {updatePrompt}
+        {wasmTest}
+      </div>
     </div>
   );
 }

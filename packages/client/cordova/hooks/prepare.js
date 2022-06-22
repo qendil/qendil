@@ -69,6 +69,37 @@ async function updateElectronPackageJson(projectRoot, version) {
   );
 }
 
+async function updateElectronMainScript(projectRoot) {
+  const cdvElectronMainPath = path.join(
+    projectRoot,
+    "platforms/electron/platform_www/cdv-electron-main.js"
+  );
+
+  const cdvElectronMain = await fs.readFile(cdvElectronMainPath, "utf8");
+
+  // Cordova-electron is using a custom protocol, but does not give it enough
+  // permissions to run service workers and fetch wasm files
+  const from = "privileges: { standard: true, secure: true }";
+  const to = `privileges: {
+    standard: true,
+    secure: true,
+    supportFetchAPI: true,
+    allowServiceWorkers: true,
+  }`;
+
+  // Make sure that either strings is in the file
+  // This might happen if a new version of cordova-electron changed
+  // the file and that we'd need to update it (or hopefully get rid of it)
+  if (!cdvElectronMain.includes(from) && !cdvElectronMain.includes(to)) {
+    throw new Error(
+      "Error: cdv-electron-main does not contain privileges string"
+    );
+  }
+
+  const updated = cdvElectronMain.replace(from, to);
+  return fs.writeFile(cdvElectronMainPath, updated, "utf8");
+}
+
 async function updateAndroidManifest(projectRoot, version) {
   const manifestPath = path.join(
     projectRoot,
@@ -138,6 +169,7 @@ module.exports = async (context) => {
         updateElectronConfig(projectRoot, version, "config.xml"),
         updateElectronConfig(projectRoot, version, "www/config.xml"),
         updateElectronPackageJson(projectRoot, version),
+        updateElectronMainScript(projectRoot),
       ]);
     }
 

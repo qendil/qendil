@@ -38,7 +38,7 @@ export default defineConfig(async ({ mode }) => {
   // Load .env files
   const environment: Record<string, string | undefined> = loadEnv(
     mode,
-    path.join(currentDirectory, ".."),
+    path.join(currentDirectory, "../.."),
     "CLIENT_"
   );
 
@@ -99,8 +99,10 @@ export default defineConfig(async ({ mode }) => {
   // Various app related info
   const appConfig = {
     ...appManifest,
+    platform: environment.CLIENT_PLATFORM || "browser",
     description: packageJson.description,
     version: appVersion,
+    mode,
   } as const;
 
   // Shared rollup options
@@ -126,9 +128,7 @@ export default defineConfig(async ({ mode }) => {
     define: {
       __APP_NAME__: JSON.stringify(appConfig.name),
       __APP_VERSION__: JSON.stringify(appConfig.version),
-      __APP_PLATFORM__: JSON.stringify(
-        environment.CLIENT_PLATFORM || "browser"
-      ),
+      __APP_PLATFORM__: JSON.stringify(appConfig.platform),
       __SENTRY_DSN__: JSON.stringify(
         environment.CLIENT_SENTRY_DSN || undefined
       ),
