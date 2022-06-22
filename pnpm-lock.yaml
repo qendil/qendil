@@ -7,6 +7,7 @@ importers:
       '@jgoz/esbuild-plugin-typecheck': ^1.1.0
       '@typescript-eslint/eslint-plugin': ^5.29.0
       '@typescript-eslint/parser': ^5.29.0
+      cross-env: ^7.0.3
       dotenv: ^16.0.1
       esbuild: ^0.14.47
       eslint: ^8.18.0
@@ -28,6 +29,7 @@ importers:
       typescript: ^4.7.4
       zx: ^7.0.1
     dependencies:
+      cross-env: 7.0.3
       dotenv: 16.0.1
       husky: 8.0.1
       libxmljs: 0.19.10
@@ -3698,6 +3700,14 @@ packages:
       buffer: 5.7.1
     dev: false
     optional: true
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: false
 
   /cross-spawn/7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
