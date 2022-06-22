@@ -1,4 +1,4 @@
-import type { Camera, Scene } from "three";
+import type { Camera, Scene, WebGLRendererParameters } from "three";
 import { WebGLRenderer } from "three";
 
 import DefaultMap from "../../utils/default-map";
@@ -12,10 +12,6 @@ type WebGlLoseContext = WEBGL_lose_context;
 // And even then, it's not guaranteed that all these 7 contexts
 // are available.
 export const MAX_WEBGL_CONTEXT_COUNT = 7;
-
-// When a renderer pool is no longer used, we do not clear it immediately
-// to allow reuse withing the next N seconds.
-const RENDERER_POOL_CLEANUP_DELAY_MS = import.meta.env.TEST ? 0 : 10_000; // 10 seconds
 
 export type RendererSetupHandler = (renderer: WebGLRenderer) => void;
 
@@ -52,9 +48,10 @@ class RendererProxy {
 
   public render(scene: Scene, camera: Camera): void {
     const { renderer, extLoseContext, canvas } = this;
+    const rendererContext = renderer.getContext();
 
     // Restore the context if it's lost
-    if (renderer.getContext().isContextLost()) {
+    if (rendererContext.isContextLost()) {
       extLoseContext?.restoreContext();
     }
 
@@ -93,6 +90,9 @@ class RendererProxy {
       if (renderer.getClearAlpha() !== 1) {
         context.clearRect(0, 0, canvas.width, canvas.height);
       }
+
+      // Flush before rendering, since we're not using requestAnimationFrame
+      rendererContext.flush();
 
       // Finally draw the image
       context.drawImage(renderer.domElement, 0, 0);
@@ -153,6 +153,13 @@ class RendererProxy {
     container.append(canvas);
     renderer.domElement.remove();
   }
+
+  public onContextRestored(): void {
+    // If we're not in shared mode, we need to re-setup the renderer
+    if (!this.canvas) {
+      this.onRendererSetup?.(this.renderer);
+    }
+  }
 }
 
 /**
@@ -163,13 +170,13 @@ class RendererPool {
   private readonly proxies = new Set<RendererProxy>();
   private renderer?: WebGLRenderer = undefined;
   private extLoseContext?: WebGlLoseContext = undefined;
-  private cleanupTimer?: ReturnType<typeof setTimeout> = undefined;
 
   public use(
     container: HTMLElement,
+    parameters: WebGLRendererParameters,
     onRendererSetup?: RendererSetupHandler
   ): RendererControls {
-    const renderer = this.getRenderer();
+    const renderer = this.getRenderer(parameters);
 
     const proxy = new RendererProxy(
       container,
@@ -197,11 +204,8 @@ class RendererPool {
         // There's no proxy left, dispose of the renderer pool
         renderer.domElement.remove();
 
-        // Schedule a cleanup
-        this.cleanupTimer ??= setTimeout(
-          () => this.disposeRenderer(),
-          RENDERER_POOL_CLEANUP_DELAY_MS
-        );
+        // Cleanup
+        this.disposeRenderer();
       } else if (this.proxies.size <= 1) {
         // There's only one proxy left, make the renderer exclusive to it
         for (const p of this.proxies) {
@@ -213,21 +217,17 @@ class RendererPool {
     return { renderer, proxy, dispose };
   }
 
-  private getRenderer(): WebGLRenderer {
-    // Prevent any scheduled cleanup
-    if (this.cleanupTimer !== undefined) {
-      clearTimeout(this.cleanupTimer);
-      this.cleanupTimer = undefined;
-    }
-
+  private getRenderer(parameters: WebGLRendererParameters): WebGLRenderer {
     // Make sure there's a set up renderer
-    this.renderer ??= this.createRenderer();
+    this.renderer ??= this.createRenderer(parameters);
 
     return this.renderer;
   }
 
-  private createRenderer(): WebGLRenderer {
-    const renderer = new WebGLRenderer();
+  private createRenderer(parameters: WebGLRendererParameters): WebGLRenderer {
+    const renderer = new WebGLRenderer(parameters);
+
+    // This extension is actually guaranteed to be supported on webgl
     this.extLoseContext =
       renderer.getContext().getExtension("WEBGL_lose_context") ?? undefined;
 
@@ -239,16 +239,29 @@ class RendererPool {
       domElement.style.display = "inline-block";
       void domElement.offsetHeight;
       domElement.style.display = "";
+
+      // Notify the proxies
+      for (const proxy of this.proxies) {
+        proxy.onContextRestored();
+      }
     });
 
     return renderer;
   }
 
   private disposeRenderer(): void {
-    this.renderer?.dispose();
-    this.renderer = undefined;
-    this.cleanupTimer = undefined;
+    // Lose context eagerly to free it up for others
+    const { renderer, extLoseContext } = this;
+    if (renderer !== undefined) {
+      if (!renderer.getContext().isContextLost()) {
+        extLoseContext?.loseContext();
+      }
+
+      renderer.dispose();
+    }
+
     this.extLoseContext = undefined;
+    this.renderer = undefined;
   }
 }
 
@@ -256,10 +269,11 @@ const renderers = new DefaultMap(() => new RendererPool());
 
 export default function getRenderProxy(
   container: HTMLElement,
+  parameters: WebGLRendererParameters,
   pool = MAX_WEBGL_CONTEXT_COUNT - 1,
   onRendererSetup?: RendererSetupHandler
 ): RendererControls {
   pool = Math.min(Math.max(pool, 0), MAX_WEBGL_CONTEXT_COUNT - 1);
 
-  return renderers.get(pool).use(container, onRendererSetup);
+  return renderers.get(pool).use(container, parameters, onRendererSetup);
 }

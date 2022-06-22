@@ -138,7 +138,13 @@ export default function App(): ReactElement {
     };
   }, []);
 
-  const worldView = <WorldView className={classes.worldView} />;
+  const worldView = (
+    <WorldView
+      antialias
+      className={classes.worldView}
+      powerPreference="high-performance"
+    />
+  );
 
   useWasm(coreInit);
   const wasmTest = (

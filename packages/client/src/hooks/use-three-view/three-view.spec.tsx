@@ -14,6 +14,7 @@ function CanvasGetPrototypeDummy(this: HTMLCanvasElementDummy): unknown {
 
 describe("useThreeView hook", () => {
   const mockRestoreContext = vi.fn();
+  const mockLoseContext = vi.fn();
 
   beforeEach(() => {
     vi.useRealTimers();
@@ -47,7 +48,10 @@ describe("useThreeView hook", () => {
       public getExtension(name: string): unknown {
         // Expose the `WEBGL_lose_context` extension
         if (name === "WEBGL_lose_context") {
-          return { restoreContext: mockRestoreContext };
+          return {
+            restoreContext: mockRestoreContext,
+            loseContext: mockLoseContext,
+          };
         }
 
         return undefined;
@@ -198,10 +202,9 @@ describe("useThreeView hook", () => {
     expect(mockClearRect).toHaveBeenCalledTimes(2);
   });
 
-  it("cleans up renderers when the last Component is unmounted, after a delay", () => {
+  it("cleans up renderers when the last Component is unmounted", () => {
     // Given a mounted ThreeView component
     // When I unmount the component
-    // And wait a little bit
     // Then the component should be disposed
 
     const onDispose = vi.fn();
@@ -211,14 +214,24 @@ describe("useThreeView hook", () => {
     const { current: ThreeView } = result;
 
     const { unmount } = render(<ThreeView />);
-    vi.useFakeTimers();
 
     unmount();
     expect(onDispose).toHaveBeenCalled();
-    expect(WebGLRenderer.prototype.dispose).not.toHaveBeenCalled();
-
-    vi.runAllTimers();
     expect(WebGLRenderer.prototype.dispose).toHaveBeenCalledOnce();
+  });
+
+  it("eagerly loses context when disposed", () => {
+    // Given a single mounted ThreeView component
+    // When I unmount the component
+    // Then the context should be discarded
+
+    const { result } = renderHook(() => useThreeView(() => ({}), []));
+    const { current: ThreeView } = result;
+
+    const { unmount } = render(<ThreeView />);
+
+    unmount();
+    expect(mockLoseContext).toHaveBeenCalledOnce();
   });
 
   it("restores context after it has been lost", async () => {
@@ -233,7 +246,7 @@ describe("useThreeView hook", () => {
     const mockIsContextLost = vi.mocked(
       WebGL2RenderingContext.prototype.isContextLost
     );
-    mockIsContextLost.mockReturnValue(true);
+    mockIsContextLost.mockReturnValueOnce(true);
 
     await new Promise((resolve) => {
       requestAnimationFrame(resolve);
@@ -304,5 +317,29 @@ describe("useThreeView hook", () => {
 
     expect(mockSetDisplay).toHaveBeenCalled();
     expect(mockGetOffsetHeight).toHaveBeenCalled();
+  });
+
+  it("re-setups an exclusive renderer after restoring context", () => {
+    // Given a single mounted ThreeView component that had lost its context
+    // When its context is restored
+    // Then It should re-setup component
+
+    const onSetup = vi.fn();
+    const { result } = renderHook(() => useThreeView(() => ({ onSetup }), []));
+    const { current: ThreeView } = result;
+
+    render(<ThreeView />);
+    const mockIsContextLost = vi.mocked(
+      WebGL2RenderingContext.prototype.isContextLost
+    );
+    mockIsContextLost.mockReturnValueOnce(true);
+
+    onSetup.mockClear();
+
+    // eslint-disable-next-line testing-library/no-node-access
+    const canvas = document.querySelector("canvas");
+    canvas?.dispatchEvent(new Event("webglcontextrestored"));
+
+    expect(onSetup).toHaveBeenCalledOnce();
   });
 });

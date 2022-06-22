@@ -1,5 +1,5 @@
 import type { ComponentProps, ComponentType, FunctionComponent } from "react";
-import type { Camera, WebGLRenderer } from "three";
+import type { Camera, WebGLRenderer, WebGLRendererParameters } from "three";
 
 import {
   forwardRef,
@@ -63,34 +63,56 @@ export type ThreeViewInitalizer = (
   options: ThreeViewInitalizerOptions
 ) => ThreeViewOptions | undefined;
 
-export type ThreeViewProps = ComponentProps<"div"> & {
-  /**
-   * Height of the container.
-   */
-  height?: number;
+export type ThreeViewProps = ComponentProps<"div"> &
+  Omit<WebGLRendererParameters, "canvas" | "context"> & {
+    /**
+     * Width of the container.
+     */
+    width?: number;
 
-  /**
-   * The function used to initialize the Three.js view
-   */
-  init: ThreeViewInitalizer;
+    /**
+     * Height of the container.
+     */
+    height?: number;
 
-  /**
-   * The renderer pool to use for the Three.js view (0 to 6)
-   * If 2 renderers have the same pool, they will share the same renderer.
-   */
-  pool?: number;
+    /**
+     * The function used to initialize the Three.js view
+     */
+    init: ThreeViewInitalizer;
 
-  /**
-   * Width of the container.
-   */
-  width?: number;
-};
+    /**
+     * The renderer pool to use for the Three.js view (0 to 6)
+     * If 2 renderers have the same pool, they will share the same renderer.
+     */
+    pool?: number;
+  };
 
 /**
  * A component that renders a Three.js scene.
  */
 const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
-  ({ init, pool, className, width, height, style, ...props }, ref) => {
+  (
+    {
+      init,
+      pool,
+      className,
+      width,
+      height,
+      style,
+      precision,
+      alpha,
+      premultipliedAlpha,
+      antialias,
+      stencil,
+      preserveDrawingBuffer,
+      powerPreference,
+      depth,
+      logarithmicDepthBuffer,
+      failIfMajorPerformanceCaveat,
+      ...props
+    },
+    ref
+  ) => {
     const innerRef = useRef<HTMLDivElement>(null);
 
     // Forward the ref to the parent, if needed
@@ -128,18 +150,28 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
         onSetup: onRendererSetup,
       } = init({ scene, makePerspectiveCamera }) ?? {};
 
+      const parameters = {
+        precision,
+        alpha,
+        premultipliedAlpha,
+        antialias,
+        stencil,
+        preserveDrawingBuffer,
+        powerPreference,
+        depth,
+        logarithmicDepthBuffer,
+        failIfMajorPerformanceCaveat,
+      };
+
       const { proxy, dispose } = getRenderProxy(
         container,
+        parameters,
         pool,
         onRendererSetup
       );
 
       // The main loop of this renderer
       const render = (timestamp: number): void => {
-        // Schedule the rendering of the next frame
-        if (rafID !== undefined) cancelAnimationFrame(rafID);
-        rafID = requestAnimationFrame(render);
-
         // Calculate the time passed since the last render
         const frametime =
           lastTimestamp === undefined ? 0 : (timestamp - lastTimestamp) / 1000;
@@ -148,6 +180,10 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
         // Update and render
         onUpdate?.(frametime);
         proxy.render(scene, camera);
+
+        // Schedule the rendering of the next frame
+        if (rafID !== undefined) cancelAnimationFrame(rafID);
+        rafID = requestAnimationFrame(render);
       };
 
       // The resize function
@@ -198,7 +234,21 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
         onDispose?.();
         dispose();
       };
-    }, [init, pool]);
+    }, [
+      alpha,
+      antialias,
+      depth,
+      failIfMajorPerformanceCaveat,
+      init,
+      logarithmicDepthBuffer,
+      pool,
+      powerPreference,
+      precision,
+      premultipliedAlpha,
+      preserveDrawingBuffer,
+      props,
+      stencil,
+    ]);
 
     return (
       <div
