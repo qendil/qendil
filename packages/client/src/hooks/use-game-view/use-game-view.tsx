@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import InputManager, { InputAction } from "../../utils/input-manager";
 import type {
   ThreeViewInitalizerOptions,
@@ -31,7 +31,7 @@ export type GameViewOptions = ThreeViewOptions & {
   /**
    * Called every fixed amount of time, disregarding the framerate.
    */
-  onFixedUpdate?: (frametime: number) => void;
+  onFixedUpdate?: (frametime: number) => Promise<void> | void;
 
   /**
    * Input context to use. Defaults to "menu".
@@ -60,11 +60,6 @@ export default function useGameView(
   initalizer: GameViewInitializer,
   deps: unknown[]
 ): ReturnType<typeof useThreeView> {
-  // Stock this as a ref because we don't want it to reset on each re-render
-  // But also because we don't want to cause a re-render on each update
-  // And it's getting updated a lot...
-  const cumulativeFrametime = useRef(0);
-
   const input = useMemo(() => new InputManager(), []);
 
   useEffect(() => {
@@ -83,34 +78,62 @@ export default function useGameView(
 
     const {
       fixedUpdateRate = 1 / 50,
-      onFixedUpdate,
-      onUpdate: onRenderUpdate,
       inputContext = "menu",
+      onFixedUpdate,
+      onUpdate: onThreeViewUpdate,
+      onDispose: onThreeViewDispose,
       ...options
     } = initalizer(initializerOptions) ?? {};
 
     // Setup input context
     input.setKeymap(KEYBOARD_MAP[inputContext]);
 
-    // Custom onUpdate that also does fixed updates
-    const onUpdate = (frametime: number): void => {
-      onRenderUpdate?.(frametime);
+    // Setup onFixedUpdate
+    let fixedUpdateID: ReturnType<typeof setTimeout> | undefined;
+    if (onFixedUpdate && fixedUpdateRate) {
+      let lastUpdateTime = performance.now();
+      let accumulatedUpdateTime = 0;
+      const updateRate = fixedUpdateRate * 1000;
 
-      // Run fixed update only if enough time passed since last update
-      // And as many times as needed to catch up to the fixedUpdateRate
-      if (onFixedUpdate && fixedUpdateRate) {
-        cumulativeFrametime.current += frametime;
-        while (cumulativeFrametime.current >= fixedUpdateRate) {
-          onFixedUpdate(fixedUpdateRate);
-          cumulativeFrametime.current -= fixedUpdateRate;
+      const fixedUpdateHandler = async (): Promise<void> => {
+        const now = performance.now();
+        const updateTime = now - lastUpdateTime;
+        lastUpdateTime = now;
+
+        accumulatedUpdateTime += updateTime;
+
+        while (accumulatedUpdateTime >= updateRate) {
+          // We want to await each update before passing to the next
+          // eslint-disable-next-line no-await-in-loop
+          await onFixedUpdate(updateRate);
+
+          accumulatedUpdateTime -= updateRate;
         }
-      }
+
+        if (fixedUpdateID !== undefined) clearTimeout(fixedUpdateID);
+        fixedUpdateID = setTimeout(fixedUpdateHandler, fixedUpdateRate);
+      };
+
+      fixedUpdateID = setTimeout(fixedUpdateHandler, fixedUpdateRate);
+    }
+
+    // Update input after renders
+    const onUpdate = (frametime: number): void => {
+      onThreeViewUpdate?.(frametime);
 
       // Update input
       input.update();
     };
 
-    return { onUpdate, ...options };
+    const onDispose = (): void => {
+      onThreeViewDispose?.();
+
+      if (fixedUpdateID !== undefined) {
+        clearTimeout(fixedUpdateID);
+      }
+    };
+
+    return { onUpdate, onDispose, ...options };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
