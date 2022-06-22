@@ -10,6 +10,7 @@
 
 **Fixed bugs:**
 
+- Fix layout issues in iOS and Electron [\#106](https://github.com/qendil/qendil/pull/106)
 - Fix handling of disposal in ECS [\#100](https://github.com/qendil/qendil/pull/100)
 
 **Other changes:**
