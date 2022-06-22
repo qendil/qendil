@@ -42,10 +42,11 @@ global._mockClass = <T extends unknown[], R, C extends new (...args: T) => R>(
   return ClassMock;
 };
 
+// Mock the three.js WebGLRenderer
 vi.mock("three", async () => {
   const threeModule = await import("three");
 
-  class WebGLRendererDummy {
+  class WebGLRenderer {
     public domElement: HTMLCanvasElement;
     private readonly context = new WebGL2RenderingContext();
 
@@ -82,7 +83,7 @@ vi.mock("three", async () => {
 
   return {
     ...threeModule,
-    WebGLRenderer: _mockClass(WebGLRendererDummy),
+    WebGLRenderer: _mockClass(WebGLRenderer),
   };
 });
 

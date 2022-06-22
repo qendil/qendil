@@ -4,6 +4,7 @@
     "**/node_modules": true,
     "**/platforms": true,
     "**/.turbo": true,
+    "**/coverage": true,
     "/target": true
   },
   // Always add a newline at the end of the file
