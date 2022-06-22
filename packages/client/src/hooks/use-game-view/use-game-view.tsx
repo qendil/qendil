@@ -31,7 +31,7 @@ export type GameViewOptions = ThreeViewOptions & {
   /**
    * Called every fixed amount of time, disregarding the framerate.
    */
-  onFixedUpdate?: (frametime: number) => Promise<void> | void;
+  onFixedUpdate?: (frametime: number) => void;
 
   /**
    * Input context to use. Defaults to "menu".
@@ -95,7 +95,7 @@ export default function useGameView(
       let accumulatedUpdateTime = 0;
       const updateRate = fixedUpdateRate * 1000;
 
-      const fixedUpdateHandler = async (): Promise<void> => {
+      const fixedUpdateHandler = (): void => {
         const now = performance.now();
         const updateTime = now - lastUpdateTime;
         lastUpdateTime = now;
@@ -104,8 +104,7 @@ export default function useGameView(
 
         while (accumulatedUpdateTime >= updateRate) {
           // We want to await each update before passing to the next
-          // eslint-disable-next-line no-await-in-loop
-          await onFixedUpdate(updateRate);
+          onFixedUpdate(updateRate);
 
           accumulatedUpdateTime -= updateRate;
         }

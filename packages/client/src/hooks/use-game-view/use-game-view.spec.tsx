@@ -40,7 +40,7 @@ describe("useGameView hook", () => {
     expect(mockInputManagerUpdate).toHaveBeenCalledOnce();
   });
 
-  it("calls fixedUpdate correctly", async () => {
+  it("calls fixedUpdate twice when framerate is double the update rate", () => {
     // Given a GameView with a fixed update rate of 1/120
     // When I wait for a frame to render (at 1/60 framerate)
     // Then the fixedUpdate should be called twice
@@ -67,12 +67,11 @@ describe("useGameView hook", () => {
     performanceNowMock.mockReturnValue(frameRate * frames);
     vi.advanceTimersByTime(frameRate * frames);
 
-    await new Promise(process.nextTick);
     expect(onFixedUpdate).toHaveBeenCalledTimes(2);
   });
 
-  it("calls fixedUpdate half the time when framerate is half the update rate", async () => {
-    // Given a GameView with a fixed update rate of 1000/30
+  it("calls fixedUpdate half the time when framerate is half the update rate", () => {
+    // Given a GameView with a fixed update rate of 1/30
     // When I wait for two frame to render (at 1/60 framerate)
     // Then the fixedUpdate should be called twice
 
@@ -95,7 +94,6 @@ describe("useGameView hook", () => {
     performanceNowMock.mockReturnValue(frameRate * frames);
     vi.advanceTimersByTime(frameRate * frames);
 
-    await new Promise(process.nextTick);
     expect(onFixedUpdate).toHaveBeenCalledTimes(1);
   });
 });
