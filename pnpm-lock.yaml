@@ -15,7 +15,7 @@ importers:
       eslint-config-xo: ^0.41.0
       eslint-config-xo-react: ^0.27.0
       eslint-plugin-jsx-a11y: ^6.5.1
-      eslint-plugin-react: ^7.30.0
+      eslint-plugin-react: ^7.30.1
       eslint-plugin-react-hooks: ^4.6.0
       eslint-plugin-testing-library: ^5.5.1
       eslint-plugin-tsdoc: ^0.2.16
@@ -44,9 +44,9 @@ importers:
       eslint: 8.18.0
       eslint-config-prettier: 8.5.0_eslint@8.18.0
       eslint-config-xo: 0.41.0_eslint@8.18.0
-      eslint-config-xo-react: 0.27.0_s5usb4a2tj4mqdbcjd7gooour4
+      eslint-config-xo-react: 0.27.0_pikjprhmrbmn4eelzg2gq62ujq
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.18.0
-      eslint-plugin-react: 7.30.0_eslint@8.18.0
+      eslint-plugin-react: 7.30.1_eslint@8.18.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.18.0
       eslint-plugin-testing-library: 5.5.1_b5e7v2qnwxfo6hmiq56u52mz3e
       eslint-plugin-tsdoc: 0.2.16
@@ -4783,7 +4783,7 @@ packages:
       eslint: 8.18.0
     dev: true
 
-  /eslint-config-xo-react/0.27.0_s5usb4a2tj4mqdbcjd7gooour4:
+  /eslint-config-xo-react/0.27.0_pikjprhmrbmn4eelzg2gq62ujq:
     resolution: {integrity: sha512-wiV215xQIn71XZyyVfaOXHaFpR1B14IJttwOjMi/eqUK1s+ojJdHr7eHqTLaGUfh6FKgWha1QNwePlIXx7mBUg==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -4792,7 +4792,7 @@ packages:
       eslint-plugin-react-hooks: '>=4.3.0'
     dependencies:
       eslint: 8.18.0
-      eslint-plugin-react: 7.30.0_eslint@8.18.0
+      eslint-plugin-react: 7.30.1_eslint@8.18.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.18.0
     dev: true
 
@@ -4836,8 +4836,8 @@ packages:
       eslint: 8.18.0
     dev: true
 
-  /eslint-plugin-react/7.30.0_eslint@8.18.0:
-    resolution: {integrity: sha512-RgwH7hjW48BleKsYyHK5vUAvxtE9SMPDKmcPRQgtRCYaZA0XQPt5FSkrU3nhz5ifzMZcA8opwmRJ2cmOO8tr5A==}
+  /eslint-plugin-react/7.30.1_eslint@8.18.0:
+    resolution: {integrity: sha512-NbEvI9jtqO46yJA3wcRF9Mo0lF9T/jhdHqhCHXiXtD+Zcb98812wvokjWpU7Q4QH5edo6dmqrukxVvWWXHlsUg==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
