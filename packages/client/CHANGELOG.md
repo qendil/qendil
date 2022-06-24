@@ -11,6 +11,7 @@
 
 **Fixed bugs:**
 
+- Fix ThreeView re-initializing on each re-render [\#119](https://github.com/qendil/qendil/pull/119)
 - Fix layout issues in iOS and Electron [\#106](https://github.com/qendil/qendil/pull/106)
 - Fix handling of disposal in ECS [\#100](https://github.com/qendil/qendil/pull/100)
 
