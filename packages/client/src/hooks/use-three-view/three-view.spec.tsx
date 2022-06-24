@@ -342,4 +342,26 @@ describe("useThreeView hook", () => {
 
     expect(onSetup).toHaveBeenCalledOnce();
   });
+
+  test("result component does not call the initializer on re-render", () => {
+    // Given a rendered ThreeView component
+    // When the ThreeView component re-renders
+    // Then it should not call the initializer again
+
+    const initializer = vi.fn();
+    const { result } = renderHook(() =>
+      useThreeView(() => {
+        initializer();
+        return {};
+      }, [])
+    );
+    const { current: ThreeView } = result;
+
+    const { rerender } = render(<ThreeView />);
+
+    initializer.mockClear();
+    rerender(<ThreeView />);
+
+    expect(initializer).not.toHaveBeenCalled();
+  });
 });

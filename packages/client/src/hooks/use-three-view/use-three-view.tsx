@@ -246,7 +246,6 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
       precision,
       premultipliedAlpha,
       preserveDrawingBuffer,
-      props,
       stencil,
     ]);
 
