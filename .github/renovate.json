@@ -1,5 +1,7 @@
 {
   "extends": ["config:base"],
+  "labels": ["Dependencies"],
+  "assignees": ["dermoumi"],
   "rangeStrategy": "bump",
   "packageRules": [
     {
