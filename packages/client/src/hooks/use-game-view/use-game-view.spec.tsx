@@ -96,4 +96,26 @@ describe("useGameView hook", () => {
 
     expect(onFixedUpdate).toHaveBeenCalledTimes(1);
   });
+
+  test("result component does not call the initializer on re-render", () => {
+    // Given a rendered GameView component
+    // When the GameView component re-renders
+    // Then it should not call the initializer again
+
+    const initializer = vi.fn();
+    const { result } = renderHook(() =>
+      useGameView(() => {
+        initializer();
+        return {};
+      }, [])
+    );
+    const { current: GameView } = result;
+
+    const { rerender } = render(<GameView />);
+
+    initializer.mockClear();
+    rerender(<GameView />);
+
+    expect(initializer).not.toHaveBeenCalled();
+  });
 });
