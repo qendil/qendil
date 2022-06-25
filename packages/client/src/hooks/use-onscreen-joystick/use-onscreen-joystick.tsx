@@ -49,6 +49,7 @@ export default function useOnScreenJoystick(
     }
   }, [deadZoneThreshold, originX, originY, radius, visible, x, y]);
 
+  // Triggers the joystick
   const showJoystick = useCallback<PointerEventHandler>(
     (event): void => {
       // If already visible do to another finger being pressed
