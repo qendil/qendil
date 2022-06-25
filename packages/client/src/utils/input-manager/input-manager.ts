@@ -88,6 +88,17 @@ export default class InputManager {
     window.removeEventListener("keydown", this.keydownHandler);
   }
 
+  /**
+   * Updates the value of an axis.
+   * This is primarily used by on-screen controls.
+   *
+   * @param axis - The axis to update
+   * @param value - The value to set the axis to
+   */
+  public updateAxis(axis: InputAxis, value: number): void {
+    this.axesValues[axis] = value;
+  }
+
   public isActionDown(action: InputAction): boolean {
     return this.currentKeysDown.has(action);
   }

@@ -2,6 +2,7 @@ import { BoxGeometry, Mesh as ThreeMesh, MeshBasicMaterial } from "three";
 import { InputAxis } from "../utils/input-manager";
 import coreInit, { makeGreeting } from "@qendil/core";
 import GameWorld, { GameComponent } from "../utils/game-world";
+import classNames from "classnames";
 
 import type InputManager from "../utils/input-manager";
 import type { ReactElement } from "react";
@@ -9,10 +10,10 @@ import type { ReactElement } from "react";
 import useServiceWorker from "../hooks/use-service-worker";
 import useGameView from "../hooks/use-game-view";
 import useWasm from "../hooks/use-wasm";
+import useOnscreenJoystick from "../hooks/use-onscreen-joystick";
 
 import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
-import classNames from "classnames";
 
 const gameWorld = new GameWorld();
 
@@ -103,40 +104,47 @@ export default function App(): ReactElement {
     </div>
   );
 
-  const WorldView = useGameView(({ scene, input, makePerspectiveCamera }) => {
-    const camera = makePerspectiveCamera();
-    camera.position.z = 5;
+  const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
 
-    const geometry = new BoxGeometry();
-    const material = new MeshBasicMaterial({ color: 0xffcc00 });
+  const WorldView = useGameView(
+    ({ scene, input, makePerspectiveCamera }) => {
+      const camera = makePerspectiveCamera();
+      camera.position.z = 5;
 
-    const cube = gameWorld
-      .spawn()
-      .insertNew(Mesh, geometry, material)
-      .insert(Position)
-      .insert(Velocity, { factor: 3 })
-      .insert(ThirdPersonController);
+      const geometry = new BoxGeometry();
+      const material = new MeshBasicMaterial({ color: 0xffcc00 });
 
-    const { mesh } = cube.get(Mesh);
-    scene.add(mesh);
+      bindInput(input);
 
-    return {
-      camera,
-      onSetup(renderer): void {
-        renderer.setClearColor(0x8a326c);
-      },
-      onUpdate(frametime): void {
-        updateStickControl(input);
-        updatePosition(frametime);
-        updateMeshPosition();
-      },
-      onDispose(): void {
-        material.dispose();
-        geometry.dispose();
-        cube.dispose();
-      },
-    };
-  }, []);
+      const cube = gameWorld
+        .spawn()
+        .insertNew(Mesh, geometry, material)
+        .insert(Position)
+        .insert(Velocity, { factor: 3 })
+        .insert(ThirdPersonController);
+
+      const { mesh } = cube.get(Mesh);
+      scene.add(mesh);
+
+      return {
+        camera,
+        onSetup(renderer): void {
+          renderer.setClearColor(0x8a326c);
+        },
+        onUpdate(frametime): void {
+          updateStickControl(input);
+          updatePosition(frametime);
+          updateMeshPosition();
+        },
+        onDispose(): void {
+          material.dispose();
+          geometry.dispose();
+          cube.dispose();
+        },
+      };
+    },
+    [bindInput]
+  );
 
   const worldView = (
     <WorldView
@@ -158,10 +166,14 @@ export default function App(): ReactElement {
   return (
     <div className={classes.app}>
       {worldView}
-      <div className={classNames(classes.uiContent, commonClasses.safeArea)}>
+      <div
+        className={classNames(classes.uiContent, commonClasses.safeArea)}
+        onTouchStart={showJoystick}
+      >
         {updatePrompt}
         {wasmTest}
       </div>
+      {onScreenJoystick}
     </div>
   );
 }

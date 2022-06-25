@@ -32,10 +32,24 @@
       media="(prefers-color-scheme: dark)"
       content="<%= theme_color %>"
     />
+
+    <!--
+      Prevent zoom on mobile devices. For a valid reason:
+      - Users will often use multi-touch to move and interact, and this
+        often accidentally triggers zoom.
+      To remedy this, UI scale must be configurable from the settings menu
+    -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      content="
+        width=device-width,
+        initial-scale=1.0,
+        maximum-scale=1.0,
+        user-scalable=no,
+        viewport-fit=cover
+      "
     />
+
     <meta name="color-scheme" content="light dark" />
 
     <meta name="description" content="<%= description %>" />
