@@ -3,11 +3,15 @@ ci:
     numberOfRuns: 3
     settings:
       chromeFlags: --no-sandbox
+      skipAudits:
+        - is-crawlable
+        - meta-viewport
   assert:
     preset: lighthouse:recommended
     assertions:
       unused-javascript: warn
       csp-xss: off
       is-crawlable: off # Staging instances are not crawlable on purpose
+      meta-viewport: off
   upload:
     target: temporary-public-storage
