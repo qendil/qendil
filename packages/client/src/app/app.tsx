@@ -168,7 +168,7 @@ export default function App(): ReactElement {
       {worldView}
       <div
         className={classNames(classes.uiContent, commonClasses.safeArea)}
-        onTouchStart={showJoystick}
+        onPointerDown={showJoystick}
       >
         {updatePrompt}
         {wasmTest}

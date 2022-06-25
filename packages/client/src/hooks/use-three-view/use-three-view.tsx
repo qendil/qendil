@@ -252,7 +252,6 @@ const ThreeView = forwardRef<HTMLDivElement, ThreeViewProps>(
     return (
       <div
         className={classnames(classes.container, className)}
-        // eslint-disable-next-line react/forbid-dom-props
         style={{ width, height, ...style }}
         {...props}
         ref={innerRef}

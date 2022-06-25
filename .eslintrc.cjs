@@ -156,12 +156,6 @@ module.exports = {
         forbid: [{ propName: "style", message: "Use CSS modules instead." }],
       },
     ],
-    "react/forbid-dom-props": [
-      "error",
-      {
-        forbid: [{ propName: "style", message: "Use CSS modules instead." }],
-      },
-    ],
     "react/jsx-filename-extension": [1, { extensions: [".jsx", ".tsx"] }],
     "react/jsx-handler-names": [
       "error",

@@ -1,154 +1,139 @@
 import { useCallback, useMemo, useState } from "react";
-import { InputAxis } from "../../utils/input-manager";
 
-import type { ReactElement, TouchEventHandler } from "react";
+import type { ReactElement, PointerEventHandler } from "react";
 import type InputManager from "../../utils/input-manager";
+import Joystick from "./joystick";
 
-import classes from "./joystick.module.css";
-
-export default function useOnScreenJoystick(): [
+/**
+ * A react hook to create and manage an on-screen joystick
+ * that emulates a gamepad joystick.
+ *
+ * @param radius - The radius of the joystick element.
+ * @returns A tuple with 3 things:
+ * - The joystick element to be rendered.
+ * - A pointerdown handler function to trigger the joystick.
+ * - A function to bind the input manager to this on-screen joystick.
+ */
+export default function useOnScreenJoystick(
+  radius = 70
+): [
   ReactElement | undefined,
-  TouchEventHandler,
+  PointerEventHandler,
   (input: InputManager) => void
 ] {
   const [visible, setVisible] = useState(false);
 
-  const [centerX, setCenterX] = useState(0);
-  const [centerY, setCenterY] = useState(0);
+  const [originX, setOriginX] = useState(0);
+  const [originY, setOriginY] = useState(0);
 
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
 
-  const size = 140;
-  const size2 = size / 2;
-
   const [inputManager, setInputManager] = useState<InputManager | undefined>();
 
   const element = useMemo(() => {
-    if (visible)
+    if (visible) {
       return (
-        <div
-          className={classes.joystickContainer}
-          // eslint-disable-next-line react/forbid-dom-props
-          style={{
-            width: size,
-            height: size,
-            left: centerX - size2,
-            top: centerY - size2,
-          }}
-        >
-          <div
-            className={classes.joystick}
-            // eslint-disable-next-line react/forbid-dom-props
-            style={{
-              left: size2 + x * size2,
-              top: size2 + y * size2,
-            }}
-          />
-        </div>
+        <Joystick
+          originX={originX}
+          originY={originY}
+          radius={radius}
+          x={x}
+          y={y}
+        />
       );
-  }, [centerX, centerY, size2, visible, x, y]);
+    }
+  }, [originX, originY, radius, visible, x, y]);
 
-  const updateInputManager = useCallback(
-    (lx: number, ly: number): void => {
-      if (!inputManager) return;
-
-      inputManager.updateAxis(InputAxis.LX, lx);
-      inputManager.updateAxis(InputAxis.LY, ly);
-    },
-    [inputManager]
-  );
-
-  const showJoystick = useCallback<TouchEventHandler>(
+  const showJoystick = useCallback<PointerEventHandler>(
     (event): void => {
-      if (visible) return;
+      // If already visible do to another finger being pressed
+      // Then ignore this event...
+      if (visible || !inputManager) return;
 
-      const { changedTouches } = event;
-      if (changedTouches.length === 0) return;
-      const touch = changedTouches.item(0);
-      const { identifier: pointerId, pageX: pointerX, pageY: pointerY } = touch;
+      const {
+        pageX: pointerX,
+        pageY: pointerY,
+        pointerId,
+        pointerType,
+      } = event;
+      if (pointerType !== "touch") return;
 
-      setCenterX(pointerX);
-      setCenterY(pointerY);
-      setX(0);
-      setY(0);
+      setOriginX(pointerX);
+      setOriginY(pointerY);
       setVisible(true);
 
-      updateInputManager(0, 0);
+      // Utility function to update the axis values
+      const updateAxes = (joystickX: number, joystickY: number): void => {
+        const [finalX, finalY] = inputManager.updateJoystick(
+          "l",
+          joystickX,
+          joystickY
+        );
 
+        setX(finalX);
+        setY(finalY);
+      };
+
+      updateAxes(0, 0);
+
+      // Disable the context menu
+      // On touch devices, holding touch for a few seconds triggers
+      // the context menu, and breaks the joystick
       const handleContextMenu = (menuEvent: Event): void => {
         menuEvent.preventDefault();
+        menuEvent.stopImmediatePropagation();
       };
 
-      const handleTouchMove = (touchEvent: TouchEvent): void => {
-        const { changedTouches: movedTouches } = touchEvent;
+      // Handle touch moves
+      const handleTouchMove = (pointerEvent: PointerEvent): void => {
+        const {
+          pointerId: eventPointerId,
+          pageX: eventPointerX,
+          pageY: eventPointerY,
+        } = pointerEvent;
+        if (eventPointerId !== pointerId) return;
 
-        for (let index = 0; index < movedTouches.length; index++) {
-          const movedTouch = movedTouches.item(index);
-          if (!movedTouch) continue;
+        const lx = (eventPointerX - pointerX) / radius;
+        const ly = (eventPointerY - pointerY) / radius;
 
-          const {
-            identifier: eventPointerId,
-            pageX: eventPointerX,
-            pageY: eventPointerY,
-          } = movedTouch;
-          if (eventPointerId !== pointerId) continue;
-
-          const lx = Math.min(
-            1,
-            Math.max(-1, (eventPointerX - pointerX) / size2)
-          );
-          const ly = Math.min(
-            1,
-            Math.max(-1, (eventPointerY - pointerY) / size2)
-          );
-
-          setX(lx);
-          setY(ly);
-          updateInputManager(lx, ly);
-
-          break;
-        }
+        updateAxes(lx, ly);
       };
 
-      const handleTouchEnd = (touchEvent: TouchEvent): void => {
-        const { changedTouches: releasedTouches } = touchEvent;
-        for (let index = 0; index < releasedTouches.length; ++index) {
-          const releasedTouch = releasedTouches.item(index);
-          if (!releasedTouch) continue;
+      // Handle touch releases
+      const handleTouchEnd = (pointerEvent: PointerEvent): void => {
+        const { pointerId: eventPointerId } = pointerEvent;
+        if (eventPointerId !== pointerId) return;
 
-          const { identifier: eventPointerId } = releasedTouch;
-          if (eventPointerId !== pointerId) continue;
-
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          handleRelease();
-          break;
-        }
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        handleCancel();
       };
 
-      const handleRelease = (): void => {
-        setX(0);
-        setY(0);
-        updateInputManager(0, 0);
-
-        window.removeEventListener("contextmenu", handleContextMenu);
-        window.removeEventListener("touchmove", handleTouchMove);
-        window.removeEventListener("touchend", handleTouchEnd);
-        window.removeEventListener("touchcancel", handleTouchEnd);
-        window.removeEventListener("blur", handleRelease);
-
+      // Handle cancel events (pointercancel, blur...)
+      const handleCancel = (): void => {
+        updateAxes(0, 0);
         setVisible(false);
+
+        window.removeEventListener("contextmenu", handleContextMenu, true);
+        window.removeEventListener("pointermove", handleTouchMove);
+        window.removeEventListener("pointerup", handleTouchEnd);
+        window.removeEventListener("pointercancel", handleTouchEnd);
+        window.removeEventListener("blur", handleCancel);
       };
 
-      window.addEventListener("blur", handleRelease);
-      window.addEventListener("touchcancel", handleTouchEnd);
-      window.addEventListener("touchend", handleTouchEnd);
-      window.addEventListener("touchmove", handleTouchMove);
-      window.addEventListener("contextmenu", handleContextMenu);
+      // Bind all the event listeners
+      window.addEventListener("blur", handleCancel);
+      window.addEventListener("pointercancel", handleTouchEnd);
+      window.addEventListener("pointerup", handleTouchEnd);
+      window.addEventListener("pointermove", handleTouchMove);
+      window.addEventListener("contextmenu", handleContextMenu, {
+        capture: true,
+      });
     },
-    [size2, updateInputManager, visible]
+    [inputManager, radius, visible]
   );
 
+  // Function to bind this joystick to an input manager
   const bindInput = useCallback((manager: InputManager): void => {
     setInputManager(manager);
   }, []);

@@ -17,14 +17,16 @@ describe("InputManager", () => {
     const input = new InputManager();
     input.setKeymap(keymap);
     input.bind();
-
     context.input = input;
 
     // Create an input user
-    const user = userEvent.setup({
-      skipAutoClose: true,
-    });
-    context.user = user;
+    context.user = userEvent.setup({ skipAutoClose: true });
+
+    // Remove currently active element
+    const { activeElement } = document;
+    if (activeElement instanceof HTMLElement) {
+      activeElement.blur();
+    }
   });
 
   afterEach((context) => {
@@ -238,5 +240,36 @@ describe("InputManager", () => {
     expect(input.isActionReleased(InputAction.Interact)).toBe(false);
 
     expect(inputElement.value).toBe("f");
+  });
+
+  it("caps joystick length to 1", async (context) => {
+    // Given an input manager
+    // When I press the left arrow key
+    // And I press the down arrow key
+    // Then the left axis should be at -0.707106, 0.707106
+
+    const input = context.input as InputManager;
+    const user = context.user as UserEvent;
+
+    await user.keyboard("[ArrowLeft>][ArrowDown>]");
+
+    const xApprox = Math.cos((3 * Math.PI) / 4); // =~ -0.707106
+    expect(input.getAxis(InputAxis.LX)).toBeCloseTo(xApprox);
+
+    const yApprox = -Math.sin((7 * Math.PI) / 4); // =~ 0.707106
+    expect(input.getAxis(InputAxis.LY)).toBeCloseTo(yApprox);
+  });
+
+  test("updateJoystick updates axis values correctly", (context) => {
+    // Given an input manager
+    // When I call updateJoystick with 2 values
+    // Then I should get those values from the corresponding axes
+
+    const input = context.input as InputManager;
+
+    input.updateJoystick("r", 0.5, 0.5);
+
+    expect(input.getAxis(InputAxis.RX)).toBe(0.5);
+    expect(input.getAxis(InputAxis.RY)).toBe(0.5);
   });
 });

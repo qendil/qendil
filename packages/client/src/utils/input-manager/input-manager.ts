@@ -57,6 +57,11 @@ export default class InputManager {
     [InputAxis.RT]: 0,
   };
 
+  private readonly keyToAxisValues = {
+    [InputAxis.LX]: 0,
+    [InputAxis.LY]: 0,
+  };
+
   public constructor() {
     this.update = this.update.bind(this);
     this.keydownHandler = this.keydownHandler.bind(this);
@@ -64,10 +69,18 @@ export default class InputManager {
     this.blurHandler = this.blurHandler.bind(this);
   }
 
+  /**
+   * Change the mapping of keyboard keys to actions.
+   *
+   * @param keymap - A mapping of keys to actions
+   */
   public setKeymap(keymap: KeyboardMapping): void {
     this.keymap = keymap;
   }
 
+  /**
+   * Bind the input manager's event listeners.
+   */
   public bind(): void {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     window.addEventListener("keydown", this.keydownHandler);
@@ -78,6 +91,9 @@ export default class InputManager {
     window.addEventListener("blur", this.blurHandler);
   }
 
+  /**
+   * Removes bound event listeners, and does clean up when necessary.
+   */
   public dispose(): void {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     window.removeEventListener("blur", this.blurHandler);
@@ -89,36 +105,86 @@ export default class InputManager {
   }
 
   /**
-   * Updates the value of an axis.
-   * This is primarily used by on-screen controls.
+   * Updates the value of a joystick.
    *
-   * @param axis - The axis to update
-   * @param value - The value to set the axis to
+   * Also caps the distance from the center to 1,
+   * and returns the capped values.
+   *
+   * @param joystick - The joystick to update
+   * @param x - The value of the horizontal axis of the joystick
+   * @param y - The value of the horizontal axis of the joystick
+   * @returns The capped values of the joystick
    */
-  public updateAxis(axis: InputAxis, value: number): void {
-    this.axesValues[axis] = value;
+  public updateJoystick(
+    joystick: "l" | "r",
+    x: number,
+    y: number
+  ): [number, number] {
+    let xCapped = x;
+    let yCapped = y;
+
+    const magnitude = Math.sqrt(x * x + y * y);
+    if (magnitude > 1) {
+      xCapped /= magnitude;
+      yCapped /= magnitude;
+    }
+
+    const xAxis = joystick === "l" ? InputAxis.LX : InputAxis.RX;
+    const yAxis = joystick === "l" ? InputAxis.LY : InputAxis.RY;
+
+    this.axesValues[xAxis] = xCapped;
+    this.axesValues[yAxis] = yCapped;
+
+    return [xCapped, yCapped];
   }
 
+  /**
+   * Check if an action is currently down.
+   *
+   * @param action - The action to check
+   * @returns True if the action is currently down
+   */
   public isActionDown(action: InputAction): boolean {
     return this.currentKeysDown.has(action);
   }
 
+  /**
+   * Check if an action was pressed since the last update.
+   *
+   * @param action - The action to check
+   * @returns True if the action was pressed since the last input update
+   */
   public isActionPressed(action: InputAction): boolean {
     return (
       this.currentKeysDown.has(action) && !this.previousKeysDown.has(action)
     );
   }
 
+  /**
+   * Check if an action was released since the last update.
+   *
+   * @param action - The action to check
+   * @returns True if the action was released since the last input update
+   */
   public isActionReleased(action: InputAction): boolean {
     return (
       !this.currentKeysDown.has(action) && this.previousKeysDown.has(action)
     );
   }
 
+  /**
+   * Get the value of a joystick axis.
+   *
+   * @param axis - The axis to retrieve the value of
+   * @returns The value of a joystick axis
+   */
   public getAxis(axis: keyof AxesValues): number {
     return this.axesValues[axis];
   }
 
+  /**
+   * Update the state of the input manager to match current user inputs.
+   */
   public update(): void {
     this.previousKeysDown = new Set(this.currentKeysDown);
   }
@@ -151,7 +217,7 @@ export default class InputManager {
         case InputAction.Right:
         case InputAction.Down:
         case InputAction.Left:
-          this.axesActionDown(action);
+          this.axesActionKeyDown(action);
           break;
         default:
           break;
@@ -186,7 +252,7 @@ export default class InputManager {
       case InputAction.Right:
       case InputAction.Down:
       case InputAction.Left:
-        this.axesActionUp(action);
+        this.axesActionKeyUp(action);
         break;
       default:
         break;
@@ -205,7 +271,7 @@ export default class InputManager {
     }
   }
 
-  private axesActionDown(action: DirectionInputAction): void {
+  private axesActionKeyDown(action: DirectionInputAction): void {
     const axis =
       action === InputAction.Up || action === InputAction.Down
         ? InputAxis.LY
@@ -217,14 +283,19 @@ export default class InputManager {
     if (action !== lastDirection) {
       const value = DIRECTION_TO_AXIS[action];
 
-      this.axesValues[axis] = value;
+      this.keyToAxisValues[axis] = value;
+      this.updateJoystick(
+        "l",
+        this.keyToAxisValues[InputAxis.LX],
+        this.keyToAxisValues[InputAxis.LY]
+      );
     }
 
     // Add the action to the stack
     stack.unshift(action);
   }
 
-  private axesActionUp(action: DirectionInputAction): void {
+  private axesActionKeyUp(action: DirectionInputAction): void {
     const axis =
       action === InputAction.Up || action === InputAction.Down
         ? InputAxis.LY
@@ -245,14 +316,18 @@ export default class InputManager {
       const value =
         lastDirection === undefined ? 0 : DIRECTION_TO_AXIS[lastDirection];
 
-      this.axesValues[axis] = value;
+      this.keyToAxisValues[axis] = value;
+      this.updateJoystick(
+        "l",
+        this.keyToAxisValues[InputAxis.LX],
+        this.keyToAxisValues[InputAxis.LY]
+      );
     }
   }
 
   private isInputElementActive(): boolean {
-    const focusedElement = document.activeElement;
-    if (!focusedElement) return false;
+    const tagName = document.activeElement?.tagName;
 
-    return ["INPUT", "TEXTAREA"].includes(focusedElement.tagName);
+    return tagName === "INPUT" || tagName === "TEXTAREA";
   }
 }

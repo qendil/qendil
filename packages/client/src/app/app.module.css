@@ -8,6 +8,7 @@
   height: calc(100% - var(--safe-area-top) - var(--safe-area-bottom));
   box-sizing: border-box;
   inset: 0;
+  touch-action: none;
 }
 
 .updatePrompt {
