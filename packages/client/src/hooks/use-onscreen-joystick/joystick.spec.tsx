@@ -31,38 +31,4 @@ describe("Joystick component", () => {
     expect(joystick.style.left).toBe("25px"); // X * radius + radius
     expect(joystick.style.top).toBe("75px"); // Y * radius + radius
   });
-
-  it.each([
-    [-1, -1, ["north", "west"]],
-    [0, -1, ["north"]],
-    [1, -1, ["north", "east"]],
-    [-1, 0, ["west"]],
-    [0, 0, []],
-    [1, 0, ["east"]],
-    [-1, 1, ["south", "west"]],
-    [0, 1, ["south"]],
-    [1, 1, ["south", "east"]],
-  ])("has annotated direction", (x, y, directions) => {
-    render(
-      <Joystick
-        x={x}
-        y={y}
-        originX={100}
-        originY={150}
-        radius={50}
-        deadZoneThreshold={0.25}
-      />
-    );
-
-    const joystick = screen.getByTestId("joystick-container");
-
-    const excludedClasses = ["north", "south", "east", "west"].filter(
-      (direction) => !directions.includes(direction)
-    );
-    expect(joystick).not.toHaveClass(...excludedClasses);
-
-    if (directions.length > 0) {
-      expect(joystick).toHaveClass(...directions);
-    }
-  });
 });

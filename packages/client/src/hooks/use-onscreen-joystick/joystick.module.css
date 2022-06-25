@@ -4,50 +4,6 @@
   background: rgba(255, 255, 255, 0.2);
   position: absolute;
   pointer-events: none;
-
-  &:global(.north) .joystick {
-    transform: translate(-50%, -50%) rotate(0deg);
-    border-radius: 0;
-    border-top: 5px solid #f00;
-  }
-
-  &:global(.south) .joystick {
-    transform: translate(-50%, -50%) rotate(180deg);
-    border-radius: 0;
-    border-top: 5px solid #f00;
-  }
-
-  &:global(.west) {
-    & .joystick {
-      transform: translate(-50%, -50%) rotate(-90deg);
-      border-radius: 0;
-      border-top: 5px solid #f00;
-    }
-
-    &:global(.north) .joystick {
-      transform: translate(-50%, -50%) rotate(-45deg);
-    }
-
-    &:global(.south) .joystick {
-      transform: translate(-50%, -50%) rotate(-135deg);
-    }
-  }
-
-  &:global(.east) {
-    & .joystick {
-      transform: translate(-50%, -50%) rotate(90deg);
-      border-radius: 0;
-      border-top: 5px solid #f00;
-    }
-
-    &:global(.north) .joystick {
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-
-    &:global(.south) .joystick {
-      transform: translate(-50%, -50%) rotate(135deg);
-    }
-  }
 }
 
 .deadZone {

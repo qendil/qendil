@@ -1,6 +1,3 @@
-import classNames from "classnames";
-import { useMemo } from "react";
-
 import type { ReactElement } from "react";
 
 import classes from "./joystick.module.css";
@@ -39,32 +36,6 @@ export type JoystickProps = {
 };
 
 /**
- * Utility class to calculate 8-way joystick directions.
- */
-function getDirections(x: number, y: number, deadzone: number): string[] {
-  const directions: string[] = [];
-  if (x * x + y * y < deadzone * deadzone) {
-    return directions;
-  }
-
-  const angle = Math.atan2(-y, x);
-
-  if (angle >= Math.PI / 8 && angle <= (7 * Math.PI) / 8) {
-    directions.push("north");
-  } else if (angle <= -Math.PI / 8 && angle >= (-7 * Math.PI) / 8) {
-    directions.push("south");
-  }
-
-  if (angle <= (3 * Math.PI) / 8 && angle >= (-3 * Math.PI) / 8) {
-    directions.push("east");
-  } else if (angle >= (5 * Math.PI) / 8 || angle <= (-5 * Math.PI) / 8) {
-    directions.push("west");
-  }
-
-  return directions;
-}
-
-/**
  * An on-screen joystick element that can be used to emulate a gamepad joystick.
  */
 export default function Joystick(props: JoystickProps): ReactElement {
@@ -90,14 +61,9 @@ export default function Joystick(props: JoystickProps): ReactElement {
     top: (y + 1) * radius,
   };
 
-  const directions = useMemo(
-    () => getDirections(x, y, deadZoneThreshold),
-    [deadZoneThreshold, x, y]
-  );
-
   return (
     <div
-      className={classNames(classes.joystickContainer, ...directions)}
+      className={classes.joystickContainer}
       style={containerStyle}
       data-testid="joystick-container"
     >
