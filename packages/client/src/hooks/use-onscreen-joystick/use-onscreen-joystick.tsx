@@ -15,7 +15,8 @@ import Joystick from "./joystick";
  * - A function to bind the input manager to this on-screen joystick.
  */
 export default function useOnScreenJoystick(
-  radius = 70
+  radius = 70,
+  deadZoneThreshold = 0.25
 ): [
   ReactElement | undefined,
   PointerEventHandler,
@@ -31,6 +32,8 @@ export default function useOnScreenJoystick(
 
   const [inputManager, setInputManager] = useState<InputManager | undefined>();
 
+  const deadZoneThreshold2 = deadZoneThreshold * deadZoneThreshold;
+
   const element = useMemo(() => {
     if (visible) {
       return (
@@ -40,10 +43,11 @@ export default function useOnScreenJoystick(
           radius={radius}
           x={x}
           y={y}
+          deadZoneThreshold={deadZoneThreshold}
         />
       );
     }
-  }, [originX, originY, radius, visible, x, y]);
+  }, [deadZoneThreshold, originX, originY, radius, visible, x, y]);
 
   const showJoystick = useCallback<PointerEventHandler>(
     (event): void => {
@@ -65,14 +69,21 @@ export default function useOnScreenJoystick(
 
       // Utility function to update the axis values
       const updateAxes = (joystickX: number, joystickY: number): void => {
-        const [finalX, finalY] = inputManager.updateJoystick(
-          "l",
-          joystickX,
-          joystickY
-        );
+        const magnitude2 = joystickX * joystickX + joystickY * joystickY;
+        if (deadZoneThreshold2 > magnitude2) {
+          inputManager.updateJoystick("l", 0, 0);
+          setX(joystickX);
+          setY(joystickY);
+        } else {
+          const [finalX, finalY] = inputManager.updateJoystick(
+            "l",
+            joystickX,
+            joystickY
+          );
 
-        setX(finalX);
-        setY(finalY);
+          setX(finalX);
+          setY(finalY);
+        }
       };
 
       updateAxes(0, 0);
@@ -130,7 +141,7 @@ export default function useOnScreenJoystick(
         capture: true,
       });
     },
-    [inputManager, radius, visible]
+    [deadZoneThreshold2, inputManager, radius, visible]
   );
 
   // Function to bind this joystick to an input manager
