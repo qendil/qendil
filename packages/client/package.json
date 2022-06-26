@@ -1,6 +1,6 @@
 {
   "name": "@qendil/client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The client for the qendil game",
   "author": "Said Dermoumi <hi@sdrm.me>",
   "private": true,
