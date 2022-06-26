@@ -18,6 +18,7 @@
 **Other changes:**
 
 - Refactor App scene to use ECS [\#104](https://github.com/qendil/qendil/pull/104)
+- Update dependency vite-plugin-sentry to ^1.0.18 [\#92](https://github.com/qendil/qendil/pull/92) ([renovate[bot]](https://github.com/apps/renovate))
 
 ## [0.0.1](https://github.com/qendil/qendil/tree/client/0.0.1) (2022-06-16)
 
