@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Add an on-screen touch joystick [\#121](https://github.com/qendil/qendil/pull/121)
 - Improve the ThreeView component [\#108](https://github.com/qendil/qendil/pull/108)
 - Add a basic ECS [\#96](https://github.com/qendil/qendil/pull/96)
 
