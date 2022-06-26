@@ -3,6 +3,8 @@ ci:
     numberOfRuns: 3
     settings:
       chromeFlags: --no-sandbox
+      skipAudits:
+        - is-crawlable
   assert:
     preset: lighthouse:recommended
     assertions:

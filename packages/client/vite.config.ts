@@ -8,6 +8,7 @@ import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { VitePWA as vitePWA } from "vite-plugin-pwa";
 import viteSentry from "vite-plugin-sentry";
+import viteRemoveAttributes from "vite-plugin-react-remove-attributes";
 
 import packageJson from "./package.json";
 
@@ -171,6 +172,10 @@ export default defineConfig(async ({ mode }) => {
           injectionPoint: "__WB_MANIFEST",
         },
       }),
+      isProduction &&
+        viteRemoveAttributes({
+          attributes: ["data-testid"],
+        }),
       uploadToSentry &&
         viteSentry({
           authToken: environment.CLIENT_SENTRY_AUTH_TOKEN,
