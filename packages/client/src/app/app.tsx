@@ -47,10 +47,7 @@ class ThirdPersonController extends GameComponent {
 const updatePosition = gameWorld.watch(
   [Position, Velocity],
   (query, dt: number) => {
-    for (const entity of query) {
-      const { x, y, z } = entity.get(Velocity);
-      const position = entity.get(Position);
-
+    for (const [position, { x, y, z }] of query) {
       position.x += x * dt;
       position.y += y * dt;
       position.z += z * dt;
@@ -59,12 +56,9 @@ const updatePosition = gameWorld.watch(
 );
 
 const updateMeshPosition = gameWorld.watch(
-  [Mesh, Position.changed()],
+  [Position, Mesh, Position.changed()],
   (query) => {
-    for (const entity of query) {
-      const { x, y, z } = entity.get(Position);
-      const { mesh } = entity.get(Mesh);
-
+    for (const [{ x, y, z }, { mesh }] of query) {
       mesh.position.x = x;
       mesh.position.y = y;
       mesh.position.z = z;
@@ -73,13 +67,12 @@ const updateMeshPosition = gameWorld.watch(
 );
 
 const updateStickControl = gameWorld.watch(
-  [ThirdPersonController, Velocity],
+  [Velocity, ThirdPersonController.present()],
   (query, input: InputManager) => {
     const lx = input.getAxis(InputAxis.LX);
     const ly = input.getAxis(InputAxis.LY);
 
-    for (const entity of query) {
-      const velocity = entity.get(Velocity);
+    for (const [velocity] of query) {
       const { factor: speed } = velocity;
 
       velocity.x = lx * speed;

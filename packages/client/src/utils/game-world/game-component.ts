@@ -6,17 +6,19 @@ export type GameComponentConstructor<
   TArgs extends any[] = any
 > = new (...args: TArgs) => T;
 
+type OperationType = "absent" | "added" | "changed" | "present";
+
 /**
  * A class that allows for filtering by a component.
  */
 export class GameComponentFilterObject<
   T extends GameComponent = GameComponent
 > {
-  public readonly operation: "added" | "changed" | "less";
+  public readonly operation: OperationType;
   public readonly component: GameComponentConstructor<T>;
 
   public constructor(
-    operation: "added" | "changed" | "less",
+    operation: OperationType,
     component: GameComponentConstructor<T>
   ) {
     this.operation = operation;
@@ -39,13 +41,23 @@ export type GameComponentFilter<T extends GameComponent = GameComponent> =
  */
 export default class GameComponent {
   /**
+   * Create a filter that only allows entities that have the component
+   */
+  public static present(): GameComponentFilterObject {
+    return new GameComponentFilterObject(
+      "present",
+      this as unknown as GameComponentConstructor
+    );
+  }
+
+  /**
    * Create a filter that excludes the given component from the query.
    *
    * @returns A component filter
    */
-  public static less(): GameComponentFilterObject {
+  public static absent(): GameComponentFilterObject {
     return new GameComponentFilterObject(
-      "less",
+      "absent",
       this as unknown as GameComponentConstructor
     );
   }

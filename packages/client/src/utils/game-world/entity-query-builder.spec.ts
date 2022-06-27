@@ -36,7 +36,7 @@ describe("Entity Query Builder", () => {
     expect(query.size).toBe(0);
 
     const entity = world.spawn().insert(Position);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
   });
 
   it("keeps tracks of removed components", () => {
@@ -50,7 +50,7 @@ describe("Entity Query Builder", () => {
     const query = update();
 
     const entity = world.spawn().insert(Position);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
 
     entity.remove(Position);
     expect(query.size).toBe(0);
@@ -70,10 +70,10 @@ describe("Entity Query Builder", () => {
     expect(query.size).toBe(0);
 
     const entity = world.spawn().insert(Position);
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
 
     entity.insert(Rotation);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
   });
 
   it("tracks entities created before the query was created", () => {
@@ -94,8 +94,8 @@ describe("Entity Query Builder", () => {
       .insert(Rotation);
 
     const system = world.watch(
-      [Position, Velocity, Rotation.less()],
-      (query) => [...query]
+      [Position, Velocity, Rotation.absent()],
+      (query) => [...query.asEntities()]
     );
     const query = system();
 
@@ -129,14 +129,14 @@ describe("Entity Query Builder", () => {
     // Then the query should no longer contain that entity
 
     const world = new GameWorld();
-    const update = world.watch([Position, Rotation.less()], (query) => query);
+    const update = world.watch([Position, Rotation.absent()], (query) => query);
     const query = update();
 
     const entity = world.spawn().insert(Position);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
 
     entity.insert(Rotation);
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
   });
 
   it("handles querying recently added components", () => {
@@ -153,13 +153,13 @@ describe("Entity Query Builder", () => {
     const query = update();
 
     const entity = world.spawn().insert(Position);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
 
     update();
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
 
     entity.remove(Position).insert(Position);
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
   });
 
   it("treats existing components as recently added", () => {
@@ -171,7 +171,7 @@ describe("Entity Query Builder", () => {
     const entity = world.spawn().insert(Position);
 
     const update = world.watch([Position.added()], (query) => {
-      expect([...query]).toContain(entity);
+      expect([...query.asEntities()]).toContain(entity);
     });
 
     update();
@@ -188,10 +188,10 @@ describe("Entity Query Builder", () => {
     const update = world.watch([Position.changed()], (query) => query);
 
     const query = update();
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
 
     entity.get(Position).x = 1;
-    expect([...query]).toContain(entity);
+    expect([...query.asEntities()]).toContain(entity);
   });
 
   it("does not consider component updates as changed if the value does not change", () => {
@@ -205,10 +205,10 @@ describe("Entity Query Builder", () => {
     const update = world.watch([Position.changed()], (query) => query);
 
     const query = update();
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
 
     entity.get(Position).x = 144;
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
   });
 
   it("handles complex gradual queries", () => {
@@ -223,7 +223,7 @@ describe("Entity Query Builder", () => {
 
     const world = new GameWorld();
     const update = world.watch(
-      [Named, Position.added(), Velocity.changed(), Rotation.less()],
+      [Named, Position.added(), Velocity.changed(), Rotation.absent()],
       (query) => query
     );
     const query = update();
@@ -246,37 +246,37 @@ describe("Entity Query Builder", () => {
     // Add component
     entityA.insert(Position);
     entityB.insert(Position);
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     // Change component values
     entityA.get(Velocity).x = 1;
     entityB.get(Velocity).x = 1;
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
 
     // Change component values before removal
     entityB.get(Velocity).x = 42;
 
     // Remove previously added component
     entityB.remove(Velocity);
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     // Re-add removed component
     entityB.insert(Velocity, { x: 1 });
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
 
     // Removed filtered-out component
     entityA.remove(Rotation);
-    expect([...query]).toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
 
     // Remove unrelated component
     entityB.remove(Vehicle);
-    expect([...query]).toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
   });
 
   it("handles removing an excluded component while there are still other excluded components", () => {
@@ -288,15 +288,15 @@ describe("Entity Query Builder", () => {
 
     const world = new GameWorld();
     const update = world.watch(
-      [Position.less(), Velocity.less()],
+      [Position.absent(), Velocity.absent()],
       (query) => query
     );
     const query = update();
 
     const entity = world.spawn().insert(Position).insert(Velocity);
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
 
     entity.remove(Position);
-    expect([...query]).not.toContain(entity);
+    expect([...query.asEntities()]).not.toContain(entity);
   });
 });

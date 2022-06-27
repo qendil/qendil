@@ -10,6 +10,7 @@ import type {
 import type { GameEntityLifecycleHooks } from "./game-entity";
 import type { EntityQuery } from "./entity-query";
 import type { GameSystem } from "./game-system";
+import type { ComponentFilterTuple } from "./types";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -29,7 +30,7 @@ export default class GameWorld {
   private readonly entities = new Set<GameEntity>();
   private readonly queries = new SetMap<
     GameComponentConstructor,
-    EntityQueryBuilder
+    EntityQueryBuilder<any>
   >();
 
   /**
@@ -46,8 +47,10 @@ export default class GameWorld {
     const disposedBuilders = new Set<EntityQueryBuilder>();
     for (const builders of this.queries.values()) {
       for (const builder of builders) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         if (!disposedBuilders.has(builder)) {
           builder.dispose();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           disposedBuilders.add(builder);
         }
       }
@@ -95,10 +98,14 @@ export default class GameWorld {
    *  Arguments and return value are forwarded when the system is invoked
    * @returns A system function
    */
-  public watch<T extends unknown[], R>(
-    filters: GameComponentFilter[],
-    callback: (entities: EntityQuery, ...args: T) => R
-  ): GameSystem<T, R> {
+  public watch<
+    TFilter extends ComponentFilterTuple,
+    TArgs extends unknown[],
+    TResult
+  >(
+    filters: TFilter,
+    callback: (entities: EntityQuery<TFilter>, ...args: TArgs) => TResult
+  ): GameSystem<TArgs, TResult> {
     if (this.disposed) {
       throw new Error("Cannot create a system in a disposed world.");
     }
@@ -106,7 +113,7 @@ export default class GameWorld {
     const [query, update, dispose] = this.createQuery(...filters);
     let disposed = false;
 
-    const system: GameSystem<T, R> = (...args: T): R => {
+    const system: GameSystem<TArgs, TResult> = (...args) => {
       const result = callback(query, ...args);
       update();
       return result;
@@ -164,9 +171,9 @@ export default class GameWorld {
    * @returns a query, a function to update the query,
    *  and a function to dispose it
    */
-  private createQuery(
-    ...filters: GameComponentFilter[]
-  ): [EntityQuery, () => void, () => void] {
+  private createQuery<TFilter extends ComponentFilterTuple>(
+    ...filters: TFilter
+  ): [EntityQuery<TFilter>, () => void, () => void] {
     const builder = new EntityQueryBuilder(
       filters,
       this.entities,
@@ -188,7 +195,9 @@ export default class GameWorld {
    * @internal
    * @param builder - The query builder to dispose of
    */
-  private _disposeQueryBuilder(builder: EntityQueryBuilder): void {
+  private _disposeQueryBuilder<TFilter extends ComponentFilterTuple>(
+    builder: EntityQueryBuilder<TFilter>
+  ): void {
     for (const filter of builder.filters) {
       const filterComponent = this._getFilterComponent(filter);
       this.queries.get(filterComponent).delete(builder);

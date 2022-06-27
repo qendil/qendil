@@ -151,17 +151,17 @@ describe("GameWorld system", () => {
     const query = system();
     const entityA = world.spawn().insert(Position);
     const entityB = world.spawn();
-    expect([...query]).toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     system();
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     system();
     entityB.insert(Position);
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
   });
 
   it("properly dispose their queries", () => {
