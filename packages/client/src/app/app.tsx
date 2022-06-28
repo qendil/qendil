@@ -1,10 +1,8 @@
-import { BoxGeometry, Mesh as ThreeMesh, MeshBasicMaterial } from "three";
-import { InputAxis } from "../utils/input-manager";
+import { BoxGeometry, MeshBasicMaterial } from "three";
 import coreInit, { makeGreeting } from "@qendil/core";
-import GameWorld, { GameComponent } from "../utils/game-world";
+import GameWorld from "../utils/game-world";
 import classNames from "classnames";
 
-import type InputManager from "../utils/input-manager";
 import type { ReactElement } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
@@ -15,71 +13,18 @@ import useOnscreenJoystick from "../hooks/use-onscreen-joystick";
 import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
 
+import { Mesh, MeshPositionSystem } from "../game/mesh";
+import { Position } from "../game/position";
+import { VelocitySystem, Velocity } from "../game/velocity";
+import {
+  ThirdPersonController,
+  ThirdPersonControlSystem,
+} from "../game/third-person-controller";
+
 const gameWorld = new GameWorld();
-
-class Position extends GameComponent {
-  public x = 0;
-  public y = 0;
-  public z = 0;
-}
-
-class Velocity extends GameComponent {
-  public x = 0;
-  public y = 0;
-  public z = 0;
-  public factor = 1;
-}
-
-class Mesh extends GameComponent {
-  public mesh: ThreeMesh;
-
-  public constructor(...args: ConstructorParameters<typeof ThreeMesh>) {
-    super();
-
-    this.mesh = new ThreeMesh(...args);
-  }
-}
-
-class ThirdPersonController extends GameComponent {
-  // Nothing here
-}
-
-const updatePosition = gameWorld.watch(
-  [Position, Velocity],
-  (query, dt: number) => {
-    for (const [position, { x, y, z }] of query) {
-      position.x += x * dt;
-      position.y += y * dt;
-      position.z += z * dt;
-    }
-  }
-);
-
-const updateMeshPosition = gameWorld.watch(
-  [Position, Mesh, Position.changed()],
-  (query) => {
-    for (const [{ x, y, z }, { mesh }] of query) {
-      mesh.position.x = x;
-      mesh.position.y = y;
-      mesh.position.z = z;
-    }
-  }
-);
-
-const updateStickControl = gameWorld.watch(
-  [Velocity, ThirdPersonController.present()],
-  (query, input: InputManager) => {
-    const lx = input.getAxis(InputAxis.LX);
-    const ly = input.getAxis(InputAxis.LY);
-
-    for (const [velocity] of query) {
-      const { factor: speed } = velocity;
-
-      velocity.x = lx * speed;
-      velocity.y = -ly * speed;
-    }
-  }
-);
+const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
+const updatePosition = gameWorld.watch(VelocitySystem);
+const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
