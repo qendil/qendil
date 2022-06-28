@@ -42,6 +42,17 @@ describe("GameEntity", () => {
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 
+  it("returns undefined when trying to retrieve inexistent component", () => {
+    // Given an entity without a Position component
+    // When I call .tryGet() with the component
+    // Then I should get undefined
+
+    const world = new GameWorld();
+    const entity = world.spawn();
+
+    expect(entity.tryGet(Position)).toBeUndefined();
+  });
+
   it("removes components", () => {
     // Given a component with two components: Position and Velocity
     // When I remove the Position component
@@ -208,6 +219,21 @@ describe("GameEntity", () => {
     expect(disposeSpy).toHaveBeenCalledOnce();
   });
 
+  it("exposes the entity when removing the component", () => {
+    // Given an entity with a Position component
+    // When I remove the Position component
+    // Then the component should be able to access the entity on disposal
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.remove(Position);
+    expect(disposeSpy).toHaveBeenCalledWith(entity);
+  });
+
   it("disposes of the components when disposing the entity", () => {
     // Given an entity with a Position component
     // When I call .dispose() on the entity
@@ -238,6 +264,21 @@ describe("GameEntity", () => {
     entity.dispose();
     entity.dispose();
     expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("exposes the entity to the components when disposing the entity", () => {
+    // Given an entity with a Position component
+    // When I dispose the entity
+    // Then the component should be able to access the entity on disposal
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.dispose();
+    expect(disposeSpy).toHaveBeenCalledWith(entity);
   });
 
   it("fails when attempting to insert a component into a disposed entity", () => {

@@ -7,21 +7,30 @@ import type {
   GameComponentFilter,
 } from "./game-component";
 import type { GameEntity } from "./game-entity";
+import type { ComponentFilterTuple, ComponentTuple } from "./types";
 
 /**
  * Internal wrapper over the EntityQuery wrapper
  */
-class EntityQueryWrapper extends EntityQuery {
-  public constructor(entities: Set<GameEntity>) {
-    super(entities);
+class EntityQueryWrapper<
+  TFilter extends ComponentFilterTuple
+> extends EntityQuery<TFilter> {
+  public constructor(
+    entities: Set<GameEntity>,
+    components: ComponentTuple<TFilter>
+  ) {
+    super(entities, components);
   }
 }
 
 /**
  * Builds and maintains a query of component filters.
  */
-export default class EntityQueryBuilder extends Set<GameEntity> {
-  public readonly filters: GameComponentFilter[];
+export default class EntityQueryBuilder<
+  TFilter extends ComponentFilterTuple = GameComponentFilter[]
+> extends Set<GameEntity> {
+  public readonly filters: TFilter;
+  public readonly components: ComponentTuple<TFilter>;
 
   /**
    * The components that are required in an entity.
@@ -68,17 +77,19 @@ export default class EntityQueryBuilder extends Set<GameEntity> {
   /**
    * Hook to call when disposing the query builder.
    */
-  private readonly onDispose: (query: EntityQueryBuilder) => void;
+  private readonly onDispose: (query: EntityQueryBuilder<TFilter>) => void;
 
   public constructor(
-    components: GameComponentFilter[],
+    filters: TFilter,
     currentEntities: Iterable<GameEntity>,
-    onDispose: (query: EntityQueryBuilder) => void
+    onDispose: (query: EntityQueryBuilder<TFilter>) => void
   ) {
     super();
 
-    this.filters = components;
+    this.filters = filters;
     this.onDispose = onDispose;
+
+    const components: GameComponentConstructor[] = [];
 
     // Build utility sets to make querying faster later on
     for (const filter of this.filters) {
@@ -86,7 +97,7 @@ export default class EntityQueryBuilder extends Set<GameEntity> {
         const { operation, component } = filter;
 
         switch (operation) {
-          case "less":
+          case "absent":
             this.excludedComponents.add(component);
             break;
 
@@ -100,13 +111,21 @@ export default class EntityQueryBuilder extends Set<GameEntity> {
             this.inclusiveFilters.add(component);
             break;
 
+          case "present":
+            this.requiredComponents.add(component);
+            this.inclusiveFilters.add(component);
+
           // No default
         }
       } else {
         this.requiredComponents.add(filter);
         this.inclusiveFilters.add(filter);
+
+        components.push(filter);
       }
     }
+
+    this.components = components as ComponentTuple<TFilter>;
 
     // Build the initial set of entities matched by this query
     for (const entity of currentEntities) {
@@ -131,8 +150,8 @@ export default class EntityQueryBuilder extends Set<GameEntity> {
    * @returns An EntityQuery, a function to signal an update,
    *  and a function to dispose it
    */
-  public wrap(): [EntityQuery, () => void, () => void] {
-    const query = new EntityQueryWrapper(this);
+  public wrap(): [EntityQuery<TFilter>, () => void, () => void] {
+    const query = new EntityQueryWrapper(this, this.components);
 
     const update = (): void => this.update();
     const dispose = (): void => this.dispose();

@@ -1,5 +1,6 @@
 import GameWorld from "./game-world";
 import GameComponent from "./game-component";
+import GameSystem from "./game-system";
 
 class Position extends GameComponent {
   public x = 0;
@@ -151,20 +152,20 @@ describe("GameWorld system", () => {
     const query = system();
     const entityA = world.spawn().insert(Position);
     const entityB = world.spawn();
-    expect([...query]).toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     system();
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).not.toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).not.toContain(entityB);
 
     system();
     entityB.insert(Position);
-    expect([...query]).not.toContain(entityA);
-    expect([...query]).toContain(entityB);
+    expect([...query.asEntities()]).not.toContain(entityA);
+    expect([...query.asEntities()]).toContain(entityB);
   });
 
-  it("properly dispose their queries", () => {
+  it("properly disposes of system queries", () => {
     // Given a system that queries for Position components
     // When I call `.dispose()` on the system
     // Then the corresponding query should no longer be tracked
@@ -180,7 +181,7 @@ describe("GameWorld system", () => {
     expect(queries.size).toBe(0);
   });
 
-  it("properly dispose their queries once", () => {
+  it("properly disposes of system queries queries once", () => {
     // Given a system that queries for Position components
     // When I call `.dispose()` on the system
     // And I call `.dispose()` on the system again
@@ -198,5 +199,19 @@ describe("GameWorld system", () => {
     system.dispose();
     system.dispose();
     expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("accepts alternative syntax for systems", () => {
+    // Given a GameSystem instance
+    // When I call `.watch()` with the GameSystem instance
+    // Then I should have a proper game system handle
+
+    const mySystem = new GameSystem([Position], (query) => [...query]);
+
+    const world = new GameWorld();
+    const system = world.watch(mySystem);
+
+    expect(system()).toBeInstanceOf(Array);
+    expect(system()).toHaveLength(0);
   });
 });
