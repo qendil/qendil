@@ -219,6 +219,21 @@ describe("GameEntity", () => {
     expect(disposeSpy).toHaveBeenCalledOnce();
   });
 
+  it("exposes the entity when removing the component", () => {
+    // Given an entity with a Position component
+    // When I remove the Position component
+    // Then the component should be able to access the entity on disposal
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.remove(Position);
+    expect(disposeSpy).toHaveBeenCalledWith(entity);
+  });
+
   it("disposes of the components when disposing the entity", () => {
     // Given an entity with a Position component
     // When I call .dispose() on the entity
@@ -249,6 +264,21 @@ describe("GameEntity", () => {
     entity.dispose();
     entity.dispose();
     expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("exposes the entity to the components when disposing the entity", () => {
+    // Given an entity with a Position component
+    // When I dispose the entity
+    // Then the component should be able to access the entity on disposal
+
+    const world = new GameWorld();
+    const entity = world.spawn().insert(Position);
+
+    const position = entity.get(Position);
+    const disposeSpy = vi.spyOn(position, "dispose");
+
+    entity.dispose();
+    expect(disposeSpy).toHaveBeenCalledWith(entity);
   });
 
   it("fails when attempting to insert a component into a disposed entity", () => {

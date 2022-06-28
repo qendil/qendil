@@ -55,7 +55,7 @@ export abstract class GameEntity {
     this.disposed = true;
 
     for (const component of this.components.values()) {
-      component.dispose();
+      component.dispose(this);
     }
 
     this.hooks.onDispose(this);
@@ -163,7 +163,7 @@ export abstract class GameEntity {
     const component = this.components.get(constructor);
     if (component !== undefined) {
       this.components.delete(constructor);
-      component.dispose();
+      component.dispose(this);
       this.hooks.onComponentRemoved(this, constructor);
     }
 

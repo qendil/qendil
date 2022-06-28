@@ -1,3 +1,5 @@
+import type { GameEntity } from "./game-entity";
+
 /**
  * A reference to a component by its constructor.
  */
@@ -94,7 +96,7 @@ export default class GameComponent {
    * @important This method is only meant for resource clean up,
    *  avoid running game logic in here.
    */
-  public dispose(): void {
+  public dispose(_entity: GameEntity): void {
     // Nothing to do
   }
 }
