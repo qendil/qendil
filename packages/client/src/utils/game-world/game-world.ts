@@ -9,8 +9,9 @@ import type {
 } from "./game-component";
 import type { GameEntityLifecycleHooks } from "./game-entity";
 import type { EntityQuery } from "./entity-query";
-import type { GameSystem } from "./game-system";
+import type { GameSystemHandle } from "./game-system";
 import type { ComponentFilterTuple } from "./types";
+import type GameSystem from "./game-system";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -92,11 +93,29 @@ export default class GameWorld {
    * @important
    *  You should call `dispose()` on the returned system when you are done.
    *
+   * @param system - A GameSystem instance to define the system
+   * @returns A system handle
+   */
+  public watch<
+    TFilter extends ComponentFilterTuple,
+    TArgs extends unknown[],
+    TResult
+  >(
+    system: GameSystem<TFilter, TArgs, TResult>
+  ): GameSystemHandle<TArgs, TResult>;
+
+  /**
+   * Create a system that operates on entities that have all of the given
+   *   components.
+   *
+   * @important
+   *  You should call `dispose()` on the returned system when you are done.
+   *
    * @param filters - List of component filters to track
    * @param callback - Callback that's called whenever the system is invoked
    *  It receives and entity set as its first argument
    *  Arguments and return value are forwarded when the system is invoked
-   * @returns A system function
+   * @returns A system hanlde
    */
   public watch<
     TFilter extends ComponentFilterTuple,
@@ -105,16 +124,44 @@ export default class GameWorld {
   >(
     filters: TFilter,
     callback: (entities: EntityQuery<TFilter>, ...args: TArgs) => TResult
-  ): GameSystem<TArgs, TResult> {
+  ): GameSystemHandle<TArgs, TResult>;
+
+  /**
+   * Create a system that operates on entities that have all of the given
+   *   components.
+   *
+   * @important
+   *  You should call `dispose()` on the returned system when you are done.
+   *
+   * @param filtersOrSystem - A filter or a GameSystem instance
+   * @param callback - Callback that's called whenever the system is invoked
+   *  It receives and entity set as its first argument
+   *  Arguments and return value are forwarded when the system is invoked
+   * @returns A system handle
+   */
+  public watch<
+    TFilter extends ComponentFilterTuple,
+    TArgs extends unknown[],
+    TResult
+  >(
+    filtersOrSystem: GameSystem<TFilter, TArgs, TResult> | TFilter,
+    callback?: (entities: EntityQuery<TFilter>, ...args: TArgs) => TResult
+  ): GameSystemHandle<TArgs, TResult> {
+    if (!Array.isArray(filtersOrSystem)) {
+      const { filters, handle } = filtersOrSystem;
+      return this.watch(filters, handle);
+    }
+
     if (this.disposed) {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
-    const [query, update, dispose] = this.createQuery(...filters);
+    const [query, update, dispose] = this.createQuery(...filtersOrSystem);
     let disposed = false;
 
-    const system: GameSystem<TArgs, TResult> = (...args) => {
-      const result = callback(query, ...args);
+    const system: GameSystemHandle<TArgs, TResult> = (...args) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const result = callback!(query, ...args);
       update();
       return result;
     };
