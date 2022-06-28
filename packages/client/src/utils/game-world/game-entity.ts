@@ -180,7 +180,8 @@ export abstract class GameEntity {
   public get<T extends GameComponent>(
     constructor: GameComponentConstructor<T>
   ): T {
-    const component = this.components.get(constructor) as T | undefined;
+    const component = this.tryGet(constructor);
+
     if (component === undefined) {
       throw new Error(
         `Cannot retrieve component ${constructor.name} from entity ${this.id} because it does not exist.`
@@ -188,6 +189,19 @@ export abstract class GameEntity {
     }
 
     return component;
+  }
+
+  /**
+   * Retrieve as single mapped component from this entity if it exists,
+   * otherwise return `undefined`.
+   *
+   * @param constructor - The component to retrieve
+   * @returns A component or `undefined`
+   */
+  public tryGet<T extends GameComponent>(
+    constructor: GameComponentConstructor<T>
+  ): T | undefined {
+    return this.components.get(constructor) as T | undefined;
   }
 
   /**

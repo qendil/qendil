@@ -42,6 +42,17 @@ describe("GameEntity", () => {
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 
+  it("returns undefined when trying to retrieve inexistent component", () => {
+    // Given an entity without a Position component
+    // When I call .tryGet() with the component
+    // Then I should get undefined
+
+    const world = new GameWorld();
+    const entity = world.spawn();
+
+    expect(entity.tryGet(Position)).toBeUndefined();
+  });
+
   it("removes components", () => {
     // Given a component with two components: Position and Velocity
     // When I remove the Position component
