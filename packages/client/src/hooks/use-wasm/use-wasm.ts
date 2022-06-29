@@ -3,16 +3,15 @@ const loadedWasmFiles = new WeakMap<() => Promise<unknown>, unknown>();
 /**
  * Hook that suspends the component until the given initializer has loaded.
  * @param initializer - The wasm initializer function
+ * @returns The result of the initializer
  */
 export default function useWasm<T = unknown>(initializer: () => Promise<T>): T {
-  const loaded = loadedWasmFiles.get(initializer);
-
-  if (!loaded) {
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw initializer().then((exports) => {
-      loadedWasmFiles.set(initializer, exports);
-    });
+  if (loadedWasmFiles.has(initializer)) {
+    return loadedWasmFiles.get(initializer) as T;
   }
 
-  return loaded as T;
+  // eslint-disable-next-line @typescript-eslint/no-throw-literal
+  throw initializer().then((exports) => {
+    loadedWasmFiles.set(initializer, exports);
+  });
 }
