@@ -8,6 +8,10 @@
 
 - ECS Refactoring and improvements [\#125](https://github.com/qendil/qendil/pull/125)
 
+**Fixed bugs:**
+
+- Fix useWasm failing when the initializer resolves to undefined [\#129](https://github.com/qendil/qendil/pull/129)
+
 ## [0.1.0](https://github.com/qendil/qendil/tree/client/0.1.0) (2022-06-26)
 
 [Full Changelog](https://github.com/qendil/qendil/compare/client/0.0.1...client/0.1.0)
