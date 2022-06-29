@@ -108,17 +108,23 @@ export default defineConfig(async ({ mode }) => {
 
   // Shared rollup options
   const rollupOptions = {
-    output: isProductionDebug
-      ? {
-          assetFileNames: `assets/[name]_[hash].[ext]`,
-          chunkFileNames: `assets/[name]_[hash].js`,
-          entryFileNames: `assets/[name]_[hash].js`,
-        }
-      : {
-          assetFileNames: `assets/[hash].[ext]`,
-          chunkFileNames: `assets/[hash].js`,
-          entryFileNames: `assets/[hash].js`,
-        },
+    output: {
+      ...(isProductionDebug
+        ? {
+            assetFileNames: `assets/[name]_[hash].[ext]`,
+            chunkFileNames: `assets/[name]_[hash].js`,
+            entryFileNames: `assets/[name]_[hash].js`,
+          }
+        : {
+            assetFileNames: `assets/[hash].[ext]`,
+            chunkFileNames: `assets/[hash].js`,
+            entryFileNames: `assets/[hash].js`,
+          }),
+      manualChunks: {
+        // Isolate huge packages
+        rapier: ["@dimforge/rapier3d-compat"],
+      },
+    },
   } as const;
 
   const sentryEnvironment = environment.CLIENT_SENTRY_ENVIRONMENT || mode;

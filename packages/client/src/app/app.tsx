@@ -14,17 +14,23 @@ import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
 
 import { Mesh, MeshPositionSystem } from "../game/mesh";
-import { Position } from "../game/position";
-import { VelocitySystem, Velocity } from "../game/velocity";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
 } from "../game/third-person-controller";
 
+import {
+  init as rapierInit,
+  ColliderDesc,
+  RigidBodyDesc,
+  World,
+} from "@dimforge/rapier3d-compat";
+import { RigidBody, RigidBodyCreatorSystem } from "../game/rigid-body";
+
 const gameWorld = new GameWorld();
 const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
-const updatePosition = gameWorld.watch(VelocitySystem);
 const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
+const rigidBodyCreator = gameWorld.watch(RigidBodyCreatorSystem);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -43,41 +49,76 @@ export default function App(): ReactElement {
   );
 
   const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
+  useWasm(rapierInit);
 
   const WorldView = useGameView(
     ({ scene, input, makePerspectiveCamera }) => {
       const camera = makePerspectiveCamera();
-      camera.position.z = 5;
+      camera.position.y = 5;
+      camera.lookAt(0, 0, 0);
+
+      const physicsWorld = new World({ x: 0, y: -9.81, z: 0 });
+      physicsWorld.timestep = 1 / 50;
+      physicsWorld.maxVelocityIterations = 8;
 
       const geometry = new BoxGeometry();
       const material = new MeshBasicMaterial({ color: 0xffcc00 });
+      const material2 = new MeshBasicMaterial({ color: 0x00ccff });
 
       bindInput(input);
+
+      gameWorld
+        .spawn()
+        .insertNew(
+          RigidBody,
+          RigidBodyDesc.fixed(),
+          ColliderDesc.cuboid(10, 0.1, 10)
+        );
 
       const cube = gameWorld
         .spawn()
         .insertNew(Mesh, geometry, material)
-        .insert(Position)
-        .insert(Velocity, { factor: 3 })
+        .insertNew(
+          RigidBody,
+          RigidBodyDesc.dynamic().setTranslation(0, 1, 0).lockRotations(),
+          ColliderDesc.cuboid(0.5, 0.5, 0.5)
+        )
         .insert(ThirdPersonController);
 
+      const cube2 = gameWorld
+        .spawn()
+        .insertNew(Mesh, geometry, material2)
+        .insertNew(
+          RigidBody,
+          RigidBodyDesc.dynamic().setTranslation(0, 1, 2).setAdditionalMass(10),
+          ColliderDesc.cuboid(0.5, 0.5, 0.5)
+        );
+
       const { mesh } = cube.get(Mesh);
+      const { mesh: mesh2 } = cube2.get(Mesh);
       scene.add(mesh);
+      scene.add(mesh2);
 
       return {
         camera,
+        fixedUpdateRate: 1 / 50,
         onSetup(renderer): void {
           renderer.setClearColor(0x8a326c);
         },
-        onUpdate(frametime): void {
+        onUpdate(): void {
           updateStickControl(input);
-          updatePosition(frametime);
           updateMeshPosition();
+        },
+        onFixedUpdate(): void {
+          rigidBodyCreator(physicsWorld);
+          physicsWorld.step();
         },
         onDispose(): void {
           material.dispose();
+          material2.dispose();
           geometry.dispose();
           cube.dispose();
+          cube2.dispose();
         },
       };
     },

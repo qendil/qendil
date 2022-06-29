@@ -1,8 +1,9 @@
 import { GameComponent, GameSystem } from "../utils/game-world";
 import { InputAxis } from "../utils/input-manager";
-import { Velocity } from "./velocity";
 
 import type InputManager from "../utils/input-manager";
+import { RigidBody } from "./rigid-body";
+import { Vector3 } from "@dimforge/rapier3d-compat";
 
 /**
  * Tags entities that are controlled by a third-person camera.
@@ -25,12 +26,11 @@ export const ThirdPersonControlSystem = new GameSystem(
     const ly = input.getAxis(InputAxis.LY);
 
     for (const entity of query.asEntities()) {
-      const velocity = entity.tryGet(Velocity);
-      if (velocity !== undefined) {
-        const { factor: speed } = velocity;
+      const rigidBody = entity.tryGet(RigidBody);
+      if (rigidBody !== undefined) {
+        const { body } = rigidBody;
 
-        velocity.x = lx * speed;
-        velocity.y = -ly * speed;
+        body?.setLinvel(new Vector3(4 * lx, 0, 4 * ly), true);
       }
     }
   }

@@ -31,6 +31,8 @@
     "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "dependencies": {
+    "@dimforge/rapier3d": "^0.8.1",
+    "@dimforge/rapier3d-compat": "^0.8.1",
     "@juggle/resize-observer": "^3.3.1",
     "@qendil/core": "workspace:*",
     "@qendil/workers": "workspace:*",

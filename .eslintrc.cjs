@@ -54,6 +54,7 @@ module.exports = {
     "no-useless-constructor": "off", // Overridden by @typescript-eslint
     "no-return-await": "off", // Overridden by @typescript-eslint
     "no-unused-vars": "off", // Overridden by @typescript-eslint
+    "no-lone-blocks": "off",
 
     "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
     "@typescript-eslint/ban-ts-comment": [

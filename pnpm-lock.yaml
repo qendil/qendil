@@ -57,6 +57,8 @@ importers:
 
   packages/client:
     specifiers:
+      '@dimforge/rapier3d': ^0.8.1
+      '@dimforge/rapier3d-compat': ^0.8.1
       '@juggle/resize-observer': ^3.3.1
       '@qendil/core': workspace:*
       '@qendil/workers': workspace:*
@@ -100,6 +102,8 @@ importers:
       vitest: ^0.16.0
       workbox-window: ^6.5.3
     dependencies:
+      '@dimforge/rapier3d': 0.8.1
+      '@dimforge/rapier3d-compat': 0.8.1
       '@juggle/resize-observer': 3.3.1
       '@qendil/core': link:../core
       '@qendil/workers': link:../workers
@@ -1405,6 +1409,14 @@ packages:
     dev: false
     optional: true
 
+  /@dimforge/rapier3d-compat/0.8.1:
+    resolution: {integrity: sha512-D+Q7HR+qdMnXcb3ioqIl+TtLtag8A55fumO+LY9/0WTf2kX1xmFlpHJJNC9fpOza3pl5RYfeZW6K+5YQlEcptw==}
+    dev: false
+
+  /@dimforge/rapier3d/0.8.1:
+    resolution: {integrity: sha512-N63MntDmqFxpPx6gocENP4GhOaIbrgVNKTaUEFJ9X/bHjI0vcdbjwepOwqleWPYu7zCW3nekKpqG5MNE+TBdSw==}
+    dev: false
+
   /@electron/get/1.14.1:
     resolution: {integrity: sha512-BrZYyL/6m0ZXz/lDxy/nlVhQz+WF+iPS6qXolEU8atw7h6v1aYkjwJZ63m+bJMBTxDE66X+r2tPS4a/8C82sZw==}
     engines: {node: '>=8.6'}
@@ -2688,6 +2700,7 @@ packages:
   /astral-regex/2.0.0:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /async-exit-hook/2.0.1:
     resolution: {integrity: sha512-NW2cX8m1Q7KPA7a5M2ULQeZ2wR5qI5PAbw5L0UOMxdioVk9PMZ0h1TmyZEkPYrCvYjDlFICusOu1dlEKAAeXBw==}
@@ -3250,6 +3263,7 @@ packages:
   /cli-truncate/2.1.0:
     resolution: {integrity: sha512-n8fOixwDD6b/ObinzTrp1ZKFzbgvKZvuz/TvejnLn1aQfC6r52XEx85FmuC+3HI+JM7coBRXUvNqEU2PHVrHpg==}
     engines: {node: '>=8'}
+    requiresBuild: true
     dependencies:
       slice-ansi: 3.0.0
       string-width: 4.2.3
@@ -6213,6 +6227,7 @@ packages:
 
   /json-schema-traverse/0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+    requiresBuild: true
 
   /json-schema-traverse/1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
