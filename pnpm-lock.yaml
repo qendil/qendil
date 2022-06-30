@@ -87,7 +87,7 @@ importers:
       jsdom: ^20.0.0
       libxmljs: ^0.19.10
       postcss: ^8.4.14
-      postcss-nesting: ^10.1.9
+      postcss-nesting: ^10.1.10
       react: ^18.2.0
       react-dom: ^18.2.0
       three: ^0.142.0
@@ -116,7 +116,7 @@ importers:
       classnames: 2.3.1
       git-rev: 0.2.1
       postcss: 8.4.14
-      postcss-nesting: 10.1.9_postcss@8.4.14
+      postcss-nesting: 10.1.10_postcss@8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       three: 0.142.0
@@ -7707,8 +7707,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /postcss-nesting/10.1.9_postcss@8.4.14:
-    resolution: {integrity: sha512-WlnqQecNMT7eizBpWwAnQOIk7Zr0A+OZJccEwQoTwmcIsZCVdcjT1LjXj1hBk6zR3BDLZQYsb5KZj2HquZgvTw==}
+  /postcss-nesting/10.1.10_postcss@8.4.14:
+    resolution: {integrity: sha512-lqd7LXCq0gWc0wKXtoKDru5wEUNjm3OryLVNRZ8OnW8km6fSNUuFrjEhU3nklxXE2jvd4qrox566acgh+xQt8w==}
     engines: {node: ^12 || ^14 || >=16}
     peerDependencies:
       postcss: ^8.2
