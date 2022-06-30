@@ -29,10 +29,10 @@
     "prepare": "husky install",
     "release": "zx scripts/release.mjs"
   },
-  "packageManager": "pnpm@7.4.0",
+  "packageManager": "pnpm@7.4.1",
   "engines": {
     "node": ">=v16.15.1",
-    "pnpm": ">=7.4.0"
+    "pnpm": ">=7.4.1"
   },
   "volta": {
     "node": "16.15.1"
