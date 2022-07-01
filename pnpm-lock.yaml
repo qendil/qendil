@@ -19,7 +19,7 @@ importers:
       eslint-plugin-react-hooks: ^4.6.0
       eslint-plugin-testing-library: ^5.5.1
       eslint-plugin-tsdoc: ^0.2.16
-      eslint-plugin-unicorn: ^42.0.0
+      eslint-plugin-unicorn: ^43.0.0
       husky: ^8.0.1
       libxmljs: ^0.19.10
       lint-staged: ^13.0.3
@@ -27,7 +27,7 @@ importers:
       prettier: ^2.7.1
       turbo: ^1.3.1
       typescript: ^4.7.4
-      zx: ^7.0.4
+      zx: ^7.0.5
     dependencies:
       cross-env: 7.0.3
       dotenv: 16.0.1
@@ -35,7 +35,7 @@ importers:
       libxmljs: 0.19.10
       minimist: 1.2.6
       turbo: 1.3.1
-      zx: 7.0.4
+      zx: 7.0.5
     devDependencies:
       '@jgoz/esbuild-plugin-typecheck': 1.1.0_typescript@4.7.4
       '@typescript-eslint/eslint-plugin': 5.30.3_uhfrv6c56y4b7yuzllo3ym4bou
@@ -50,7 +50,7 @@ importers:
       eslint-plugin-react-hooks: 4.6.0_eslint@8.18.0
       eslint-plugin-testing-library: 5.5.1_b5e7v2qnwxfo6hmiq56u52mz3e
       eslint-plugin-tsdoc: 0.2.16
-      eslint-plugin-unicorn: 42.0.0_eslint@8.18.0
+      eslint-plugin-unicorn: 43.0.0_eslint@8.18.0
       lint-staged: 13.0.3
       prettier: 2.7.1
       typescript: 4.7.4
@@ -87,14 +87,14 @@ importers:
       jsdom: ^20.0.0
       libxmljs: ^0.19.10
       postcss: ^8.4.14
-      postcss-nesting: ^10.1.9
+      postcss-nesting: ^10.1.10
       react: ^18.2.0
       react-dom: ^18.2.0
       three: ^0.142.0
       typescript: ^4.7.4
       vite: ^2.9.13
       vite-plugin-html: ^3.2.0
-      vite-plugin-pwa: ^0.12.1
+      vite-plugin-pwa: ^0.12.2
       vite-plugin-react-remove-attributes: ^1.0.1
       vite-plugin-sentry: ^1.0.18
       vitest: ^0.16.0
@@ -116,14 +116,14 @@ importers:
       classnames: 2.3.1
       git-rev: 0.2.1
       postcss: 8.4.14
-      postcss-nesting: 10.1.9_postcss@8.4.14
+      postcss-nesting: 10.1.10_postcss@8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       three: 0.142.0
       typescript: 4.7.4
       vite: 2.9.13
       vite-plugin-html: 3.2.0_vite@2.9.13
-      vite-plugin-pwa: 0.12.1_l4wqv364nx4ztnbztyvj7uhthq
+      vite-plugin-pwa: 0.12.2_l4wqv364nx4ztnbztyvj7uhthq
       vite-plugin-react-remove-attributes: 1.0.1_vite@2.9.13
       vite-plugin-sentry: 1.0.18_vite@2.9.13
       workbox-window: 6.5.3
@@ -428,6 +428,11 @@ packages:
   /@babel/helper-validator-identifier/7.16.7:
     resolution: {integrity: sha512-hsEnFemeiW4D08A5gUAZxLBTXpZ39P+a+DGDsHw1yxqyQ/jzFEnxf5uTEGp+3bzAbNOxU1paTgYS4ECU/IgfDw==}
     engines: {node: '>=6.9.0'}
+
+  /@babel/helper-validator-identifier/7.18.6:
+    resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
+    engines: {node: '>=6.9.0'}
+    dev: true
 
   /@babel/helper-validator-option/7.16.7:
     resolution: {integrity: sha512-TRtenOuRUVo9oIQGPC5G9DgK4743cdxvtOw0weQNpZXaS16SCBi5MNjZF8vba3ETURjZpTbVn7Vvcf2eAwFozQ==}
@@ -4882,13 +4887,13 @@ packages:
       '@microsoft/tsdoc-config': 0.16.1
     dev: true
 
-  /eslint-plugin-unicorn/42.0.0_eslint@8.18.0:
-    resolution: {integrity: sha512-ixBsbhgWuxVaNlPTT8AyfJMlhyC5flCJFjyK3oKE8TRrwBnaHvUbuIkCM1lqg8ryYrFStL/T557zfKzX4GKSlg==}
-    engines: {node: '>=12'}
+  /eslint-plugin-unicorn/43.0.0_eslint@8.18.0:
+    resolution: {integrity: sha512-Z/6HX8yry+zAjo4jHHTAbe1rfniox7qgmCReGBfTc/CVgotfScaMCc4dtSSTHlJ+7Yix5o6LPXzwwpuGGFricg==}
+    engines: {node: '>=14.18'}
     peerDependencies:
-      eslint: '>=8.8.0'
+      eslint: '>=8.18.0'
     dependencies:
-      '@babel/helper-validator-identifier': 7.16.7
+      '@babel/helper-validator-identifier': 7.18.6
       ci-info: 3.3.2
       clean-regexp: 1.0.0
       eslint: 8.18.0
@@ -7707,8 +7712,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /postcss-nesting/10.1.9_postcss@8.4.14:
-    resolution: {integrity: sha512-WlnqQecNMT7eizBpWwAnQOIk7Zr0A+OZJccEwQoTwmcIsZCVdcjT1LjXj1hBk6zR3BDLZQYsb5KZj2HquZgvTw==}
+  /postcss-nesting/10.1.10_postcss@8.4.14:
+    resolution: {integrity: sha512-lqd7LXCq0gWc0wKXtoKDru5wEUNjm3OryLVNRZ8OnW8km6fSNUuFrjEhU3nklxXE2jvd4qrox566acgh+xQt8w==}
     engines: {node: ^12 || ^14 || >=16}
     peerDependencies:
       postcss: ^8.2
@@ -9563,8 +9568,8 @@ packages:
       vite: 2.9.13
     dev: false
 
-  /vite-plugin-pwa/0.12.1_l4wqv364nx4ztnbztyvj7uhthq:
-    resolution: {integrity: sha512-Jeb/RHdA1gZ5WiP8rStdPHSqllb53ekvk8VHPAgp0XmLMCGkwBshv0XlPo1nUIZxou6fEirNwbZ4nHLPalXfkg==}
+  /vite-plugin-pwa/0.12.2_l4wqv364nx4ztnbztyvj7uhthq:
+    resolution: {integrity: sha512-XK2oi1YZkoc1J8fyerNYxyh/yfb+INdrdOW/mOOD5DBLq7jVPxHQuncIhqiREbGOMlY/xMe9CSE7QZ9xIAEf7A==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0-0
     dependencies:
@@ -10109,8 +10114,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zx/7.0.4:
-    resolution: {integrity: sha512-Z0uybYYLtL8ODx9ZOU88EKi6OLZ9ZTDRXX5igtcAsePUIseOWdACSaMxPjzgp0hqWkx0sZz/Lxs8bBSAHOsnNA==}
+  /zx/7.0.5:
+    resolution: {integrity: sha512-0gra6urz4XwOc5bDxQo5LqGENoiD0UIMU9oSaInaYe4u9fi8kLr/s2FbXrnCD2SLEAHTfdANjgYlSlhh+80tWw==}
     engines: {node: '>= 16.0.0'}
     hasBin: true
     dependencies:
