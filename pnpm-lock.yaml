@@ -19,7 +19,7 @@ importers:
       eslint-plugin-react-hooks: ^4.6.0
       eslint-plugin-testing-library: ^5.5.1
       eslint-plugin-tsdoc: ^0.2.16
-      eslint-plugin-unicorn: ^42.0.0
+      eslint-plugin-unicorn: ^43.0.0
       husky: ^8.0.1
       libxmljs: ^0.19.10
       lint-staged: ^13.0.3
@@ -50,7 +50,7 @@ importers:
       eslint-plugin-react-hooks: 4.6.0_eslint@8.18.0
       eslint-plugin-testing-library: 5.5.1_b5e7v2qnwxfo6hmiq56u52mz3e
       eslint-plugin-tsdoc: 0.2.16
-      eslint-plugin-unicorn: 42.0.0_eslint@8.18.0
+      eslint-plugin-unicorn: 43.0.0_eslint@8.18.0
       lint-staged: 13.0.3
       prettier: 2.7.1
       typescript: 4.7.4
@@ -428,6 +428,11 @@ packages:
   /@babel/helper-validator-identifier/7.16.7:
     resolution: {integrity: sha512-hsEnFemeiW4D08A5gUAZxLBTXpZ39P+a+DGDsHw1yxqyQ/jzFEnxf5uTEGp+3bzAbNOxU1paTgYS4ECU/IgfDw==}
     engines: {node: '>=6.9.0'}
+
+  /@babel/helper-validator-identifier/7.18.6:
+    resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
+    engines: {node: '>=6.9.0'}
+    dev: true
 
   /@babel/helper-validator-option/7.16.7:
     resolution: {integrity: sha512-TRtenOuRUVo9oIQGPC5G9DgK4743cdxvtOw0weQNpZXaS16SCBi5MNjZF8vba3ETURjZpTbVn7Vvcf2eAwFozQ==}
@@ -4882,13 +4887,13 @@ packages:
       '@microsoft/tsdoc-config': 0.16.1
     dev: true
 
-  /eslint-plugin-unicorn/42.0.0_eslint@8.18.0:
-    resolution: {integrity: sha512-ixBsbhgWuxVaNlPTT8AyfJMlhyC5flCJFjyK3oKE8TRrwBnaHvUbuIkCM1lqg8ryYrFStL/T557zfKzX4GKSlg==}
-    engines: {node: '>=12'}
+  /eslint-plugin-unicorn/43.0.0_eslint@8.18.0:
+    resolution: {integrity: sha512-Z/6HX8yry+zAjo4jHHTAbe1rfniox7qgmCReGBfTc/CVgotfScaMCc4dtSSTHlJ+7Yix5o6LPXzwwpuGGFricg==}
+    engines: {node: '>=14.18'}
     peerDependencies:
-      eslint: '>=8.8.0'
+      eslint: '>=8.18.0'
     dependencies:
-      '@babel/helper-validator-identifier': 7.16.7
+      '@babel/helper-validator-identifier': 7.18.6
       ci-info: 3.3.2
       clean-regexp: 1.0.0
       eslint: 8.18.0
