@@ -47,7 +47,7 @@
     "classnames": "^2.3.1",
     "git-rev": "^0.2.1",
     "postcss": "^8.4.14",
-    "postcss-nesting": "^10.1.9",
+    "postcss-nesting": "^10.1.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.142.0",
