@@ -34,7 +34,7 @@
     "@juggle/resize-observer": "^3.3.1",
     "@qendil/core": "workspace:*",
     "@qendil/workers": "workspace:*",
-    "@sentry/react": "^7.4.1",
+    "@sentry/react": "^7.5.0",
     "@types/babel__core": "^7.1.19",
     "@types/ejs": "^3.1.1",
     "@types/git-rev": "^0.2.0",
@@ -56,7 +56,7 @@
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.12.2",
     "vite-plugin-react-remove-attributes": "^1.0.1",
-    "vite-plugin-sentry": "^1.0.18",
+    "vite-plugin-sentry": "^1.1.0",
     "workbox-window": "^6.5.3"
   },
   "devDependencies": {

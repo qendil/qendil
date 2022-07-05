@@ -60,7 +60,7 @@ importers:
       '@juggle/resize-observer': ^3.3.1
       '@qendil/core': workspace:*
       '@qendil/workers': workspace:*
-      '@sentry/react': ^7.4.1
+      '@sentry/react': ^7.5.0
       '@testing-library/dom': ^8.14.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
@@ -96,14 +96,14 @@ importers:
       vite-plugin-html: ^3.2.0
       vite-plugin-pwa: ^0.12.2
       vite-plugin-react-remove-attributes: ^1.0.1
-      vite-plugin-sentry: ^1.0.18
+      vite-plugin-sentry: ^1.1.0
       vitest: ^0.17.0
       workbox-window: ^6.5.3
     dependencies:
       '@juggle/resize-observer': 3.3.1
       '@qendil/core': link:../core
       '@qendil/workers': link:../workers
-      '@sentry/react': 7.4.1_react@18.2.0
+      '@sentry/react': 7.5.0_react@18.2.0
       '@types/babel__core': 7.1.19
       '@types/ejs': 3.1.1
       '@types/git-rev': 0.2.0
@@ -125,7 +125,7 @@ importers:
       vite-plugin-html: 3.2.0_vite@2.9.13
       vite-plugin-pwa: 0.12.2_l4wqv364nx4ztnbztyvj7uhthq
       vite-plugin-react-remove-attributes: 1.0.1_vite@2.9.13
-      vite-plugin-sentry: 1.0.18_vite@2.9.13
+      vite-plugin-sentry: 1.1.0_vite@2.9.13
       workbox-window: 6.5.3
     optionalDependencies:
       cordova: 11.0.0
@@ -1757,18 +1757,18 @@ packages:
       picomatch: 2.3.1
     dev: false
 
-  /@sentry/browser/7.4.1:
-    resolution: {integrity: sha512-eHSjseHBmfqmyS8auYDQPVSNy2yOEoqGDUumspyvZzxy8taFNiBDvt8JdIXyCwuAhEQBfNi6kMMGlcgkcWOVpw==}
+  /@sentry/browser/7.5.0:
+    resolution: {integrity: sha512-tTtccbqYti8liTuLudTI0Qrgpe3sKajm0lwsMN4tb1YE879a9JiQ6U6kZ1G/fOIMjOm09pE7J8ozQ+FihPHw5g==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.4.1
-      '@sentry/types': 7.4.1
-      '@sentry/utils': 7.4.1
+      '@sentry/core': 7.5.0
+      '@sentry/types': 7.5.0
+      '@sentry/utils': 7.5.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/cli/2.1.0:
-    resolution: {integrity: sha512-RTT8rD2Z1UoGHLsLdvwztDoP8zWR9TZk6JHDuRZAZbvgCPjlFOUENkRgM9hOOp+nYI/oUy6ZMi/NDe8lVeiLHA==}
+  /@sentry/cli/2.3.0:
+    resolution: {integrity: sha512-R6GWF7gKwmjjKLFmM0ZyFgG0oXrEm6f671Hc3kDkR3NoIj3uL1TTO+6VEWnl8/cZP3uq5VrjZZldet77qCdhcA==}
     engines: {node: '>= 12'}
     hasBin: true
     requiresBuild: true
@@ -1784,49 +1784,49 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/core/7.4.1:
-    resolution: {integrity: sha512-YHx6CCds6ZqyCXAYX8ZpBKZLcFsGWbXZwofIfdILxO1PoToKXOLMPY4XFcI4NNhNg1gM3efleVdcyHKfBLDNyw==}
+  /@sentry/core/7.5.0:
+    resolution: {integrity: sha512-2KO2hVUki3WgvPlB0qj9+yea56CmsK2b1XtBSyAnqbs+JiXWgerF4qshVsH52kS/1h2B0CisyeIv64/WfuGvQQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/hub': 7.4.1
-      '@sentry/types': 7.4.1
-      '@sentry/utils': 7.4.1
+      '@sentry/hub': 7.5.0
+      '@sentry/types': 7.5.0
+      '@sentry/utils': 7.5.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/hub/7.4.1:
-    resolution: {integrity: sha512-VSeaMgn5sbAJ+TCk0NpQbyV5zI3YeuLZgQogQF1YLtNdW9kW9vRDjawNnKEqu7aX18s8bdVbnwjK1oUHUXDKdg==}
+  /@sentry/hub/7.5.0:
+    resolution: {integrity: sha512-R3jGEOtRtZaYCswSNs/7SmjOj/Pp8BhRyXk4q0a5GXghbuVAdzZvlJH0XnD/6jOJAF0iSXFuyGSLqVUmjkY9Ow==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.4.1
-      '@sentry/utils': 7.4.1
+      '@sentry/types': 7.5.0
+      '@sentry/utils': 7.5.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/react/7.4.1_react@18.2.0:
-    resolution: {integrity: sha512-qmcRhFRiQz08zcZ+TGe/f0xiFM03NkQcjX8upqDcjr9pyZ6wF4wiysFwECOpURJWLyusd1bIJotxdXWNd7kiBw==}
+  /@sentry/react/7.5.0_react@18.2.0:
+    resolution: {integrity: sha512-kkSRRK5WIrsDzpbTJBmWqKxpOkmtRTjtEAQjJ8+5iIbfFYRjv3kp58aN2v7+7W4XrITkrht3wMhB2W6p+hzxfQ==}
     engines: {node: '>=8'}
     peerDependencies:
       react: 15.x || 16.x || 17.x || 18.x
     dependencies:
-      '@sentry/browser': 7.4.1
-      '@sentry/types': 7.4.1
-      '@sentry/utils': 7.4.1
+      '@sentry/browser': 7.5.0
+      '@sentry/types': 7.5.0
+      '@sentry/utils': 7.5.0
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/types/7.4.1:
-    resolution: {integrity: sha512-PXzoTwdR5qAoZGdDromiE1JuIJE43ItDVpmMQYA+L40BdlrmvKh1nAP13e8tTCOKxMJ+4TulTLnysumo0NDTlw==}
+  /@sentry/types/7.5.0:
+    resolution: {integrity: sha512-VPQ/53mLo5N8NQUB4k6R2GQBWoW8otFyhhPnC75gYXeBTItVCzJAylVyWy8b+gGqGst+pQN3wb2dl9xhrd69YQ==}
     engines: {node: '>=8'}
     dev: false
 
-  /@sentry/utils/7.4.1:
-    resolution: {integrity: sha512-fJnMPKrM9/fGr43aNCiAJG5F1W6Scpu7TV5MTvHDx7XPVfJhvlW70XBOtrpF1kD7xD9QJw5t+50WX6HctAACjA==}
+  /@sentry/utils/7.5.0:
+    resolution: {integrity: sha512-DgHrkGgHplVMgMbU9hGBfGBV6LcOwNBrhHiVaFwo2NHiXnGwMkaILi5XTRjKm9Iu/m2choAFABA80HEtPKmjtA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.4.1
+      '@sentry/types': 7.5.0
       tslib: 1.14.1
     dev: false
 
@@ -9593,13 +9593,13 @@ packages:
       vite: 2.9.13
     dev: false
 
-  /vite-plugin-sentry/1.0.18_vite@2.9.13:
-    resolution: {integrity: sha512-hkYoEqHzUlHtICLQCLMwv4jQR38WsUZmlSyJPG20xVUkdwZ8BetRX5EmngEMZIfudx0+UjHREVdTVdo6Tcbfig==}
+  /vite-plugin-sentry/1.1.0_vite@2.9.13:
+    resolution: {integrity: sha512-WP73Eh3l1DTM0H27hr7TC7awZJxuVGWbbM5lGOiO4agVCq6B+6V8ifHDShPsrRWlsI69+3zqGYJrkLA7MUQQjQ==}
     engines: {node: '>= 12'}
     peerDependencies:
       vite: ^2.9.12
     dependencies:
-      '@sentry/cli': 2.1.0
+      '@sentry/cli': 2.3.0
       vite: 2.9.13
     transitivePeerDependencies:
       - encoding
