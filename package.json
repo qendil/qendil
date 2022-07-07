@@ -31,11 +31,11 @@
   },
   "packageManager": "pnpm@7.5.0",
   "engines": {
-    "node": ">=v16.15.1",
+    "node": ">=v16.16.0",
     "pnpm": ">=7.5.0"
   },
   "volta": {
-    "node": "16.15.1"
+    "node": "16.16.0"
   },
   "workspaces": [
     "packages/*"
