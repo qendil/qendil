@@ -55,7 +55,7 @@
     "vite": "^2.9.14",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.12.2",
-    "vite-plugin-react-remove-attributes": "^1.0.1",
+    "vite-plugin-react-remove-attributes": "^1.0.2",
     "vite-plugin-sentry": "^1.1.0",
     "workbox-window": "^6.5.3"
   },
