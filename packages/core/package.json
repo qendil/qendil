@@ -14,6 +14,6 @@
     "lint:staged": "cargo clippy && cargo nextest run"
   },
   "dependencies": {
-    "nodemon": "^2.0.18"
+    "nodemon": "^2.0.19"
   }
 }
