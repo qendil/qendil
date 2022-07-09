@@ -13,18 +13,32 @@ import useOnscreenJoystick from "../hooks/use-onscreen-joystick";
 import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
 
-import { Mesh, MeshPositionSystem } from "../game/mesh";
+import {
+  Mesh,
+  MeshPositionSystem,
+  MeshSmoothPositionSystem,
+} from "../game/mesh";
 import { Position } from "../game/position";
 import { VelocitySystem, Velocity } from "../game/velocity";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
 } from "../game/third-person-controller";
+import {
+  SmoothPosition,
+  SmoothPositionAnimate,
+  SmoothPositionInit,
+  SmoothPositionUpdate,
+} from "../game/smooth-position";
 
 const gameWorld = new GameWorld();
 const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
+const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
 const updatePosition = gameWorld.watch(VelocitySystem);
 const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
+const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
+const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
+const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -58,6 +72,7 @@ export default function App(): ReactElement {
         .spawn()
         .insertNew(Mesh, geometry, material)
         .insert(Position)
+        .insert(SmoothPosition)
         .insert(Velocity, { factor: 3 })
         .insert(ThirdPersonController);
 
@@ -66,13 +81,20 @@ export default function App(): ReactElement {
 
       return {
         camera,
+        fixedUpdateRate: 1 / 20,
         onSetup(renderer): void {
           renderer.setClearColor(0x8a326c);
         },
         onUpdate(frametime): void {
+          smoothPositionInit();
+          smoothPositionUpdate();
+          smoothPositionAnimate(frametime, 1 / 20);
           updateStickControl(input);
-          updatePosition(frametime);
           updateMeshPosition();
+          updateMeshSmoothPosition();
+        },
+        onFixedUpdate(frametime): void {
+          updatePosition(frametime);
         },
         onDispose(): void {
           material.dispose();
