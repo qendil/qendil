@@ -61,7 +61,7 @@ importers:
       '@qendil/core': workspace:*
       '@qendil/workers': workspace:*
       '@sentry/react': ^7.5.0
-      '@testing-library/dom': ^8.14.0
+      '@testing-library/dom': ^8.14.1
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
       '@testing-library/user-event': ^14.2.1
@@ -135,10 +135,10 @@ importers:
       cordova-plugin-statusbar: 3.0.0
       libxmljs: 0.19.10
     devDependencies:
-      '@testing-library/dom': 8.14.0
+      '@testing-library/dom': 8.14.1
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/user-event': 14.2.1_ihvo3xlg2d6kwqju3os3zitn3y
+      '@testing-library/user-event': 14.2.1_tqxcvevrce5yj65bmtjesujwlq
       '@types/testing-library__jest-dom': 5.14.5
       c8: 7.11.3
       electron-devtools-installer: 3.2.0
@@ -360,7 +360,7 @@ packages:
       '@babel/helper-module-imports': 7.16.7
       '@babel/helper-simple-access': 7.18.2
       '@babel/helper-split-export-declaration': 7.16.7
-      '@babel/helper-validator-identifier': 7.16.7
+      '@babel/helper-validator-identifier': 7.18.6
       '@babel/template': 7.16.7
       '@babel/traverse': 7.18.5
       '@babel/types': 7.18.4
@@ -428,11 +428,11 @@ packages:
   /@babel/helper-validator-identifier/7.16.7:
     resolution: {integrity: sha512-hsEnFemeiW4D08A5gUAZxLBTXpZ39P+a+DGDsHw1yxqyQ/jzFEnxf5uTEGp+3bzAbNOxU1paTgYS4ECU/IgfDw==}
     engines: {node: '>=6.9.0'}
+    dev: false
 
   /@babel/helper-validator-identifier/7.18.6:
     resolution: {integrity: sha512-MmetCkz9ej86nJQV+sFCxoGGrUbU3q02kgLciwkrt9QqEB7cP39oKEY0PakknEO0Gu20SskMRi+AYZ3b1TpN9g==}
     engines: {node: '>=6.9.0'}
-    dev: true
 
   /@babel/helper-validator-option/7.16.7:
     resolution: {integrity: sha512-TRtenOuRUVo9oIQGPC5G9DgK4743cdxvtOw0weQNpZXaS16SCBi5MNjZF8vba3ETURjZpTbVn7Vvcf2eAwFozQ==}
@@ -466,7 +466,7 @@ packages:
     resolution: {integrity: sha512-7yykMVF3hfZY2jsHZEEgLc+3x4o1O+fYyULu11GynEUQNwB6lua+IIQn1FiJxNucd5UlyJryrwsOh8PL9Sn8Qg==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-validator-identifier': 7.16.7
+      '@babel/helper-validator-identifier': 7.18.6
       chalk: 2.4.2
       js-tokens: 4.0.0
 
@@ -1028,7 +1028,7 @@ packages:
       '@babel/helper-hoist-variables': 7.16.7
       '@babel/helper-module-transforms': 7.18.0
       '@babel/helper-plugin-utils': 7.17.12
-      '@babel/helper-validator-identifier': 7.16.7
+      '@babel/helper-validator-identifier': 7.18.6
       babel-plugin-dynamic-import-node: 2.3.3
     transitivePeerDependencies:
       - supports-color
@@ -1855,8 +1855,8 @@ packages:
       defer-to-connect: 1.1.3
     dev: false
 
-  /@testing-library/dom/8.14.0:
-    resolution: {integrity: sha512-m8FOdUo77iMTwVRCyzWcqxlEIk+GnopbrRI15a0EaLbpZSCinIVI4kSQzWhkShK83GogvEFJSsHF3Ws0z1vrqA==}
+  /@testing-library/dom/8.14.1:
+    resolution: {integrity: sha512-S+E5jTThFnTga+LrX9Oj29Uz0wyLcu0/fD6i9+BUaoJpYtcW9QZ5rJ9SPq4CkKXGhz3Vz9w8poBkngq6Xg7NLQ==}
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.16.7
@@ -1892,19 +1892,19 @@ packages:
       react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.18.3
-      '@testing-library/dom': 8.14.0
+      '@testing-library/dom': 8.14.1
       '@types/react-dom': 18.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: true
 
-  /@testing-library/user-event/14.2.1_ihvo3xlg2d6kwqju3os3zitn3y:
+  /@testing-library/user-event/14.2.1_tqxcvevrce5yj65bmtjesujwlq:
     resolution: {integrity: sha512-HOr1QiODrq+0j9lKU5i10y9TbhxMBMRMGimNx10asdmau9cb8Xb1Vyg0GvTwyIL2ziQyh2kAloOtAQFBQVuecA==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@testing-library/dom': 8.14.0
+      '@testing-library/dom': 8.14.1
     dev: true
 
   /@tootallnate/once/1.1.2:
