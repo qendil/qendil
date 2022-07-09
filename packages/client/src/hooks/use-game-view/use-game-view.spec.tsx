@@ -118,4 +118,31 @@ describe("useGameView hook", () => {
 
     expect(initializer).not.toHaveBeenCalled();
   });
+
+  it("calls onFixedUpdate with the correct arguments", () => {
+    // Given a GameView with a fixed update rate of 1/30
+    // When I wait for the fixedUpdate to be called
+    // Then it should be called with 1/30 as an parameter
+
+    const onFixedUpdate = vi.fn();
+    const { result } = renderHook(() =>
+      useGameView(() => ({ onFixedUpdate, fixedUpdateRate: 1 / 30 }), [])
+    );
+    const { current: GameView } = result;
+
+    vi.useFakeTimers();
+    const performanceNowMock = vi.spyOn(performance, "now");
+    performanceNowMock.mockReturnValue(0);
+
+    onFixedUpdate.mockClear();
+
+    render(<GameView />);
+
+    const frameRate = 1000 / 60;
+    const frames = 2;
+    performanceNowMock.mockReturnValue(frameRate * frames);
+    vi.advanceTimersByTime(frameRate * frames);
+
+    expect(onFixedUpdate).toHaveBeenLastCalledWith(1 / 30);
+  });
 });

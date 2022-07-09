@@ -104,7 +104,7 @@ export default function useGameView(
 
         while (accumulatedUpdateTime >= updateRate) {
           // We want to await each update before passing to the next
-          onFixedUpdate(updateRate);
+          onFixedUpdate(fixedUpdateRate);
 
           accumulatedUpdateTime -= updateRate;
         }
