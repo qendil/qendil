@@ -96,7 +96,7 @@ importers:
       vite-plugin-html: ^3.2.0
       vite-plugin-pwa: ^0.12.2
       vite-plugin-react-remove-attributes: ^1.0.2
-      vite-plugin-sentry: ^1.1.0
+      vite-plugin-sentry: ^1.1.1
       vitest: ^0.18.0
       workbox-window: ^6.5.3
     dependencies:
@@ -125,7 +125,7 @@ importers:
       vite-plugin-html: 3.2.0_vite@2.9.14
       vite-plugin-pwa: 0.12.2_ziluxo2lw7ix6oitfjk2wljgoi
       vite-plugin-react-remove-attributes: 1.0.2_vite@2.9.14
-      vite-plugin-sentry: 1.1.0_vite@2.9.14
+      vite-plugin-sentry: 1.1.1_vite@2.9.14
       workbox-window: 6.5.3
     optionalDependencies:
       cordova: 11.0.0
@@ -1767,8 +1767,8 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/cli/2.3.0:
-    resolution: {integrity: sha512-R6GWF7gKwmjjKLFmM0ZyFgG0oXrEm6f671Hc3kDkR3NoIj3uL1TTO+6VEWnl8/cZP3uq5VrjZZldet77qCdhcA==}
+  /@sentry/cli/2.3.1:
+    resolution: {integrity: sha512-f21BJhiR57/oy0JOZo2prxUIisEMiJKNxg7JMU5fl10AVodnS54yIFsqlZ2Uxkhy9dJyqPGc8lgkEtr+Yui+Kg==}
     engines: {node: '>= 12'}
     hasBin: true
     requiresBuild: true
@@ -9386,13 +9386,13 @@ packages:
       vite: 2.9.14
     dev: false
 
-  /vite-plugin-sentry/1.1.0_vite@2.9.14:
-    resolution: {integrity: sha512-WP73Eh3l1DTM0H27hr7TC7awZJxuVGWbbM5lGOiO4agVCq6B+6V8ifHDShPsrRWlsI69+3zqGYJrkLA7MUQQjQ==}
+  /vite-plugin-sentry/1.1.1_vite@2.9.14:
+    resolution: {integrity: sha512-jH4N2+HYtKyYtfeWr65+GUYpMkQNBHTF1ku6LslhUcbNXZSNPpsfesdp2N0Co1WnxQnX2tVX+KwPkPKhL0zRmQ==}
     engines: {node: '>= 12'}
     peerDependencies:
       vite: ^2.9.12
     dependencies:
-      '@sentry/cli': 2.3.0
+      '@sentry/cli': 2.3.1
       vite: 2.9.14
     transitivePeerDependencies:
       - encoding
