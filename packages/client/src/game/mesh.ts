@@ -1,12 +1,12 @@
 import { Mesh as ThreeMesh } from "three";
-import { GameComponent, GameSystem } from "../utils/game-world";
+import { EcsComponent, EcsSystem } from "../utils/ecs";
 import { Position } from "./position";
 import { SmoothPosition } from "./smooth-position";
 
 /**
  * Tags entities that have a 3D mesh attached to them.
  */
-export class Mesh extends GameComponent {
+export class Mesh extends EcsComponent {
   public mesh: ThreeMesh;
 
   public constructor(...args: ConstructorParameters<typeof ThreeMesh>) {
@@ -19,7 +19,7 @@ export class Mesh extends GameComponent {
 /**
  * Updates the mesh's position based on the entity's position.
  */
-export const MeshPositionSystem = new GameSystem(
+export const MeshPositionSystem = new EcsSystem(
   [Mesh, Position, Position.changed(), SmoothPosition.absent()],
   (query) => {
     for (const [{ mesh }, { x, y, z }] of query) {
@@ -33,7 +33,7 @@ export const MeshPositionSystem = new GameSystem(
 /**
  * Updates the mesh's position based on the entity's smooth physic's position.
  */
-export const MeshSmoothPositionSystem = new GameSystem(
+export const MeshSmoothPositionSystem = new EcsSystem(
   [Mesh, SmoothPosition, SmoothPosition.changed()],
   (query) => {
     for (const [{ mesh }, { x, y, z }] of query) {

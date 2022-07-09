@@ -1,7 +1,7 @@
-import GameWorld from "./game-world";
-import GameComponent from "./game-component";
+import EcsWorld from "./ecs-world";
+import EcsComponent from "./ecs-component";
 
-class Position extends GameComponent {
+class Position extends EcsComponent {
   public x = 0;
   public y = 0;
 
@@ -13,7 +13,7 @@ class Position extends GameComponent {
   }
 }
 
-class Velocity extends GameComponent {
+class Velocity extends EcsComponent {
   public x = 0;
   public y = 0;
 }
@@ -24,7 +24,7 @@ describe("GameEntity", () => {
     // When I insert a Position component
     // Then the component should be added to the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const components = entity.getComponents();
@@ -36,7 +36,7 @@ describe("GameEntity", () => {
     // When I call .get() with the component
     // Then I should get the component with the correct values
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position, { x: 42, y: 144 });
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
@@ -47,7 +47,7 @@ describe("GameEntity", () => {
     // When I call .tryGet() with the component
     // Then I should get undefined
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
 
     expect(entity.tryGet(Position)).toBeUndefined();
@@ -59,7 +59,7 @@ describe("GameEntity", () => {
     // Then the Velocity component should still be present
     // And the Position component should not be present
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position).insert(Velocity);
 
     const components = entity.getComponents();
@@ -78,7 +78,7 @@ describe("GameEntity", () => {
     // When I call .has() with the Position component
     // Then I should get true
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     expect(entity.has(Position)).toBe(true);
@@ -89,7 +89,7 @@ describe("GameEntity", () => {
     // When I call .has() with the Velocity component
     // Then I should get false
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     expect(entity.has(Velocity)).toBe(false);
@@ -100,7 +100,7 @@ describe("GameEntity", () => {
     // When I call .hasAll() with the Position and Velocity components
     // Then I should get true
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position).insert(Velocity);
 
     expect(entity.hasAll([Position, Velocity])).toBe(true);
@@ -111,7 +111,7 @@ describe("GameEntity", () => {
     // When I call .hasAll() with the Position and Velocity components
     // Then I should get false
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     expect(entity.hasAll([Position, Velocity])).toBe(false);
@@ -122,7 +122,7 @@ describe("GameEntity", () => {
     // When I call .hasAny() with the Position and Velocity components
     // Then I should get true
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     expect(entity.hasAny([Position, Velocity])).toBe(true);
@@ -133,7 +133,7 @@ describe("GameEntity", () => {
     // When I call .hasAny() with the Position and Velocity components
     // Then I should get false
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
 
     expect(entity.hasAny([Position, Velocity])).toBe(false);
@@ -144,7 +144,7 @@ describe("GameEntity", () => {
     // When I try to insert another Position component
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     expect(() => entity.insert(Position)).toThrowError(
@@ -157,7 +157,7 @@ describe("GameEntity", () => {
     // When I try to get the Position component
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
 
     expect(() => entity.get(Position)).toThrowError(
@@ -170,7 +170,7 @@ describe("GameEntity", () => {
     // When I call .add() with a component and a value
     // Then the entity should have a component with the correct value
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position, { x: 42, y: 144 });
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
@@ -181,7 +181,7 @@ describe("GameEntity", () => {
     // When I call .insertNew() with an instance of a component
     // Then the entity should have a component with the correct value
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insertNew(Position, 42, 144);
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
@@ -192,7 +192,7 @@ describe("GameEntity", () => {
     // When I remove the Position component
     // Then .dispose() should be called on the Position component
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -208,7 +208,7 @@ describe("GameEntity", () => {
     // And I attempt to remove the component again
     // Then .dispose() should be called on the Position component
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -224,7 +224,7 @@ describe("GameEntity", () => {
     // When I remove the Position component
     // Then the component should be able to access the entity on disposal
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -239,7 +239,7 @@ describe("GameEntity", () => {
     // When I call .dispose() on the entity
     // Then .dispose() should be called on the components too
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -255,7 +255,7 @@ describe("GameEntity", () => {
     // And I call .dispose() on the entity again
     // Then .dispose() should be called on the components too
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -271,7 +271,7 @@ describe("GameEntity", () => {
     // When I dispose the entity
     // Then the component should be able to access the entity on disposal
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const position = entity.get(Position);
@@ -286,7 +286,7 @@ describe("GameEntity", () => {
     // When I try to add a component to it
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
     entity.dispose();
 
@@ -300,7 +300,7 @@ describe("GameEntity", () => {
     // When I try to remove a component from it
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
     entity.dispose();
 

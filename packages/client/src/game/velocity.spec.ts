@@ -1,4 +1,4 @@
-import GameWorld from "../utils/game-world";
+import EcsWorld from "../utils/ecs";
 import { Position } from "./position";
 import { Velocity, VelocitySystem } from "./velocity";
 
@@ -8,7 +8,7 @@ describe("VelocitySystem", () => {
     // When I trigger the system with dt=1
     // Then the position should be updated accordingly
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch(VelocitySystem);
     const entity = world
       .spawn()

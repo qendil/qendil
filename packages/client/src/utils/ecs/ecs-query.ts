@@ -1,4 +1,4 @@
-import type { GameEntity } from "./game-entity";
+import type { EcsEntity } from "./ecs-entity";
 import type {
   ComponentFilterTuple,
   ComponentInstances,
@@ -9,12 +9,12 @@ import type {
  * A self-updating query that tracks all entities that match with the query's
  *  component filters.
  */
-export abstract class EntityQuery<TFilter extends ComponentFilterTuple> {
-  protected readonly entities: Set<GameEntity>;
+export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
+  protected readonly entities: Set<EcsEntity>;
   protected readonly components: ComponentTuple<TFilter>;
 
   protected constructor(
-    entities: Set<GameEntity>,
+    entities: Set<EcsEntity>,
     components: ComponentTuple<TFilter>
   ) {
     this.entities = entities;
@@ -36,7 +36,7 @@ export abstract class EntityQuery<TFilter extends ComponentFilterTuple> {
    * Get the query entities and their components.
    */
   public *withEntities(): IterableIterator<
-    [GameEntity, ...ComponentInstances<TFilter>]
+    [EcsEntity, ...ComponentInstances<TFilter>]
   > {
     for (const entity of this.entities) {
       yield [
@@ -51,7 +51,7 @@ export abstract class EntityQuery<TFilter extends ComponentFilterTuple> {
   /**
    * Get only the entities in the query.
    */
-  public *asEntities(): IterableIterator<GameEntity> {
+  public *asEntities(): IterableIterator<EcsEntity> {
     yield* this.entities;
   }
 
@@ -61,7 +61,7 @@ export abstract class EntityQuery<TFilter extends ComponentFilterTuple> {
    * @param entity - The entity to check for
    * @returns `true` if the entity is in the query
    */
-  public has(entity: GameEntity): boolean {
+  public has(entity: EcsEntity): boolean {
     return this.entities.has(entity);
   }
 

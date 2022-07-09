@@ -1,24 +1,24 @@
-import type GameComponent from "./game-component";
-import type { GameComponentConstructor } from "./game-component";
+import type EcsComponent from "./ecs-component";
+import type { EcsComponentConstructor } from "./ecs-component";
 
 /**
  * Lifecycle hooks privately exposed by the game world.
  *
  * @internal
  */
-export type GameEntityLifecycleHooks = {
-  onDispose: (entity: GameEntity) => void;
+export type EcsEntityLifecycleHooks = {
+  onDispose: (entity: EcsEntity) => void;
   onComponentAdded: (
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ) => void;
   onComponentRemoved: (
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ) => void;
   onComponentChanged: (
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ) => void;
 };
 
@@ -32,17 +32,17 @@ export type GameEntityLifecycleHooks = {
  * @important You should call `dispose()` on the returned entity when you
  *  are done with it, to remove it from the world.
  */
-export abstract class GameEntity {
+export abstract class EcsEntity {
   public readonly id: number;
-  protected readonly hooks: GameEntityLifecycleHooks;
+  protected readonly hooks: EcsEntityLifecycleHooks;
   protected disposed = false;
 
   protected readonly components = new Map<
-    GameComponentConstructor,
-    GameComponent
+    EcsComponentConstructor,
+    EcsComponent
   >();
 
-  protected constructor(id: number, hooks: GameEntityLifecycleHooks) {
+  protected constructor(id: number, hooks: EcsEntityLifecycleHooks) {
     this.id = id;
     this.hooks = hooks;
   }
@@ -70,8 +70,8 @@ export abstract class GameEntity {
    * @param args - Values to pass to the constructor when creating the component
    * @returns The entity itself
    */
-  public insertNew<T extends GameComponent, TArgs extends any[]>(
-    constructor: GameComponentConstructor<T, TArgs>,
+  public insertNew<T extends EcsComponent, TArgs extends any[]>(
+    constructor: EcsComponentConstructor<T, TArgs>,
     ...args: TArgs
   ): this {
     const component = new constructor(...args);
@@ -86,8 +86,8 @@ export abstract class GameEntity {
    * @param values - Initial values for the component
    * @returns The entity itself
    */
-  public insert<T extends GameComponent>(
-    constructor: GameComponentConstructor<T>,
+  public insert<T extends EcsComponent>(
+    constructor: EcsComponentConstructor<T>,
     values?: Partial<Record<keyof T, any>>
   ): this {
     const component = new constructor();
@@ -106,8 +106,8 @@ export abstract class GameEntity {
    * @returns The entity itself
    */
   private insertComponent(
-    constructor: GameComponentConstructor,
-    component: GameComponent
+    constructor: EcsComponentConstructor,
+    component: EcsComponent
   ): this {
     // Make sure the entity was not disposed
     if (this.disposed) {
@@ -151,8 +151,8 @@ export abstract class GameEntity {
    * @param constructor - Component to remove
    * @returns The entity itself
    */
-  public remove<T extends GameComponent>(
-    constructor: GameComponentConstructor<T>
+  public remove<T extends EcsComponent>(
+    constructor: EcsComponentConstructor<T>
   ): this {
     if (this.disposed) {
       throw new Error(
@@ -177,8 +177,8 @@ export abstract class GameEntity {
    * @param constructor - The component to retrieve
    * @returns A component
    */
-  public get<T extends GameComponent>(
-    constructor: GameComponentConstructor<T>
+  public get<T extends EcsComponent>(
+    constructor: EcsComponentConstructor<T>
   ): T {
     const component = this.tryGet(constructor);
 
@@ -198,8 +198,8 @@ export abstract class GameEntity {
    * @param constructor - The component to retrieve
    * @returns A component or `undefined`
    */
-  public tryGet<T extends GameComponent>(
-    constructor: GameComponentConstructor<T>
+  public tryGet<T extends EcsComponent>(
+    constructor: EcsComponentConstructor<T>
   ): T | undefined {
     return this.components.get(constructor) as T | undefined;
   }
@@ -210,8 +210,8 @@ export abstract class GameEntity {
    * @param component - The component to check for
    * @returns `true` if the component is mapped to this entity
    */
-  public has<T extends GameComponent>(
-    component: GameComponentConstructor<T>
+  public has<T extends EcsComponent>(
+    component: EcsComponentConstructor<T>
   ): boolean {
     return this.components.has(component);
   }
@@ -222,7 +222,7 @@ export abstract class GameEntity {
    * @param components - The components to check for
    * @returns `true` if all of the components are mapped to this entity
    */
-  public hasAll(components: Iterable<GameComponentConstructor>): boolean {
+  public hasAll(components: Iterable<EcsComponentConstructor>): boolean {
     for (const additionalComponent of components) {
       if (!this.components.has(additionalComponent)) return false;
     }
@@ -236,7 +236,7 @@ export abstract class GameEntity {
    * @param components - The components to check for
    * @returns `true` if any of the components are mapped to this entity
    */
-  public hasAny(components: Iterable<GameComponentConstructor>): boolean {
+  public hasAny(components: Iterable<EcsComponentConstructor>): boolean {
     for (const additionalComponent of components) {
       if (this.components.has(additionalComponent)) return true;
     }
@@ -249,7 +249,7 @@ export abstract class GameEntity {
    *
    * @returns An iterable of all components mapped to this entity
    */
-  public getComponents(): Iterable<GameComponentConstructor> {
+  public getComponents(): Iterable<EcsComponentConstructor> {
     return this.components.keys();
   }
 }

@@ -1,8 +1,8 @@
-import GameWorld from "./game-world";
-import GameComponent from "./game-component";
-import GameSystem from "./game-system";
+import EcsWorld from "./ecs-world";
+import EcsComponent from "./ecs-component";
+import EcsSystem from "./ecs-system";
 
-class Position extends GameComponent {
+class Position extends EcsComponent {
   public x = 0;
   public y = 0;
 }
@@ -13,7 +13,7 @@ describe("GameWorld", () => {
     // When I call .dispose() on the world
     // Then the queries should be disposed
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     world.watch([Position], (query) => query);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
@@ -31,7 +31,7 @@ describe("GameWorld", () => {
     // And I call .dispose() on the world again
     // Then the queries should be disposed
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     world.watch([Position], (query) => query);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
@@ -49,7 +49,7 @@ describe("GameWorld", () => {
     // When I call .dispose() on the world
     // Then the entities should be disposed
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
 
     const disposeSpy = vi.spyOn(entity, "dispose");
@@ -64,7 +64,7 @@ describe("GameWorld", () => {
     // And I call .dispose() on the world again
     // Then the entities should be disposed
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn();
 
     const disposeSpy = vi.spyOn(entity, "dispose");
@@ -79,7 +79,7 @@ describe("GameWorld", () => {
     // When I try to spawn an entity
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     world.dispose();
 
     expect(() => world.spawn()).toThrowError(
@@ -92,7 +92,7 @@ describe("GameWorld", () => {
     // When I try to create a system
     // Then I should get an error
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     world.dispose();
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -108,7 +108,7 @@ describe("GameWorld system", () => {
     // When I call the system with those 2 arguments
     // Then I the system's callback should receive those same 2 arguments as parameters
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
 
     const system = world.watch(
       [Position],
@@ -126,7 +126,7 @@ describe("GameWorld system", () => {
     // When I call the system
     // Then I should receive the return value from the callback
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch([Position], () => "test output");
 
     const returnValue = system();
@@ -146,7 +146,7 @@ describe("GameWorld system", () => {
     // And I run the system the third time
     // Then only the entity B should be in the system's query
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch([Position.added()], (query) => query);
 
     const query = system();
@@ -170,7 +170,7 @@ describe("GameWorld system", () => {
     // When I call `.dispose()` on the system
     // Then the corresponding query should no longer be tracked
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.queries.get(Position);
 
@@ -187,7 +187,7 @@ describe("GameWorld system", () => {
     // And I call `.dispose()` on the system again
     // Then the corresponding query should no longer be tracked
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.queries.get(Position);
     const system = world.watch([Position], (query) => query);
@@ -206,9 +206,9 @@ describe("GameWorld system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new GameSystem([Position], (query) => [...query]);
+    const mySystem = new EcsSystem([Position], (query) => [...query]);
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch(mySystem);
 
     expect(system()).toBeInstanceOf(Array);

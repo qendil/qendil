@@ -1,12 +1,12 @@
-import GameWorld from "./game-world";
-import GameComponent from "./game-component";
+import EcsWorld from "./ecs-world";
+import EcsComponent from "./ecs-component";
 
-class Position extends GameComponent {
+class Position extends EcsComponent {
   public x = 0;
   public y = 0;
 }
 
-class Velocity extends GameComponent {
+class Velocity extends EcsComponent {
   public x = 0;
   public y = 0;
 }
@@ -17,7 +17,7 @@ describe("Entity Query", () => {
     // When I create a new entity with a Position component
     // Then the query should contain that entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch([Position], (query) => query);
 
     const query = system();
@@ -34,7 +34,7 @@ describe("Entity Query", () => {
     // When I iterate over the query
     // Then I should get the position component directly
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch(
       [Position, Velocity.present()],
       (query) => query
@@ -53,7 +53,7 @@ describe("Entity Query", () => {
     // When I iterate over the query.asEntities()
     // Then I should get the entities
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch(
       [Position, Velocity.present()],
       (query) => query
@@ -72,7 +72,7 @@ describe("Entity Query", () => {
     // When I iterate over the query.withEntities()
     // Then I should get the entities + their components
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch(
       [Position, Velocity.present()],
       (query) => query

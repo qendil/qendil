@@ -1,4 +1,4 @@
-import GameWorld from "../utils/game-world";
+import EcsWorld from "../utils/ecs";
 import { Mesh, MeshPositionSystem, MeshSmoothPositionSystem } from "./mesh";
 import { Position } from "./position";
 import {
@@ -14,7 +14,7 @@ describe("MeshPositionSystem", () => {
     // And then update the system
     // Then the mesh's position should be updated
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Mesh).insert(Position);
     const system = world.watch(MeshPositionSystem);
 
@@ -40,7 +40,7 @@ describe("MeshPositionSystem", () => {
     // And then update the system
     // Then the mesh's position should be stay the same
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world
       .spawn()
       .insert(Mesh)
@@ -70,7 +70,7 @@ describe("MeshPositionSystem", () => {
     // And then update the systems
     // Then the mesh's position should be updated gradually
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world
       .spawn()
       .insert(Mesh)

@@ -1,25 +1,25 @@
-import GameWorld from "./game-world";
-import GameComponent from "./game-component";
+import EcsWorld from "./ecs-world";
+import EcsComponent from "./ecs-component";
 
-class Position extends GameComponent {
+class Position extends EcsComponent {
   public x = 0;
   public y = 0;
 }
 
-class Rotation extends GameComponent {
+class Rotation extends EcsComponent {
   public angle = 0;
 }
 
-class Velocity extends GameComponent {
+class Velocity extends EcsComponent {
   public x = 0;
   public y = 0;
 }
 
-class Named extends GameComponent {
+class Named extends EcsComponent {
   public name = "entity";
 }
 
-class Vehicle extends GameComponent {
+class Vehicle extends EcsComponent {
   public wheels = 4;
 }
 
@@ -29,7 +29,7 @@ describe("Entity Query Builder", () => {
     // When I create a new entity with a Position component
     // Then the query should contain that entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch([Position], (query) => query);
     const query = update();
 
@@ -45,7 +45,7 @@ describe("Entity Query Builder", () => {
     // When I remove the Position component from the entity
     // Then the query should not contain the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch([Position], (query) => query);
     const query = update();
 
@@ -63,7 +63,7 @@ describe("Entity Query Builder", () => {
     // When I add a rotation component to the entity
     // Then the query should contain that entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch([Position, Rotation], (query) => query);
     const query = update();
 
@@ -84,7 +84,7 @@ describe("Entity Query Builder", () => {
     // Then the query should contain the entity A
     // And the query should not contain the entities B and C
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity1 = world.spawn().insert(Position).insert(Velocity);
     const entity2 = world.spawn().insert(Position);
     const entity3 = world
@@ -110,7 +110,7 @@ describe("Entity Query Builder", () => {
     // When I dispose the entity
     // Then the query should not contain the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const system = world.watch([Position], (query) => query);
     const query = system();
 
@@ -128,7 +128,7 @@ describe("Entity Query Builder", () => {
     // When I add a Rotation component to the entity
     // Then the query should no longer contain that entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch([Position, Rotation.absent()], (query) => query);
     const query = update();
 
@@ -148,7 +148,7 @@ describe("Entity Query Builder", () => {
     // When I remove then re-add the component to the entity
     // Then the query should contain that entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch([Position.added()], (query) => query);
     const query = update();
 
@@ -167,7 +167,7 @@ describe("Entity Query Builder", () => {
     // When I create a Position-added query
     // Then it should contain the component
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
     const update = world.watch([Position.added()], (query) => {
@@ -183,7 +183,7 @@ describe("Entity Query Builder", () => {
     // When I change the value of the Position component
     // Then the query should contain the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
     const update = world.watch([Position.changed()], (query) => query);
 
@@ -200,7 +200,7 @@ describe("Entity Query Builder", () => {
     // When I update the value of the Position component to its same value
     // Then the query should not contain the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const entity = world.spawn().insert(Position, { x: 144 });
     const update = world.watch([Position.changed()], (query) => query);
 
@@ -221,7 +221,7 @@ describe("Entity Query Builder", () => {
     // When I remove Rotation from entity A
     // Then the query should contain both entities
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch(
       [Named, Position.added(), Velocity.changed(), Rotation.absent()],
       (query) => query
@@ -286,7 +286,7 @@ describe("Entity Query Builder", () => {
     // When I remove the Position component
     // Then the query should still not contain the entity
 
-    const world = new GameWorld();
+    const world = new EcsWorld();
     const update = world.watch(
       [Position.absent(), Velocity.absent()],
       (query) => query

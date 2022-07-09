@@ -1,4 +1,4 @@
-import type { EntityQuery } from "./entity-query";
+import type { EcsQuery } from "./ecs-query";
 import type { ComponentFilterTuple } from "./types";
 
 /**
@@ -6,20 +6,17 @@ import type { ComponentFilterTuple } from "./types";
  *
  * Systems operate on all entities of a given Component filter.
  */
-export default class GameSystem<
+export default class EcsSystem<
   TFilter extends ComponentFilterTuple,
   TArgs extends unknown[],
   TResult
 > {
   public readonly filters: TFilter;
-  public readonly handle: (
-    query: EntityQuery<TFilter>,
-    ...args: TArgs
-  ) => TResult;
+  public readonly handle: (query: EcsQuery<TFilter>, ...args: TArgs) => TResult;
 
   public constructor(
     filter: TFilter,
-    handler: (query: EntityQuery<TFilter>, ...args: TArgs) => TResult
+    handler: (query: EcsQuery<TFilter>, ...args: TArgs) => TResult
   ) {
     this.filters = filter;
     this.handle = handler;
@@ -29,7 +26,7 @@ export default class GameSystem<
 /**
  * A handle to invoke a game system or to dispose it.
  */
-export type GameSystemHandle<TArgs extends unknown[], TResult> = {
+export type EcsSystemHandle<TArgs extends unknown[], TResult> = {
   (...args: TArgs): TResult;
 
   /**

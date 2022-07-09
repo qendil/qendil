@@ -1,23 +1,23 @@
 import { SetMap } from "../default-map";
-import EntityQueryBuilder from "./entity-query-builder";
-import { GameEntity } from "./game-entity";
-import { GameComponentFilterObject } from "./game-component";
+import EntityQueryBuilder from "./ecs-query-builder";
+import { EcsEntity } from "./ecs-entity";
+import { EcsFilterObject } from "./ecs-component";
 
 import type {
-  GameComponentConstructor,
-  GameComponentFilter,
-} from "./game-component";
-import type { GameEntityLifecycleHooks } from "./game-entity";
-import type { EntityQuery } from "./entity-query";
-import type { GameSystemHandle } from "./game-system";
+  EcsComponentConstructor,
+  EcsComponentFilter,
+} from "./ecs-component";
+import type { EcsEntityLifecycleHooks } from "./ecs-entity";
+import type { EcsQuery } from "./ecs-query";
+import type { EcsSystemHandle } from "./ecs-system";
 import type { ComponentFilterTuple } from "./types";
-import type GameSystem from "./game-system";
+import type EcsSystem from "./ecs-system";
 
 /**
  * Unexposed wrapper that implements GameEntity
  */
-class GameEntityWrapper extends GameEntity {
-  public constructor(id: number, hooks: GameEntityLifecycleHooks) {
+class GameEntityWrapper extends EcsEntity {
+  public constructor(id: number, hooks: EcsEntityLifecycleHooks) {
     super(id, hooks);
   }
 }
@@ -25,12 +25,12 @@ class GameEntityWrapper extends GameEntity {
 /**
  * Stores and exposes operations on entities, components, and systems.
  */
-export default class GameWorld {
+export default class EcsWorld {
   private nextEntityID = 0;
   private disposed = false;
-  private readonly entities = new Set<GameEntity>();
+  private readonly entities = new Set<EcsEntity>();
   private readonly queries = new SetMap<
-    GameComponentConstructor,
+    EcsComponentConstructor,
     EntityQueryBuilder<any>
   >();
 
@@ -69,7 +69,7 @@ export default class GameWorld {
    *
    * @returns A new entity
    */
-  public spawn(): GameEntity {
+  public spawn(): EcsEntity {
     if (this.disposed) {
       throw new Error("Cannot spawn an entity in a disposed world.");
     }
@@ -101,8 +101,8 @@ export default class GameWorld {
     TArgs extends unknown[],
     TResult
   >(
-    system: GameSystem<TFilter, TArgs, TResult>
-  ): GameSystemHandle<TArgs, TResult>;
+    system: EcsSystem<TFilter, TArgs, TResult>
+  ): EcsSystemHandle<TArgs, TResult>;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -123,8 +123,8 @@ export default class GameWorld {
     TResult
   >(
     filters: TFilter,
-    callback: (entities: EntityQuery<TFilter>, ...args: TArgs) => TResult
-  ): GameSystemHandle<TArgs, TResult>;
+    callback: (entities: EcsQuery<TFilter>, ...args: TArgs) => TResult
+  ): EcsSystemHandle<TArgs, TResult>;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -144,9 +144,9 @@ export default class GameWorld {
     TArgs extends unknown[],
     TResult
   >(
-    filtersOrSystem: GameSystem<TFilter, TArgs, TResult> | TFilter,
-    callback?: (entities: EntityQuery<TFilter>, ...args: TArgs) => TResult
-  ): GameSystemHandle<TArgs, TResult> {
+    filtersOrSystem: EcsSystem<TFilter, TArgs, TResult> | TFilter,
+    callback?: (entities: EcsQuery<TFilter>, ...args: TArgs) => TResult
+  ): EcsSystemHandle<TArgs, TResult> {
     if (!Array.isArray(filtersOrSystem)) {
       const { filters, handle } = filtersOrSystem;
       return this.watch(filters, handle);
@@ -159,7 +159,7 @@ export default class GameWorld {
     const [query, update, dispose] = this.createQuery(...filtersOrSystem);
     let disposed = false;
 
-    const system: GameSystemHandle<TArgs, TResult> = (...args) => {
+    const system: EcsSystemHandle<TArgs, TResult> = (...args) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const result = callback!(query, ...args);
       update();
@@ -183,7 +183,7 @@ export default class GameWorld {
    * @internal
    * @param entity - The entity to dispose of
    */
-  private _disposeEntity(entity: GameEntity): void {
+  private _disposeEntity(entity: EcsEntity): void {
     for (const component of entity.getComponents()) {
       const queries = this.queries.get(component);
 
@@ -203,11 +203,9 @@ export default class GameWorld {
    * @returns The component referenced by the filter
    */
   private _getFilterComponent(
-    filter: GameComponentFilter
-  ): GameComponentConstructor {
-    return filter instanceof GameComponentFilterObject
-      ? filter.component
-      : filter;
+    filter: EcsComponentFilter
+  ): EcsComponentConstructor {
+    return filter instanceof EcsFilterObject ? filter.component : filter;
   }
 
   /**
@@ -220,7 +218,7 @@ export default class GameWorld {
    */
   private createQuery<TFilter extends ComponentFilterTuple>(
     ...filters: TFilter
-  ): [EntityQuery<TFilter>, () => void, () => void] {
+  ): [EcsQuery<TFilter>, () => void, () => void] {
     const builder = new EntityQueryBuilder(
       filters,
       this.entities,
@@ -259,8 +257,8 @@ export default class GameWorld {
    * @param component - The component that was added to the entity
    */
   private _entityComponentAdded(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const queries = this.queries.get(component);
 
@@ -277,8 +275,8 @@ export default class GameWorld {
    * @param component - The component that changed
    */
   private _entityComponentChanged(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const queries = this.queries.get(component);
 
@@ -295,8 +293,8 @@ export default class GameWorld {
    * @param component - The component that was removed
    */
   private _entityComponentRemoved(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const queries = this.queries.get(component);
 

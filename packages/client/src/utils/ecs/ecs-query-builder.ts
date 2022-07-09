@@ -1,12 +1,12 @@
 import { SetMap } from "../default-map";
-import { GameComponentFilterObject } from "./game-component";
-import { EntityQuery } from "./entity-query";
+import { EcsFilterObject } from "./ecs-component";
+import { EcsQuery } from "./ecs-query";
 
 import type {
-  GameComponentConstructor,
-  GameComponentFilter,
-} from "./game-component";
-import type { GameEntity } from "./game-entity";
+  EcsComponentConstructor,
+  EcsComponentFilter,
+} from "./ecs-component";
+import type { EcsEntity } from "./ecs-entity";
 import type { ComponentFilterTuple, ComponentTuple } from "./types";
 
 /**
@@ -14,9 +14,9 @@ import type { ComponentFilterTuple, ComponentTuple } from "./types";
  */
 class EntityQueryWrapper<
   TFilter extends ComponentFilterTuple
-> extends EntityQuery<TFilter> {
+> extends EcsQuery<TFilter> {
   public constructor(
-    entities: Set<GameEntity>,
+    entities: Set<EcsEntity>,
     components: ComponentTuple<TFilter>
   ) {
     super(entities, components);
@@ -27,51 +27,51 @@ class EntityQueryWrapper<
  * Builds and maintains a query of component filters.
  */
 export default class EntityQueryBuilder<
-  TFilter extends ComponentFilterTuple = GameComponentFilter[]
-> extends Set<GameEntity> {
+  TFilter extends ComponentFilterTuple = EcsComponentFilter[]
+> extends Set<EcsEntity> {
   public readonly filters: TFilter;
   public readonly components: ComponentTuple<TFilter>;
 
   /**
    * The components that are required in an entity.
    */
-  private readonly requiredComponents = new Set<GameComponentConstructor>();
+  private readonly requiredComponents = new Set<EcsComponentConstructor>();
 
   /**
    * The components that need to be added since the last update.
    */
-  private readonly addedComponents = new Set<GameComponentConstructor>();
+  private readonly addedComponents = new Set<EcsComponentConstructor>();
 
   /**
    * The components that need to be changed since the last update.
    */
-  private readonly changedComponents = new Set<GameComponentConstructor>();
+  private readonly changedComponents = new Set<EcsComponentConstructor>();
 
   /**
    * The components that need to be absent in an entity.
    */
-  private readonly excludedComponents = new Set<GameComponentConstructor>();
+  private readonly excludedComponents = new Set<EcsComponentConstructor>();
 
   /**
    * A union of required, added and changed components.
    */
-  private readonly inclusiveFilters = new Set<GameComponentConstructor>();
+  private readonly inclusiveFilters = new Set<EcsComponentConstructor>();
 
   /**
    * Tracks the entities that had a relevant component added to them
    *  since last update.
    */
   private readonly componentAddedEntities = new SetMap<
-    GameEntity,
-    GameComponentConstructor
+    EcsEntity,
+    EcsComponentConstructor
   >();
 
   /**
    * Tracks entities that had a relevant component changed since last update.
    */
   private readonly componentChangedEntities = new SetMap<
-    GameEntity,
-    GameComponentConstructor
+    EcsEntity,
+    EcsComponentConstructor
   >();
 
   /**
@@ -81,7 +81,7 @@ export default class EntityQueryBuilder<
 
   public constructor(
     filters: TFilter,
-    currentEntities: Iterable<GameEntity>,
+    currentEntities: Iterable<EcsEntity>,
     onDispose: (query: EntityQueryBuilder<TFilter>) => void
   ) {
     super();
@@ -89,11 +89,11 @@ export default class EntityQueryBuilder<
     this.filters = filters;
     this.onDispose = onDispose;
 
-    const components: GameComponentConstructor[] = [];
+    const components: EcsComponentConstructor[] = [];
 
     // Build utility sets to make querying faster later on
     for (const filter of this.filters) {
-      if (filter instanceof GameComponentFilterObject) {
+      if (filter instanceof EcsFilterObject) {
         const { operation, component } = filter;
 
         switch (operation) {
@@ -150,7 +150,7 @@ export default class EntityQueryBuilder<
    * @returns An EntityQuery, a function to signal an update,
    *  and a function to dispose it
    */
-  public wrap(): [EntityQuery<TFilter>, () => void, () => void] {
+  public wrap(): [EcsQuery<TFilter>, () => void, () => void] {
     const query = new EntityQueryWrapper(this, this.components);
 
     const update = (): void => this.update();
@@ -186,8 +186,8 @@ export default class EntityQueryBuilder<
    * @param component - The component that was added
    */
   public _onEntityComponentAdded(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const {
       addedComponents,
@@ -251,8 +251,8 @@ export default class EntityQueryBuilder<
    * @param component - The component that was removed
    */
   public _onEntityComponentRemoved(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const {
       addedComponents,
@@ -312,8 +312,8 @@ export default class EntityQueryBuilder<
    * @param component - The component that was changed
    */
   public _onEntityComponentChanged(
-    entity: GameEntity,
-    component: GameComponentConstructor
+    entity: EcsEntity,
+    component: EcsComponentConstructor
   ): void {
     const {
       addedComponents,

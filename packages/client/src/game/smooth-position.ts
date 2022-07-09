@@ -1,10 +1,10 @@
-import { GameComponent, GameSystem } from "../utils/game-world";
+import { EcsComponent, EcsSystem } from "../utils/ecs";
 import { Position } from "./position";
 
 /**
  * Tags entities that should have their position animated smoothly.
  */
-export class SmoothPosition extends GameComponent {
+export class SmoothPosition extends EcsComponent {
   public animationPercent = 1;
   public x = 0;
   public y = 0;
@@ -18,7 +18,7 @@ export class SmoothPosition extends GameComponent {
  * Matches the initial position of the smooth position component
  * to the position component.
  */
-export const SmoothPositionInit = new GameSystem(
+export const SmoothPositionInit = new EcsSystem(
   [SmoothPosition, Position, Position.added()],
   (query) => {
     for (const [smooth, { x, y, z }] of query) {
@@ -36,7 +36,7 @@ export const SmoothPositionInit = new GameSystem(
 /**
  * Updates the source position when the position component changes.
  */
-export const SmoothPositionUpdate = new GameSystem(
+export const SmoothPositionUpdate = new EcsSystem(
   [SmoothPosition, Position.changed()],
   (query) => {
     for (const [smooth] of query) {
@@ -53,7 +53,7 @@ export const SmoothPositionUpdate = new GameSystem(
 /**
  * Animates the position of the entity.
  */
-export const SmoothPositionAnimate = new GameSystem(
+export const SmoothPositionAnimate = new EcsSystem(
   [Position, SmoothPosition, SmoothPosition.present()],
   (query, frametime: number, fixedInterval: number) => {
     const factor = frametime / fixedInterval;
