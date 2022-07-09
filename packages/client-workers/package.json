@@ -1,5 +1,5 @@
 {
-  "name": "@qendil/workers",
+  "name": "@qendil/client-workers",
   "version": "0.0.1-alpha",
   "description": "Workers for the qendil client",
   "author": "Said Dermoumi <hi@sdrm.me>",

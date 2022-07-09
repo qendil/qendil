@@ -33,7 +33,7 @@
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
     "@qendil/core": "workspace:*",
-    "@qendil/workers": "workspace:*",
+    "@qendil/client-workers": "workspace:*",
     "@sentry/react": "^7.5.0",
     "@types/babel__core": "^7.1.19",
     "@types/ejs": "^3.1.1",
