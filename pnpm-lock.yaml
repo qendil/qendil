@@ -58,8 +58,8 @@ importers:
   packages/client:
     specifiers:
       '@juggle/resize-observer': ^3.3.1
+      '@qendil/client-workers': workspace:*
       '@qendil/core': workspace:*
-      '@qendil/workers': workspace:*
       '@sentry/react': ^7.5.0
       '@testing-library/dom': ^8.14.0
       '@testing-library/jest-dom': ^5.16.4
@@ -101,8 +101,8 @@ importers:
       workbox-window: ^6.5.3
     dependencies:
       '@juggle/resize-observer': 3.3.1
+      '@qendil/client-workers': link:../client-workers
       '@qendil/core': link:../core
-      '@qendil/workers': link:../workers
       '@sentry/react': 7.5.0_react@18.2.0
       '@types/babel__core': 7.1.19
       '@types/ejs': 3.1.1
@@ -145,13 +145,7 @@ importers:
       jsdom: 20.0.0
       vitest: 0.17.1_c8@7.11.3+jsdom@20.0.0
 
-  packages/core:
-    specifiers:
-      nodemon: ^2.0.18
-    dependencies:
-      nodemon: 2.0.18
-
-  packages/workers:
+  packages/client-workers:
     specifiers:
       c8: ^7.11.3
       vite: ^2.9.14
@@ -165,6 +159,12 @@ importers:
       c8: 7.11.3
       vite: 2.9.14
       vitest: 0.17.1_c8@7.11.3
+
+  packages/core:
+    specifiers:
+      nodemon: ^2.0.18
+    dependencies:
+      nodemon: 2.0.18
 
 packages:
 

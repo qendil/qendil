@@ -1,1 +1,1 @@
-import "@qendil/workers/service-worker";
+import "@qendil/client-workers/service-worker";
