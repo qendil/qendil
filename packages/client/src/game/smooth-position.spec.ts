@@ -130,6 +130,7 @@ describe("SmoothPositionAnimate", () => {
 
     update();
     animate();
+    animate(); // Play 2 frames here to finish both animations
 
     const position = entityA.get(Position);
     position.x = 10;
