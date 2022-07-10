@@ -15,7 +15,15 @@ import type {
   SystemQuery,
   SystemQueryResult,
 } from "./ecs-system";
-import type { ComponentFilterTuple } from "./types";
+import type {
+  ComponentFilterTuple,
+  ResourceFilterTuple,
+  ResourceInstances,
+} from "./types";
+import type {
+  default as EcsResource,
+  EcsResourceConstructor,
+} from "./ecs-resource";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -33,22 +41,21 @@ export default class EcsManager {
   private nextEntityID = 0;
   private disposed = false;
   private readonly entities = new Set<EcsEntity>();
+
   private readonly queries = new SetMap<
     EcsComponentConstructor,
     EntityQueryBuilder<any>
   >();
+
+  private readonly resources = new Map<EcsResourceConstructor, EcsResource>();
 
   /**
    * Disposes of the world and all its entities, components and systems.
    */
   public dispose(): void {
     if (this.disposed) return;
-    this.disposed = true;
 
-    for (const entity of this.entities) {
-      entity.dispose();
-    }
-
+    // Dispose of query builders
     const disposedBuilders = new Set<EntityQueryBuilder>();
     for (const builders of this.queries.values()) {
       for (const builder of builders) {
@@ -61,8 +68,23 @@ export default class EcsManager {
       }
     }
 
-    this.entities.clear();
     this.queries.clear();
+
+    // Dispose of entities
+    for (const entity of this.entities) {
+      entity.dispose();
+    }
+
+    this.entities.clear();
+
+    // Dispose of resources
+    for (const resource of this.resources.values()) {
+      resource.dispose();
+    }
+
+    this.resources.clear();
+
+    this.disposed = true;
   }
 
   /**
@@ -102,10 +124,11 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
+    TResourceFilter extends ResourceFilterTuple,
     TArgs extends unknown[],
     TResult
   >(
-    system: EcsSystem<TFilter, TArgs, TResult>
+    system: EcsSystem<TFilter, TResourceFilter, TArgs, TResult>
   ): EcsSystemHandle<TArgs, TResult>;
 
   /**
@@ -123,11 +146,15 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
+    TResourceFilter extends ResourceFilterTuple,
     TArgs extends unknown[],
     TResult
   >(
-    callback: (entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult,
-    query: SystemQuery<TFilter> | TFilter
+    callback: (
+      entities: SystemQueryResult<TFilter, TResourceFilter>,
+      ...args: TArgs
+    ) => TResult,
+    query: SystemQuery<TFilter, TResourceFilter> | TFilter
   ): EcsSystemHandle<TArgs, TResult>;
 
   /**
@@ -146,13 +173,17 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
+    TResourceFilter extends ResourceFilterTuple,
     TArgs extends unknown[],
     TResult
   >(
     callbackOrSystem:
-      | EcsSystem<TFilter, TArgs, TResult>
-      | ((entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult),
-    filterQuery?: SystemQuery<TFilter> | TFilter
+      | EcsSystem<TFilter, TResourceFilter, TArgs, TResult>
+      | ((
+          entities: SystemQueryResult<TFilter, TResourceFilter>,
+          ...args: TArgs
+        ) => TResult),
+    filterQuery?: SystemQuery<TFilter, TResourceFilter> | TFilter
   ): EcsSystemHandle<TArgs, TResult> {
     if (callbackOrSystem instanceof EcsSystem) {
       const { handle, query } = callbackOrSystem;
@@ -163,19 +194,30 @@ export default class EcsManager {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
-    const filters = Array.isArray(filterQuery)
-      ? filterQuery
-      : filterQuery?.entities;
+    const callback = callbackOrSystem;
 
-    const [entities, updateQuery, disposeQuery] = this.createQuery(...filters);
-    let disposed = false;
+    const filters = Array.isArray(filterQuery)
+      ? { entities: filterQuery, resources: [] }
+      : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        filterQuery!;
+
+    const entitiesFilter: ComponentFilterTuple = filters.entities ?? [];
+    const [entities, updateQuery, disposeQuery] = this.createQuery(
+      ...entitiesFilter
+    );
+
+    const resourceFilter = filters.resources ?? [];
+    const resources = resourceFilter.map((resourceConstructor) =>
+      this.resources.get(resourceConstructor)
+    ) as ResourceInstances<TResourceFilter>;
 
     const system: EcsSystemHandle<TArgs, TResult> = (...args) => {
-      const result = callbackOrSystem({ entities }, ...args);
+      const result = callback({ entities, resources }, ...args);
       updateQuery();
       return result;
     };
 
+    let disposed = false;
     system.dispose = (): void => {
       if (disposed) return;
 
@@ -311,5 +353,98 @@ export default class EcsManager {
     for (const builder of queries) {
       builder._onEntityComponentRemoved(entity, component);
     }
+  }
+
+  /**
+   * Add a global resource.
+   *
+   * @param constructor - The constructor of the resource to add
+   * @param properties - Initial properties of the resource
+   * @returns The manager itself
+   */
+  public addResource<T extends EcsResource>(
+    constructor: EcsResourceConstructor<T>,
+    properties?: Partial<T>
+  ): this {
+    const resource = new constructor();
+    if (properties !== undefined) {
+      Object.assign(resource, properties);
+    }
+
+    return this.addResourceInstance(resource);
+  }
+
+  /**
+   * Instanciate and add a global resource.
+   *
+   * @param constructor - The constructor of the resource to add
+   * @param args - The parameters to pass to the constructor
+   * @returns The manager itself
+   */
+  public addResourceNew<T extends EcsResource, TArgs extends any[]>(
+    constructor: EcsResourceConstructor<T, TArgs>,
+    ...args: TArgs
+  ): this {
+    const resource = new constructor(...args);
+
+    return this.addResourceInstance(resource);
+  }
+
+  /**
+   * Used interally to add and wrap a resource instance.
+   *
+   * @param resource - The resource instance to add
+   * @returns The manager itself
+   */
+  private addResourceInstance<T extends EcsResource>(resource: T): this {
+    // Extract the constructor type
+    const { constructor } = Object.getPrototypeOf(resource) as {
+      constructor: EcsResourceConstructor<T>;
+    };
+
+    // Make sure this manager was not disposed
+    if (this.disposed) {
+      throw new Error("Cannot add a resource to a disposed manager.");
+    }
+
+    // Make sure this resource was not already added
+    if (this.resources.has(constructor)) {
+      throw new Error(`A resource of type ${constructor.name} already exists.`);
+    }
+
+    // TODO: Wrap the resource with a proxy to monitor changes
+
+    this.resources.set(constructor, resource);
+    // TODO: Trigger Add hook for the resource
+
+    return this;
+  }
+
+  /**
+   * Get a global resource.
+   *
+   * @param constructor - The constructor of the resource to get
+   * @returns The resource instance
+   */
+  public getResource<T extends EcsResource>(
+    constructor: EcsResourceConstructor<T>
+  ): T {
+    if (!this.hasResource(constructor)) {
+      throw new Error(`A resource of type ${constructor.name} does not exist.`);
+    }
+
+    return this.resources.get(constructor) as T;
+  }
+
+  /**
+   * Check if a global resource exists.
+   *
+   * @param constructor - The constructor of the resource to check
+   * @returns Whether the resource exists
+   */
+  public hasResource<T extends EcsResource>(
+    constructor: EcsResourceConstructor<T>
+  ): boolean {
+    return this.resources.has(constructor);
   }
 }

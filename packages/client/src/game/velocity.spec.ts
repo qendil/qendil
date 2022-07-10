@@ -12,8 +12,8 @@ describe("VelocitySystem", () => {
     const system = world.watch(VelocitySystem);
     const entity = world
       .spawn()
-      .insert(Velocity, { x: 10, y: -100 })
-      .insert(Position, { x: 100, y: 500 });
+      .add(Velocity, { x: 10, y: -100 })
+      .add(Position, { x: 100, y: 500 });
     const position = entity.get(Position);
 
     system(1);

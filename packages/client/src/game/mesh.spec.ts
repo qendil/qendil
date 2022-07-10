@@ -15,7 +15,7 @@ describe("MeshPositionSystem", () => {
     // Then the mesh's position should be updated
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Mesh).insert(Position);
+    const entity = world.spawn().add(Mesh).add(Position);
     const system = world.watch(MeshPositionSystem);
 
     const position = entity.get(Position);
@@ -41,11 +41,7 @@ describe("MeshPositionSystem", () => {
     // Then the mesh's position should be stay the same
 
     const world = new EcsManager();
-    const entity = world
-      .spawn()
-      .insert(Mesh)
-      .insert(Position)
-      .insert(SmoothPosition);
+    const entity = world.spawn().add(Mesh).add(Position).add(SmoothPosition);
     const system = world.watch(MeshPositionSystem);
 
     const position = entity.get(Position);
@@ -71,11 +67,7 @@ describe("MeshPositionSystem", () => {
     // Then the mesh's position should be updated gradually
 
     const world = new EcsManager();
-    const entity = world
-      .spawn()
-      .insert(Mesh)
-      .insert(Position)
-      .insert(SmoothPosition);
+    const entity = world.spawn().add(Mesh).add(Position).add(SmoothPosition);
 
     const meshPosition = world.watch(MeshSmoothPositionSystem);
     const positionUpdate = world.watch(SmoothPositionUpdate);

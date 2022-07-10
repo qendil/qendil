@@ -16,7 +16,7 @@ describe("ThirdPersonControlSystem", () => {
     const input = new InputManager();
     const system = world.watch(ThirdPersonControlSystem);
 
-    world.spawn().insert(ThirdPersonController);
+    world.spawn().add(ThirdPersonController);
 
     expect(() => {
       system(input);
@@ -34,8 +34,8 @@ describe("ThirdPersonControlSystem", () => {
     const system = world.watch(ThirdPersonControlSystem);
     const entity = world
       .spawn()
-      .insert(ThirdPersonController)
-      .insert(Velocity, { factor: 1 });
+      .add(ThirdPersonController)
+      .add(Velocity, { factor: 1 });
     const velocity = entity.get(Velocity);
 
     system(input);

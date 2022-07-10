@@ -70,11 +70,11 @@ export default function App(): ReactElement {
 
       const cube = gameWorld
         .spawn()
-        .insertNew(Mesh, geometry, material)
-        .insert(Position)
-        .insert(SmoothPosition)
-        .insert(Velocity, { factor: 3 })
-        .insert(ThirdPersonController);
+        .addNew(Mesh, geometry, material)
+        .add(Position)
+        .add(SmoothPosition)
+        .add(Velocity, { factor: 3 })
+        .add(ThirdPersonController);
 
       const { mesh } = cube.get(Mesh);
       scene.add(mesh);

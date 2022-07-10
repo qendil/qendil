@@ -19,8 +19,8 @@ describe("SmoothPositionInit system", () => {
 
     const entity = world
       .spawn()
-      .insert(SmoothPosition)
-      .insert(Position, { x: 42, y: 12, z: 144 });
+      .add(SmoothPosition)
+      .add(Position, { x: 42, y: 12, z: 144 });
 
     system();
 
@@ -47,8 +47,8 @@ describe("SmoothPositionUpdate system", () => {
 
     const entity = world
       .spawn()
-      .insert(SmoothPosition)
-      .insert(Position, { x: 42, y: 12, z: 144 });
+      .add(SmoothPosition)
+      .add(Position, { x: 42, y: 12, z: 144 });
 
     // Call system to ignore the first update
     system();
@@ -87,7 +87,7 @@ describe("SmoothPositionAnimate", () => {
     // Then the smooth position should be halfway through
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(SmoothPosition).insert(Position);
+    const entity = world.spawn().add(SmoothPosition).add(Position);
     const update = world.watch(SmoothPositionUpdate);
     const animate = world.watch(SmoothPositionAnimate);
 
@@ -113,8 +113,8 @@ describe("SmoothPositionAnimate", () => {
     // Then only one of them will be animated
 
     const world = new EcsManager();
-    const entityA = world.spawn().insert(SmoothPosition).insert(Position);
-    const entityB = world.spawn().insert(SmoothPosition).insert(Position);
+    const entityA = world.spawn().add(SmoothPosition).add(Position);
+    const entityB = world.spawn().add(SmoothPosition).add(Position);
     const update = world.watch(SmoothPositionUpdate);
     const animate = world.watch(SmoothPositionAnimate);
 

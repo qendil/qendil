@@ -35,7 +35,7 @@ describe("EcsQueryBuilder", () => {
 
     expect(query.size).toBe(0);
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
   });
 
@@ -49,7 +49,7 @@ describe("EcsQueryBuilder", () => {
     const update = world.watch(({ entities }) => entities, [Position]);
     const query = update();
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
 
     entity.remove(Position);
@@ -72,10 +72,10 @@ describe("EcsQueryBuilder", () => {
 
     expect(query.size).toBe(0);
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).not.toContain(entity);
 
-    entity.insert(Rotation);
+    entity.add(Rotation);
     expect([...query.asEntities()]).toContain(entity);
   });
 
@@ -88,13 +88,9 @@ describe("EcsQueryBuilder", () => {
     // And the query should not contain the entities B and C
 
     const world = new EcsManager();
-    const entity1 = world.spawn().insert(Position).insert(Velocity);
-    const entity2 = world.spawn().insert(Position);
-    const entity3 = world
-      .spawn()
-      .insert(Position)
-      .insert(Velocity)
-      .insert(Rotation);
+    const entity1 = world.spawn().add(Position).add(Velocity);
+    const entity2 = world.spawn().add(Position);
+    const entity3 = world.spawn().add(Position).add(Velocity).add(Rotation);
 
     const system = world.watch(
       ({ entities }) => [...entities.asEntities()],
@@ -117,7 +113,7 @@ describe("EcsQueryBuilder", () => {
     const system = world.watch(({ entities }) => entities, [Position]);
     const query = system();
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect(query.has(entity)).toBeTruthy();
 
     entity.dispose();
@@ -138,10 +134,10 @@ describe("EcsQueryBuilder", () => {
     );
     const query = update();
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
 
-    entity.insert(Rotation);
+    entity.add(Rotation);
     expect([...query.asEntities()]).not.toContain(entity);
   });
 
@@ -158,13 +154,13 @@ describe("EcsQueryBuilder", () => {
     const update = world.watch(({ entities }) => entities, [Position.added()]);
     const query = update();
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
 
     update();
     expect([...query.asEntities()]).not.toContain(entity);
 
-    entity.remove(Position).insert(Position);
+    entity.remove(Position).add(Position);
     expect([...query.asEntities()]).toContain(entity);
   });
 
@@ -174,7 +170,7 @@ describe("EcsQueryBuilder", () => {
     // Then it should contain the component
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const update = world.watch(
       ({ entities }) => {
@@ -193,7 +189,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should contain the entity
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     const update = world.watch(
       ({ entities }) => entities,
       [Position.changed()]
@@ -213,7 +209,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should not contain the entity
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position, { x: 144 });
+    const entity = world.spawn().add(Position, { x: 144 });
     const update = world.watch(
       ({ entities }) => entities,
       [Position.changed()]
@@ -243,24 +239,16 @@ describe("EcsQueryBuilder", () => {
     );
     const query = update();
 
-    const entityA = world
-      .spawn()
-      .insert(Named)
-      .insert(Rotation)
-      .insert(Velocity);
+    const entityA = world.spawn().add(Named).add(Rotation).add(Velocity);
 
-    const entityB = world
-      .spawn()
-      .insert(Named)
-      .insert(Vehicle)
-      .insert(Velocity);
+    const entityB = world.spawn().add(Named).add(Vehicle).add(Velocity);
 
     // Make this the initial state
     update();
 
     // Add component
-    entityA.insert(Position);
-    entityB.insert(Position);
+    entityA.add(Position);
+    entityB.add(Position);
     expect([...query.asEntities()]).not.toContain(entityA);
     expect([...query.asEntities()]).not.toContain(entityB);
 
@@ -279,7 +267,7 @@ describe("EcsQueryBuilder", () => {
     expect([...query.asEntities()]).not.toContain(entityB);
 
     // Re-add removed component
-    entityB.insert(Velocity, { x: 1 });
+    entityB.add(Velocity, { x: 1 });
     expect([...query.asEntities()]).not.toContain(entityA);
     expect([...query.asEntities()]).toContain(entityB);
 
@@ -308,7 +296,7 @@ describe("EcsQueryBuilder", () => {
     );
     const query = update();
 
-    const entity = world.spawn().insert(Position).insert(Velocity);
+    const entity = world.spawn().add(Position).add(Velocity);
     expect([...query.asEntities()]).not.toContain(entity);
 
     entity.remove(Position);

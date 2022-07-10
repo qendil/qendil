@@ -25,7 +25,7 @@ describe("EcsEntity", () => {
     // Then the component should be added to the entity
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const components = entity.getComponents();
     expect(components).toContain(Position);
@@ -37,7 +37,7 @@ describe("EcsEntity", () => {
     // Then I should get the component with the correct values
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position, { x: 42, y: 144 });
+    const entity = world.spawn().add(Position, { x: 42, y: 144 });
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
@@ -60,7 +60,7 @@ describe("EcsEntity", () => {
     // And the Position component should not be present
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position).insert(Velocity);
+    const entity = world.spawn().add(Position).add(Velocity);
 
     const components = entity.getComponents();
     expect(components).toContain(Position);
@@ -79,7 +79,7 @@ describe("EcsEntity", () => {
     // Then I should get true
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     expect(entity.has(Position)).toBe(true);
   });
@@ -90,7 +90,7 @@ describe("EcsEntity", () => {
     // Then I should get false
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     expect(entity.has(Velocity)).toBe(false);
   });
@@ -101,7 +101,7 @@ describe("EcsEntity", () => {
     // Then I should get true
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position).insert(Velocity);
+    const entity = world.spawn().add(Position).add(Velocity);
 
     expect(entity.hasAll([Position, Velocity])).toBe(true);
   });
@@ -112,7 +112,7 @@ describe("EcsEntity", () => {
     // Then I should get false
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     expect(entity.hasAll([Position, Velocity])).toBe(false);
   });
@@ -123,7 +123,7 @@ describe("EcsEntity", () => {
     // Then I should get true
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     expect(entity.hasAny([Position, Velocity])).toBe(true);
   });
@@ -145,9 +145,9 @@ describe("EcsEntity", () => {
     // Then I should get an error
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
-    expect(() => entity.insert(Position)).toThrowError(
+    expect(() => entity.add(Position)).toThrowError(
       `Cannot add component ${Position.name} to entity ${entity.id} because it already exists.`
     );
   });
@@ -171,7 +171,7 @@ describe("EcsEntity", () => {
     // Then the entity should have a component with the correct value
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position, { x: 42, y: 144 });
+    const entity = world.spawn().add(Position, { x: 42, y: 144 });
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
@@ -182,7 +182,7 @@ describe("EcsEntity", () => {
     // Then the entity should have a component with the correct value
 
     const world = new EcsManager();
-    const entity = world.spawn().insertNew(Position, 42, 144);
+    const entity = world.spawn().addNew(Position, 42, 144);
 
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
@@ -193,7 +193,7 @@ describe("EcsEntity", () => {
     // Then .dispose() should be called on the Position component
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -209,7 +209,7 @@ describe("EcsEntity", () => {
     // Then .dispose() should be called on the Position component
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -225,7 +225,7 @@ describe("EcsEntity", () => {
     // Then the component should be able to access the entity on disposal
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -240,7 +240,7 @@ describe("EcsEntity", () => {
     // Then .dispose() should be called on the components too
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -256,7 +256,7 @@ describe("EcsEntity", () => {
     // Then .dispose() should be called on the components too
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -272,7 +272,7 @@ describe("EcsEntity", () => {
     // Then the component should be able to access the entity on disposal
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
 
     const position = entity.get(Position);
     const disposeSpy = vi.spyOn(position, "dispose");
@@ -290,7 +290,7 @@ describe("EcsEntity", () => {
     const entity = world.spawn();
     entity.dispose();
 
-    expect(() => entity.insert(Position)).toThrowError(
+    expect(() => entity.add(Position)).toThrowError(
       `Cannot insert component ${Position.name} into entity ${entity.id} because it has been disposed.`
     );
   });
@@ -301,7 +301,7 @@ describe("EcsEntity", () => {
     // Then I should get an error
 
     const world = new EcsManager();
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     entity.dispose();
 
     expect(() => entity.remove(Position)).toThrowError(

@@ -1,12 +1,24 @@
 import type { EcsQuery } from "./ecs-query";
-import type { ComponentFilterTuple } from "./types";
+import type {
+  ComponentFilterTuple,
+  ResourceFilterTuple,
+  ResourceInstances,
+} from "./types";
 
-export type SystemQuery<TFilter extends ComponentFilterTuple> = {
-  entities: TFilter;
+export type SystemQuery<
+  TFilter extends ComponentFilterTuple,
+  TResourceFilter extends ResourceFilterTuple
+> = {
+  entities?: TFilter;
+  resources?: TResourceFilter;
 };
 
-export type SystemQueryResult<TFilter extends ComponentFilterTuple> = {
+export type SystemQueryResult<
+  TFilter extends ComponentFilterTuple,
+  TResourceFilter extends ResourceFilterTuple
+> = {
   entities: EcsQuery<TFilter>;
+  resources: ResourceInstances<TResourceFilter>;
 };
 
 /**
@@ -16,18 +28,22 @@ export type SystemQueryResult<TFilter extends ComponentFilterTuple> = {
  */
 export default class EcsSystem<
   TFilter extends ComponentFilterTuple,
+  TResourceFilter extends ResourceFilterTuple,
   TArgs extends unknown[],
   TResult
 > {
-  public readonly query: SystemQuery<TFilter>;
+  public readonly query: SystemQuery<TFilter, TResourceFilter>;
   public readonly handle: (
-    query: SystemQueryResult<TFilter>,
+    query: SystemQueryResult<TFilter, TResourceFilter>,
     ...args: TArgs
   ) => TResult;
 
   public constructor(
-    handler: (query: SystemQueryResult<TFilter>, ...args: TArgs) => TResult,
-    query: SystemQuery<TFilter> | TFilter
+    handler: (
+      query: SystemQueryResult<TFilter, TResourceFilter>,
+      ...args: TArgs
+    ) => TResult,
+    query: SystemQuery<TFilter, TResourceFilter> | TFilter
   ) {
     this.query = Array.isArray(query) ? { entities: query } : query;
 

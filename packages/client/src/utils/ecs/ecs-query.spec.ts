@@ -23,7 +23,7 @@ describe("EcsQuery", () => {
     const query = system();
     expect(query.size).toBe(0);
 
-    const entity = world.spawn().insert(Position);
+    const entity = world.spawn().add(Position);
     expect(query.size).toBe(1);
     expect(query.has(entity)).toBe(true);
   });
@@ -41,7 +41,7 @@ describe("EcsQuery", () => {
     );
     const query = system();
 
-    world.spawn().insert(Position, { x: 12, y: 144 }).insert(Velocity);
+    world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);
 
     const queryList = [...query];
     expect(queryList).toEqual([[{ x: 12, y: 144 }]]);
@@ -60,7 +60,7 @@ describe("EcsQuery", () => {
     );
     const query = system();
 
-    const entity = world.spawn().insert(Position).insert(Velocity);
+    const entity = world.spawn().add(Position).add(Velocity);
 
     const queryList = [...query.asEntities()];
     expect(queryList).toEqual([entity]);
@@ -79,10 +79,7 @@ describe("EcsQuery", () => {
     );
     const query = system();
 
-    const entity = world
-      .spawn()
-      .insert(Position, { x: 12, y: 144 })
-      .insert(Velocity);
+    const entity = world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);
 
     const queryList = [...query.withEntities()];
     expect(queryList).toEqual([[entity, { x: 12, y: 144 }]]);
