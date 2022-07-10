@@ -290,7 +290,7 @@ describe("EcsManager system", () => {
     const mySystem = new EcsSystem(({ entities }) => [...entities], [Position]);
 
     const world = new EcsManager();
-    world.spawn().insert(Position);
+    world.spawn().add(Position);
     const system = world.watch(mySystem);
 
     expect(system()).toBeInstanceOf(Array);
@@ -307,7 +307,7 @@ describe("EcsManager system", () => {
     });
 
     const world = new EcsManager();
-    world.spawn().insert(Position);
+    world.spawn().add(Position);
     const system = world.watch(mySystem);
 
     expect(system()).toBeInstanceOf(Array);
