@@ -1,4 +1,6 @@
 import { EcsComponent, EcsSystem } from "../utils/ecs";
+import { FrameInfoResource } from "./frame-info-resource";
+import { GameConfigResource } from "./game-config-resource";
 import { Position } from "./position";
 
 /**
@@ -54,8 +56,10 @@ export const SmoothPositionUpdate = new EcsSystem(
  * Animates the position of the entity.
  */
 export const SmoothPositionAnimate = new EcsSystem(
-  ({ entities }, frametime: number, fixedInterval: number) => {
-    const factor = frametime / fixedInterval;
+  ({ entities, resources: [frameInfo, gameConfig] }) => {
+    const { frametime } = frameInfo;
+    const { fixedUpdateRate } = gameConfig;
+    const factor = frametime / fixedUpdateRate;
 
     for (const [{ x, y, z }, smooth] of entities) {
       if (smooth.animationPercent >= 1) continue;
@@ -70,5 +74,8 @@ export const SmoothPositionAnimate = new EcsSystem(
       smooth.z = originalZ + (z - originalZ) * percent;
     }
   },
-  [Position, SmoothPosition, SmoothPosition.present()]
+  {
+    entities: [Position, SmoothPosition, SmoothPosition.present()],
+    resources: [FrameInfoResource, GameConfigResource],
+  }
 );

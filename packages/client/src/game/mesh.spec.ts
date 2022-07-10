@@ -1,4 +1,6 @@
 import { EcsManager } from "../utils/ecs";
+import { FrameInfoResource } from "./frame-info-resource";
+import { GameConfigResource } from "./game-config-resource";
 import { Mesh, MeshPositionSystem, MeshSmoothPositionSystem } from "./mesh";
 import { Position } from "./position";
 import {
@@ -67,6 +69,9 @@ describe("MeshPositionSystem", () => {
     // Then the mesh's position should be updated gradually
 
     const world = new EcsManager();
+    world.resources
+      .add(GameConfigResource, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfoResource, { frametime: 1 / 60 });
     const entity = world.spawn().add(Mesh).add(Position).add(SmoothPosition);
 
     const meshPosition = world.watch(MeshSmoothPositionSystem);
@@ -77,7 +82,7 @@ describe("MeshPositionSystem", () => {
     const { mesh } = entity.get(Mesh);
 
     positionUpdate();
-    positionAnimate(1 / 60, 1 / 30);
+    positionAnimate();
     meshPosition();
 
     expect(mesh.position).toEqual(
@@ -87,7 +92,7 @@ describe("MeshPositionSystem", () => {
     position.x = 100;
 
     positionUpdate();
-    positionAnimate(1 / 60, 1 / 30);
+    positionAnimate();
     meshPosition();
 
     expect(mesh.position).toEqual(

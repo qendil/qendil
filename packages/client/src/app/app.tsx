@@ -30,15 +30,9 @@ import {
   SmoothPositionInit,
   SmoothPositionUpdate,
 } from "../game/smooth-position";
-
-const gameWorld = new EcsManager();
-const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
-const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
-const updatePosition = gameWorld.watch(VelocitySystem);
-const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
-const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
-const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
-const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
+import { InputResource } from "../game/input-resource";
+import { FrameInfoResource } from "../game/frame-info-resource";
+import { GameConfigResource } from "../game/game-config-resource";
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -59,13 +53,31 @@ export default function App(): ReactElement {
   const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
 
   const WorldView = useGameView(
-    ({ scene, input, makePerspectiveCamera }) => {
+    ({ scene, makePerspectiveCamera }) => {
+      const gameWorld = new EcsManager();
+
+      gameWorld.resources
+        .add(InputResource)
+        .add(FrameInfoResource)
+        .add(GameConfigResource);
+
+      const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
+      const updateMeshSmoothPosition = gameWorld.watch(
+        MeshSmoothPositionSystem
+      );
+      const updatePosition = gameWorld.watch(VelocitySystem);
+      const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
+      const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
+      const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
+      const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
+
       const camera = makePerspectiveCamera();
       camera.position.z = 5;
 
       const geometry = new BoxGeometry();
       const material = new MeshBasicMaterial({ color: 0xffcc00 });
 
+      const { input } = gameWorld.resources.get(InputResource);
       bindInput(input);
 
       const cube = gameWorld
@@ -79,19 +91,26 @@ export default function App(): ReactElement {
       const { mesh } = cube.get(Mesh);
       scene.add(mesh);
 
+      const frameInfo = gameWorld.resources.get(FrameInfoResource);
+      const gameConfig = gameWorld.resources.get(GameConfigResource);
+
       return {
         camera,
-        fixedUpdateRate: 1 / 20,
+        fixedUpdateRate: gameConfig.fixedUpdateRate,
         onSetup(renderer): void {
           renderer.setClearColor(0x8a326c);
         },
         onUpdate(frametime): void {
+          frameInfo.frametime = frametime;
+
           smoothPositionInit();
           smoothPositionUpdate();
-          smoothPositionAnimate(frametime, 1 / 20);
-          updateStickControl(input);
+          smoothPositionAnimate();
+          updateStickControl();
           updateMeshPosition();
           updateMeshSmoothPosition();
+
+          input.update();
         },
         onFixedUpdate(frametime): void {
           updatePosition(frametime);
@@ -100,6 +119,8 @@ export default function App(): ReactElement {
           material.dispose();
           geometry.dispose();
           cube.dispose();
+
+          gameWorld.dispose();
         },
       };
     },

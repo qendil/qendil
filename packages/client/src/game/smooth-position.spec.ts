@@ -1,4 +1,6 @@
 import { EcsManager } from "../utils/ecs";
+import { FrameInfoResource } from "./frame-info-resource";
+import { GameConfigResource } from "./game-config-resource";
 import { Position } from "./position";
 import {
   SmoothPositionInit,
@@ -87,6 +89,10 @@ describe("SmoothPositionAnimate", () => {
     // Then the smooth position should be halfway through
 
     const world = new EcsManager();
+    world.resources
+      .add(GameConfigResource, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfoResource, { frametime: 1 / 60 });
+
     const entity = world.spawn().add(SmoothPosition).add(Position);
     const update = world.watch(SmoothPositionUpdate);
     const animate = world.watch(SmoothPositionAnimate);
@@ -97,7 +103,7 @@ describe("SmoothPositionAnimate", () => {
     position.z = 1000;
 
     update();
-    animate(1 / 60, 1 / 30);
+    animate();
 
     const smooth = entity.get(SmoothPosition);
 
@@ -113,19 +119,23 @@ describe("SmoothPositionAnimate", () => {
     // Then only one of them will be animated
 
     const world = new EcsManager();
+    world.resources
+      .add(GameConfigResource, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfoResource, { frametime: 1 / 60 });
+
     const entityA = world.spawn().add(SmoothPosition).add(Position);
     const entityB = world.spawn().add(SmoothPosition).add(Position);
     const update = world.watch(SmoothPositionUpdate);
     const animate = world.watch(SmoothPositionAnimate);
 
     update();
-    animate(1 / 30, 1 / 30);
+    animate();
 
     const position = entityA.get(Position);
     position.x = 10;
 
     update();
-    animate(1 / 60, 1 / 30);
+    animate();
 
     const smoothA = entityA.get(SmoothPosition);
     const smoothB = entityB.get(SmoothPosition);

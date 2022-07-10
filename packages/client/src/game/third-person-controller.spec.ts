@@ -1,5 +1,6 @@
 import { EcsManager } from "../utils/ecs";
-import InputManager, { InputAxis } from "../utils/input-manager";
+import { InputAxis } from "../utils/input-manager";
+import { InputResource } from "./input-resource";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
@@ -13,13 +14,14 @@ describe("ThirdPersonControlSystem", () => {
     // Then I should not get an error
 
     const world = new EcsManager();
-    const input = new InputManager();
+    world.resources.add(InputResource);
+
     const system = world.watch(ThirdPersonControlSystem);
 
     world.spawn().add(ThirdPersonController);
 
     expect(() => {
-      system(input);
+      system();
     }).not.toThrow();
   });
 
@@ -30,7 +32,9 @@ describe("ThirdPersonControlSystem", () => {
     // Then the entity's velocity should be updated according to the input
 
     const world = new EcsManager();
-    const input = new InputManager();
+    world.resources.add(InputResource);
+    const { input } = world.resources.get(InputResource);
+
     const system = world.watch(ThirdPersonControlSystem);
     const entity = world
       .spawn()
@@ -38,14 +42,14 @@ describe("ThirdPersonControlSystem", () => {
       .add(Velocity, { factor: 1 });
     const velocity = entity.get(Velocity);
 
-    system(input);
+    system();
 
     expect(velocity).toEqual({ factor: 1, x: 0, y: -0, z: 0 });
 
     vi.spyOn(input, "getAxis").mockImplementation((axis: InputAxis) =>
       axis === InputAxis.LX ? 0.5 : -0.75
     );
-    system(input);
+    system();
 
     expect(velocity).toEqual(
       expect.objectContaining({ x: 0.5, y: 0.75, z: 0 })

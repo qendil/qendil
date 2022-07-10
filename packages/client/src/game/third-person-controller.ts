@@ -2,7 +2,7 @@ import { EcsComponent, EcsSystem } from "../utils/ecs";
 import { InputAxis } from "../utils/input-manager";
 import { Velocity } from "./velocity";
 
-import type InputManager from "../utils/input-manager";
+import { InputResource } from "./input-resource";
 
 /**
  * Tags entities that are controlled by a third-person camera.
@@ -19,7 +19,9 @@ export class ThirdPersonController extends EcsComponent {
  * - Changes the direction of the entity based on the direction of the joystick.
  */
 export const ThirdPersonControlSystem = new EcsSystem(
-  ({ entities }, input: InputManager) => {
+  ({ entities, resources: [inputResource] }) => {
+    const { input } = inputResource;
+
     const lx = input.getAxis(InputAxis.LX);
     const ly = input.getAxis(InputAxis.LY);
 
@@ -33,5 +35,5 @@ export const ThirdPersonControlSystem = new EcsSystem(
       }
     }
   },
-  [ThirdPersonController.present()]
+  { entities: [ThirdPersonController.present()], resources: [InputResource] }
 );
