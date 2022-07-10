@@ -1,4 +1,4 @@
-import EcsManager from "../utils/ecs";
+import { EcsManager } from "../utils/ecs";
 import { Mesh, MeshPositionSystem, MeshSmoothPositionSystem } from "./mesh";
 import { Position } from "./position";
 import {

@@ -1,6 +1,6 @@
 import { BoxGeometry, MeshBasicMaterial } from "three";
 import coreInit, { makeGreeting } from "@qendil/core";
-import EcsManager from "../utils/ecs";
+import { EcsManager } from "../utils/ecs";
 import classNames from "classnames";
 
 import type { ReactElement } from "react";

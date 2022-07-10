@@ -1,4 +1,4 @@
-import EcsManager from "../utils/ecs";
+import { EcsManager } from "../utils/ecs";
 import InputManager, { InputAxis } from "../utils/input-manager";
 import {
   ThirdPersonController,

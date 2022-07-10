@@ -1,4 +1,4 @@
-import EcsManager from "../utils/ecs";
+import { EcsManager } from "../utils/ecs";
 import { Position } from "./position";
 import {
   SmoothPositionInit,
