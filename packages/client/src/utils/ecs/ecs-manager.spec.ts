@@ -3,6 +3,8 @@ import EcsComponent from "./ecs-component";
 import EcsSystem from "./ecs-system";
 import EcsResource from "./ecs-resource";
 
+import type { EcsEntity } from "./ecs-entity";
+
 class Position extends EcsComponent {
   public x = 0;
   public y = 0;
@@ -88,36 +90,6 @@ describe("EcsManager", () => {
 });
 
 describe("EcsManager system", () => {
-  it("forwards arguments", () => {
-    // Given a system that accepts 2 arguments
-    // When I call the system with those 2 arguments
-    // Then I the system's callback should receive those same 2 arguments as parameters
-
-    const world = new EcsManager();
-
-    const system = world.watch(
-      (_query, argument1: string, argument2: number) => {
-        expect(argument1).toBe("hello");
-        expect(argument2).toBe(42);
-      },
-      [Position]
-    );
-
-    system("hello", 42);
-  });
-
-  it("forwards callbacks' return values", () => {
-    // Given a system with a callback that returns a value
-    // When I call the system
-    // Then I should receive the return value from the callback
-
-    const world = new EcsManager();
-    const system = world.watch(() => "test output", [Position]);
-
-    const returnValue = system();
-    expect(returnValue).toBe("test output");
-  });
-
   it("has auto-updated queries", () => {
     // Given an entity A with a Position component
     // And an entity B with no components
@@ -132,22 +104,33 @@ describe("EcsManager system", () => {
     // Then only the entity B should be in the system's query
 
     const world = new EcsManager();
-    const system = world.watch(({ entities }) => entities, [Position.added()]);
 
-    const query = system();
+    let query: EcsEntity[] = [];
+    const system = world.watch(
+      ({ entities }) => {
+        query = [...entities.asEntities()];
+      },
+      [Position.added()]
+    );
+
     const entityA = world.spawn().add(Position);
     const entityB = world.spawn();
-    expect([...query.asEntities()]).toContain(entityA);
-    expect([...query.asEntities()]).not.toContain(entityB);
-
     system();
-    expect([...query.asEntities()]).not.toContain(entityA);
-    expect([...query.asEntities()]).not.toContain(entityB);
 
+    expect(query).toContain(entityA);
+    expect(query).not.toContain(entityB);
+
+    // No operation here
     system();
+
+    expect(query).not.toContain(entityA);
+    expect(query).not.toContain(entityB);
+
     entityB.add(Position);
-    expect([...query.asEntities()]).not.toContain(entityA);
-    expect([...query.asEntities()]).toContain(entityB);
+    system();
+
+    expect(query).not.toContain(entityA);
+    expect(query).toContain(entityB);
   });
 
   it("queries resources", () => {
@@ -162,12 +145,18 @@ describe("EcsManager system", () => {
     const world = new EcsManager();
     world.resources.add(A, { value: "world" });
 
-    const system = world.watch(({ resources }) => resources, {
-      resources: [A],
-    });
-    const resources = system();
+    let query: EcsResource[] = [];
+    const system = world.watch(
+      ({ resources }) => {
+        query = resources;
+      },
+      {
+        resources: [A],
+      }
+    );
+    system();
 
-    expect(resources).toEqual([{ value: "world" }]);
+    expect(query).toEqual([{ value: "world" }]);
   });
 
   it("properly disposes of system queries", () => {
@@ -211,14 +200,24 @@ describe("EcsManager system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new EcsSystem(({ entities }) => [...entities], [Position]);
+    let query: Array<[Position]> = [];
+    const mySystem = new EcsSystem(
+      ({ entities }) => {
+        query = [...entities];
+      },
+      [Position]
+    );
 
     const world = new EcsManager();
     world.spawn().add(Position);
+
     const system = world.watch(mySystem);
 
-    expect(system()).toBeInstanceOf(Array);
-    expect(system()).toHaveLength(1);
+    system();
+    expect(query).toBeInstanceOf(Array);
+
+    system();
+    expect(query).toHaveLength(1);
   });
 
   it("accepts alternative syntax for system queries", () => {
@@ -226,15 +225,24 @@ describe("EcsManager system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new EcsSystem(({ entities }) => [...entities], {
-      entities: [Position],
-    });
+    let query: Array<[Position]> = [];
+    const mySystem = new EcsSystem(
+      ({ entities }) => {
+        query = [...entities];
+      },
+      {
+        entities: [Position],
+      }
+    );
 
     const world = new EcsManager();
     world.spawn().add(Position);
     const system = world.watch(mySystem);
 
-    expect(system()).toBeInstanceOf(Array);
-    expect(system()).toHaveLength(1);
+    system();
+    expect(query).toBeInstanceOf(Array);
+
+    system();
+    expect(query).toHaveLength(1);
   });
 });

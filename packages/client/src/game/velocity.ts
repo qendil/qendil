@@ -1,4 +1,5 @@
 import { EcsComponent, EcsSystem } from "../utils/ecs";
+import { GameConfigResource } from "./game-config-resource";
 import { Position } from "./position";
 
 /**
@@ -15,12 +16,17 @@ export class Velocity extends EcsComponent {
  * Updates entities' positions based on their velocity.
  */
 export const VelocitySystem = new EcsSystem(
-  ({ entities }, dt: number) => {
+  ({ entities, resources: [gameConfig] }) => {
+    const { fixedUpdateRate } = gameConfig;
+
     for (const [position, { x, y, z }] of entities) {
-      position.x += x * dt;
-      position.y += y * dt;
-      position.z += z * dt;
+      position.x += x * fixedUpdateRate;
+      position.y += y * fixedUpdateRate;
+      position.z += z * fixedUpdateRate;
     }
   },
-  [Position, Velocity]
+  {
+    entities: [Position, Velocity],
+    resources: [GameConfigResource],
+  }
 );

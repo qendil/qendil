@@ -117,12 +117,8 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple,
-    TArgs extends unknown[],
-    TResult
-  >(
-    system: EcsSystem<TFilter, TResourceFilter, TArgs, TResult>
-  ): EcsSystemHandle<TArgs, TResult>;
+    TResourceFilter extends ResourceFilterTuple
+  >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -139,16 +135,11 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple,
-    TArgs extends unknown[],
-    TResult
+    TResourceFilter extends ResourceFilterTuple
   >(
-    callback: (
-      entities: SystemQueryResult<TFilter, TResourceFilter>,
-      ...args: TArgs
-    ) => TResult,
+    callback: (entities: SystemQueryResult<TFilter, TResourceFilter>) => void,
     query: SystemQuery<TFilter, TResourceFilter> | TFilter
-  ): EcsSystemHandle<TArgs, TResult>;
+  ): EcsSystemHandle;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -166,18 +157,13 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple,
-    TArgs extends unknown[],
-    TResult
+    TResourceFilter extends ResourceFilterTuple
   >(
     callbackOrSystem:
-      | EcsSystem<TFilter, TResourceFilter, TArgs, TResult>
-      | ((
-          entities: SystemQueryResult<TFilter, TResourceFilter>,
-          ...args: TArgs
-        ) => TResult),
+      | EcsSystem<TFilter, TResourceFilter>
+      | ((entities: SystemQueryResult<TFilter, TResourceFilter>) => void),
     filterQuery?: SystemQuery<TFilter, TResourceFilter> | TFilter
-  ): EcsSystemHandle<TArgs, TResult> {
+  ): EcsSystemHandle {
     if (callbackOrSystem instanceof EcsSystem) {
       const { handle, query } = callbackOrSystem;
       return this.watch(handle, query);
@@ -204,10 +190,9 @@ export default class EcsManager {
       this.resources.get(resourceConstructor)
     ) as ResourceInstances<TResourceFilter>;
 
-    const system: EcsSystemHandle<TArgs, TResult> = (...args) => {
-      const result = callback({ entities, resources }, ...args);
+    const system: EcsSystemHandle = () => {
+      callback({ entities, resources });
       updateQuery();
-      return result;
     };
 
     let disposed = false;

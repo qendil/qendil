@@ -112,8 +112,8 @@ export default function App(): ReactElement {
 
           input.update();
         },
-        onFixedUpdate(frametime): void {
-          updatePosition(frametime);
+        onFixedUpdate(): void {
+          updatePosition();
         },
         onDispose(): void {
           material.dispose();

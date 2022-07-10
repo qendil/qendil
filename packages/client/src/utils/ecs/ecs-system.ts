@@ -28,21 +28,15 @@ export type SystemQueryResult<
  */
 export default class EcsSystem<
   TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple,
-  TArgs extends unknown[],
-  TResult
+  TResourceFilter extends ResourceFilterTuple
 > {
   public readonly query: SystemQuery<TFilter, TResourceFilter>;
   public readonly handle: (
-    query: SystemQueryResult<TFilter, TResourceFilter>,
-    ...args: TArgs
-  ) => TResult;
+    query: SystemQueryResult<TFilter, TResourceFilter>
+  ) => void;
 
   public constructor(
-    handler: (
-      query: SystemQueryResult<TFilter, TResourceFilter>,
-      ...args: TArgs
-    ) => TResult,
+    handler: (query: SystemQueryResult<TFilter, TResourceFilter>) => void,
     query: SystemQuery<TFilter, TResourceFilter> | TFilter
   ) {
     this.query = Array.isArray(query) ? { entities: query } : query;
@@ -54,8 +48,8 @@ export default class EcsSystem<
 /**
  * A handle to invoke a game system or to dispose it.
  */
-export type EcsSystemHandle<TArgs extends unknown[], TResult> = {
-  (...args: TArgs): TResult;
+export type EcsSystemHandle = {
+  (): void;
 
   /**
    * Disposes of the system, removing all internal references to it.
