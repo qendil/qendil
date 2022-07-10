@@ -209,9 +209,27 @@ describe("GameWorld system", () => {
     const mySystem = new EcsSystem(({ entities }) => [...entities], [Position]);
 
     const world = new EcsManager();
+    world.spawn().insert(Position);
     const system = world.watch(mySystem);
 
     expect(system()).toBeInstanceOf(Array);
-    expect(system()).toHaveLength(0);
+    expect(system()).toHaveLength(1);
+  });
+
+  it("accepts alternative syntax for system queries", () => {
+    // Given a GameSystem instance
+    // When I call `.watch()` with the GameSystem instance
+    // Then I should have a proper game system handle
+
+    const mySystem = new EcsSystem(({ entities }) => [...entities], {
+      entities: [Position],
+    });
+
+    const world = new EcsManager();
+    world.spawn().insert(Position);
+    const system = world.watch(mySystem);
+
+    expect(system()).toBeInstanceOf(Array);
+    expect(system()).toHaveLength(1);
   });
 });
