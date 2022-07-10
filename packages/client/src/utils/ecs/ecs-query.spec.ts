@@ -18,7 +18,7 @@ describe("Entity Query", () => {
     // Then the query should contain that entity
 
     const world = new EcsWorld();
-    const system = world.watch([Position], (query) => query);
+    const system = world.watch(({ entities }) => entities, [Position]);
 
     const query = system();
     expect(query.size).toBe(0);
@@ -36,8 +36,8 @@ describe("Entity Query", () => {
 
     const world = new EcsWorld();
     const system = world.watch(
-      [Position, Velocity.present()],
-      (query) => query
+      ({ entities }) => entities,
+      [Position, Velocity.present()]
     );
     const query = system();
 
@@ -55,8 +55,8 @@ describe("Entity Query", () => {
 
     const world = new EcsWorld();
     const system = world.watch(
-      [Position, Velocity.present()],
-      (query) => query
+      ({ entities }) => entities,
+      [Position, Velocity.present()]
     );
     const query = system();
 
@@ -74,8 +74,8 @@ describe("Entity Query", () => {
 
     const world = new EcsWorld();
     const system = world.watch(
-      [Position, Velocity.present()],
-      (query) => query
+      ({ entities }) => entities,
+      [Position, Velocity.present()]
     );
     const query = system();
 

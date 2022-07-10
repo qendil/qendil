@@ -20,26 +20,26 @@ export class Mesh extends EcsComponent {
  * Updates the mesh's position based on the entity's position.
  */
 export const MeshPositionSystem = new EcsSystem(
-  [Mesh, Position, Position.changed(), SmoothPosition.absent()],
-  (query) => {
-    for (const [{ mesh }, { x, y, z }] of query) {
+  ({ entities }) => {
+    for (const [{ mesh }, { x, y, z }] of entities) {
       mesh.position.x = x;
       mesh.position.y = y;
       mesh.position.z = z;
     }
-  }
+  },
+  [Mesh, Position, Position.changed(), SmoothPosition.absent()]
 );
 
 /**
  * Updates the mesh's position based on the entity's smooth physic's position.
  */
 export const MeshSmoothPositionSystem = new EcsSystem(
-  [Mesh, SmoothPosition, SmoothPosition.changed()],
-  (query) => {
-    for (const [{ mesh }, { x, y, z }] of query) {
+  ({ entities }) => {
+    for (const [{ mesh }, { x, y, z }] of entities) {
       mesh.position.x = x;
       mesh.position.y = y;
       mesh.position.z = z;
     }
-  }
+  },
+  [Mesh, SmoothPosition, SmoothPosition.changed()]
 );

@@ -19,9 +19,8 @@ export class SmoothPosition extends EcsComponent {
  * to the position component.
  */
 export const SmoothPositionInit = new EcsSystem(
-  [SmoothPosition, Position, Position.added()],
-  (query) => {
-    for (const [smooth, { x, y, z }] of query) {
+  ({ entities }) => {
+    for (const [smooth, { x, y, z }] of entities) {
       smooth.x = x;
       smooth.y = y;
       smooth.z = z;
@@ -30,16 +29,16 @@ export const SmoothPositionInit = new EcsSystem(
       smooth.originalZ = z;
       smooth.animationPercent = 0;
     }
-  }
+  },
+  [SmoothPosition, Position, Position.added()]
 );
 
 /**
  * Updates the source position when the position component changes.
  */
 export const SmoothPositionUpdate = new EcsSystem(
-  [SmoothPosition, Position.changed()],
-  (query) => {
-    for (const [smooth] of query) {
+  ({ entities }) => {
+    for (const [smooth] of entities) {
       const { x, y, z } = smooth;
 
       smooth.animationPercent = 0;
@@ -47,18 +46,18 @@ export const SmoothPositionUpdate = new EcsSystem(
       smooth.originalY = y;
       smooth.originalZ = z;
     }
-  }
+  },
+  [SmoothPosition, Position.changed()]
 );
 
 /**
  * Animates the position of the entity.
  */
 export const SmoothPositionAnimate = new EcsSystem(
-  [Position, SmoothPosition, SmoothPosition.present()],
-  (query, frametime: number, fixedInterval: number) => {
+  ({ entities }, frametime: number, fixedInterval: number) => {
     const factor = frametime / fixedInterval;
 
-    for (const [{ x, y, z }, smooth] of query) {
+    for (const [{ x, y, z }, smooth] of entities) {
       if (smooth.animationPercent >= 1) continue;
 
       const { animationPercent, originalX, originalY, originalZ } = smooth;
@@ -70,5 +69,6 @@ export const SmoothPositionAnimate = new EcsSystem(
       smooth.y = originalY + (y - originalY) * percent;
       smooth.z = originalZ + (z - originalZ) * percent;
     }
-  }
+  },
+  [Position, SmoothPosition, SmoothPosition.present()]
 );

@@ -1,6 +1,14 @@
 import type { EcsQuery } from "./ecs-query";
 import type { ComponentFilterTuple } from "./types";
 
+export type SystemQuery<TFilter extends ComponentFilterTuple> = {
+  entities: TFilter;
+};
+
+export type SystemQueryResult<TFilter extends ComponentFilterTuple> = {
+  entities: EcsQuery<TFilter>;
+};
+
 /**
  * A tool for controlling behavior in an ECS application.
  *
@@ -11,14 +19,18 @@ export default class EcsSystem<
   TArgs extends unknown[],
   TResult
 > {
-  public readonly filters: TFilter;
-  public readonly handle: (query: EcsQuery<TFilter>, ...args: TArgs) => TResult;
+  public readonly query: SystemQuery<TFilter>;
+  public readonly handle: (
+    query: SystemQueryResult<TFilter>,
+    ...args: TArgs
+  ) => TResult;
 
   public constructor(
-    filter: TFilter,
-    handler: (query: EcsQuery<TFilter>, ...args: TArgs) => TResult
+    handler: (query: SystemQueryResult<TFilter>, ...args: TArgs) => TResult,
+    query: SystemQuery<TFilter> | TFilter
   ) {
-    this.filters = filter;
+    this.query = Array.isArray(query) ? { entities: query } : query;
+
     this.handle = handler;
   }
 }

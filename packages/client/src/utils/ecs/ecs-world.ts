@@ -1,5 +1,6 @@
 import { SetMap } from "../default-map";
 import EntityQueryBuilder from "./ecs-query-builder";
+import EcsSystem from "./ecs-system";
 import { EcsEntity } from "./ecs-entity";
 import { EcsFilterObject } from "./ecs-component";
 
@@ -9,9 +10,12 @@ import type {
 } from "./ecs-component";
 import type { EcsEntityLifecycleHooks } from "./ecs-entity";
 import type { EcsQuery } from "./ecs-query";
-import type { EcsSystemHandle } from "./ecs-system";
+import type {
+  EcsSystemHandle,
+  SystemQuery,
+  SystemQueryResult,
+} from "./ecs-system";
 import type { ComponentFilterTuple } from "./types";
-import type EcsSystem from "./ecs-system";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -111,10 +115,10 @@ export default class EcsWorld {
    * @important
    *  You should call `dispose()` on the returned system when you are done.
    *
-   * @param filters - List of component filters to track
    * @param callback - Callback that's called whenever the system is invoked
    *  It receives and entity set as its first argument
    *  Arguments and return value are forwarded when the system is invoked
+   * @param query - List of component filters to track
    * @returns A system hanlde
    */
   public watch<
@@ -122,8 +126,8 @@ export default class EcsWorld {
     TArgs extends unknown[],
     TResult
   >(
-    filters: TFilter,
-    callback: (entities: EcsQuery<TFilter>, ...args: TArgs) => TResult
+    callback: (entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult,
+    query: SystemQuery<TFilter> | TFilter
   ): EcsSystemHandle<TArgs, TResult>;
 
   /**
@@ -133,8 +137,9 @@ export default class EcsWorld {
    * @important
    *  You should call `dispose()` on the returned system when you are done.
    *
-   * @param filtersOrSystem - A filter or a GameSystem instance
-   * @param callback - Callback that's called whenever the system is invoked
+   * @param callbackOrSystem - A EcsSystem instance or
+   *   a Callback that's called whenever the system is invoked
+   * @param filterQuery - Query filters
    *  It receives and entity set as its first argument
    *  Arguments and return value are forwarded when the system is invoked
    * @returns A system handle
@@ -144,25 +149,30 @@ export default class EcsWorld {
     TArgs extends unknown[],
     TResult
   >(
-    filtersOrSystem: EcsSystem<TFilter, TArgs, TResult> | TFilter,
-    callback?: (entities: EcsQuery<TFilter>, ...args: TArgs) => TResult
+    callbackOrSystem:
+      | EcsSystem<TFilter, TArgs, TResult>
+      | ((entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult),
+    filterQuery?: SystemQuery<TFilter> | TFilter
   ): EcsSystemHandle<TArgs, TResult> {
-    if (!Array.isArray(filtersOrSystem)) {
-      const { filters, handle } = filtersOrSystem;
-      return this.watch(filters, handle);
+    if (callbackOrSystem instanceof EcsSystem) {
+      const { handle, query } = callbackOrSystem;
+      return this.watch(handle, query);
     }
 
     if (this.disposed) {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
-    const [query, update, dispose] = this.createQuery(...filtersOrSystem);
+    const filters = Array.isArray(filterQuery)
+      ? filterQuery
+      : filterQuery?.entities;
+
+    const [entities, updateQuery, disposeQuery] = this.createQuery(...filters);
     let disposed = false;
 
     const system: EcsSystemHandle<TArgs, TResult> = (...args) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const result = callback!(query, ...args);
-      update();
+      const result = callbackOrSystem({ entities }, ...args);
+      updateQuery();
       return result;
     };
 
@@ -170,7 +180,7 @@ export default class EcsWorld {
       if (disposed) return;
 
       disposed = true;
-      dispose();
+      disposeQuery();
     };
 
     return system;

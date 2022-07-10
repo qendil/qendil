@@ -30,7 +30,7 @@ describe("Entity Query Builder", () => {
     // Then the query should contain that entity
 
     const world = new EcsWorld();
-    const update = world.watch([Position], (query) => query);
+    const update = world.watch(({ entities }) => entities, [Position]);
     const query = update();
 
     expect(query.size).toBe(0);
@@ -46,7 +46,7 @@ describe("Entity Query Builder", () => {
     // Then the query should not contain the entity
 
     const world = new EcsWorld();
-    const update = world.watch([Position], (query) => query);
+    const update = world.watch(({ entities }) => entities, [Position]);
     const query = update();
 
     const entity = world.spawn().insert(Position);
@@ -64,7 +64,10 @@ describe("Entity Query Builder", () => {
     // Then the query should contain that entity
 
     const world = new EcsWorld();
-    const update = world.watch([Position, Rotation], (query) => query);
+    const update = world.watch(
+      ({ entities }) => entities,
+      [Position, Rotation]
+    );
     const query = update();
 
     expect(query.size).toBe(0);
@@ -94,8 +97,8 @@ describe("Entity Query Builder", () => {
       .insert(Rotation);
 
     const system = world.watch(
-      [Position, Velocity, Rotation.absent()],
-      (query) => [...query.asEntities()]
+      ({ entities }) => [...entities.asEntities()],
+      [Position, Velocity, Rotation.absent()]
     );
     const query = system();
 
@@ -111,7 +114,7 @@ describe("Entity Query Builder", () => {
     // Then the query should not contain the entity
 
     const world = new EcsWorld();
-    const system = world.watch([Position], (query) => query);
+    const system = world.watch(({ entities }) => entities, [Position]);
     const query = system();
 
     const entity = world.spawn().insert(Position);
@@ -129,7 +132,10 @@ describe("Entity Query Builder", () => {
     // Then the query should no longer contain that entity
 
     const world = new EcsWorld();
-    const update = world.watch([Position, Rotation.absent()], (query) => query);
+    const update = world.watch(
+      ({ entities }) => entities,
+      [Position, Rotation.absent()]
+    );
     const query = update();
 
     const entity = world.spawn().insert(Position);
@@ -149,7 +155,7 @@ describe("Entity Query Builder", () => {
     // Then the query should contain that entity
 
     const world = new EcsWorld();
-    const update = world.watch([Position.added()], (query) => query);
+    const update = world.watch(({ entities }) => entities, [Position.added()]);
     const query = update();
 
     const entity = world.spawn().insert(Position);
@@ -170,9 +176,12 @@ describe("Entity Query Builder", () => {
     const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
 
-    const update = world.watch([Position.added()], (query) => {
-      expect([...query.asEntities()]).toContain(entity);
-    });
+    const update = world.watch(
+      ({ entities }) => {
+        expect([...entities.asEntities()]).toContain(entity);
+      },
+      [Position.added()]
+    );
 
     update();
   });
@@ -185,7 +194,10 @@ describe("Entity Query Builder", () => {
 
     const world = new EcsWorld();
     const entity = world.spawn().insert(Position);
-    const update = world.watch([Position.changed()], (query) => query);
+    const update = world.watch(
+      ({ entities }) => entities,
+      [Position.changed()]
+    );
 
     const query = update();
     expect([...query.asEntities()]).not.toContain(entity);
@@ -202,7 +214,10 @@ describe("Entity Query Builder", () => {
 
     const world = new EcsWorld();
     const entity = world.spawn().insert(Position, { x: 144 });
-    const update = world.watch([Position.changed()], (query) => query);
+    const update = world.watch(
+      ({ entities }) => entities,
+      [Position.changed()]
+    );
 
     const query = update();
     expect([...query.asEntities()]).not.toContain(entity);
@@ -223,8 +238,8 @@ describe("Entity Query Builder", () => {
 
     const world = new EcsWorld();
     const update = world.watch(
-      [Named, Position.added(), Velocity.changed(), Rotation.absent()],
-      (query) => query
+      ({ entities }) => entities,
+      [Named, Position.added(), Velocity.changed(), Rotation.absent()]
     );
     const query = update();
 
@@ -288,8 +303,8 @@ describe("Entity Query Builder", () => {
 
     const world = new EcsWorld();
     const update = world.watch(
-      [Position.absent(), Velocity.absent()],
-      (query) => query
+      ({ entities }) => entities,
+      [Position.absent(), Velocity.absent()]
     );
     const query = update();
 

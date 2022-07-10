@@ -15,12 +15,12 @@ export class Velocity extends EcsComponent {
  * Updates entities' positions based on their velocity.
  */
 export const VelocitySystem = new EcsSystem(
-  [Position, Velocity],
-  (query, dt: number) => {
-    for (const [position, { x, y, z }] of query) {
+  ({ entities }, dt: number) => {
+    for (const [position, { x, y, z }] of entities) {
       position.x += x * dt;
       position.y += y * dt;
       position.z += z * dt;
     }
-  }
+  },
+  [Position, Velocity]
 );

@@ -14,7 +14,7 @@ describe("GameWorld", () => {
     // Then the queries should be disposed
 
     const world = new EcsWorld();
-    world.watch([Position], (query) => query);
+    world.watch(({ entities }) => entities, [Position]);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
     const [query] = world.queries.get(Position);
@@ -32,7 +32,7 @@ describe("GameWorld", () => {
     // Then the queries should be disposed
 
     const world = new EcsWorld();
-    world.watch([Position], (query) => query);
+    world.watch(({ entities }) => entities, [Position]);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
     const [query] = world.queries.get(Position);
@@ -96,7 +96,7 @@ describe("GameWorld", () => {
     world.dispose();
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    expect(() => world.watch([], () => {})).toThrowError(
+    expect(() => world.watch(() => {}, [])).toThrowError(
       "Cannot create a system in a disposed world."
     );
   });
@@ -111,11 +111,11 @@ describe("GameWorld system", () => {
     const world = new EcsWorld();
 
     const system = world.watch(
-      [Position],
       (_query, argument1: string, argument2: number) => {
         expect(argument1).toBe("hello");
         expect(argument2).toBe(42);
-      }
+      },
+      [Position]
     );
 
     system("hello", 42);
@@ -127,7 +127,7 @@ describe("GameWorld system", () => {
     // Then I should receive the return value from the callback
 
     const world = new EcsWorld();
-    const system = world.watch([Position], () => "test output");
+    const system = world.watch(() => "test output", [Position]);
 
     const returnValue = system();
     expect(returnValue).toBe("test output");
@@ -147,7 +147,7 @@ describe("GameWorld system", () => {
     // Then only the entity B should be in the system's query
 
     const world = new EcsWorld();
-    const system = world.watch([Position.added()], (query) => query);
+    const system = world.watch(({ entities }) => entities, [Position.added()]);
 
     const query = system();
     const entityA = world.spawn().insert(Position);
@@ -174,7 +174,7 @@ describe("GameWorld system", () => {
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.queries.get(Position);
 
-    const system = world.watch([Position], (query) => query);
+    const system = world.watch(({ entities }) => entities, [Position]);
     expect(queries.size).toBe(1);
 
     system.dispose();
@@ -190,7 +190,7 @@ describe("GameWorld system", () => {
     const world = new EcsWorld();
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.queries.get(Position);
-    const system = world.watch([Position], (query) => query);
+    const system = world.watch(({ entities }) => entities, [Position]);
 
     const [query] = queries;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -206,7 +206,7 @@ describe("GameWorld system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new EcsSystem([Position], (query) => [...query]);
+    const mySystem = new EcsSystem(({ entities }) => [...entities], [Position]);
 
     const world = new EcsWorld();
     const system = world.watch(mySystem);
