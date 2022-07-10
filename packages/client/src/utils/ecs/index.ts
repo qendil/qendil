@@ -1,4 +1,4 @@
-export { default } from "./ecs-world";
+export { default } from "./ecs-manager";
 export { default as EcsComponent } from "./ecs-component";
 export { default as EcsSystem } from "./ecs-system";
 

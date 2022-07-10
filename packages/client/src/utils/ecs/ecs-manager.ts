@@ -29,7 +29,7 @@ class GameEntityWrapper extends EcsEntity {
 /**
  * Stores and exposes operations on entities, components, and systems.
  */
-export default class EcsWorld {
+export default class EcsManager {
   private nextEntityID = 0;
   private disposed = false;
   private readonly entities = new Set<EcsEntity>();

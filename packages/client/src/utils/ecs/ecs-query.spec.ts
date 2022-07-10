@@ -1,4 +1,4 @@
-import EcsWorld from "./ecs-world";
+import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
 
 class Position extends EcsComponent {
@@ -11,13 +11,13 @@ class Velocity extends EcsComponent {
   public y = 0;
 }
 
-describe("Entity Query", () => {
+describe("EcsQuery", () => {
   it("correctly checks for entities", () => {
     // Given a Position query
     // When I create a new entity with a Position component
     // Then the query should contain that entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(({ entities }) => entities, [Position]);
 
     const query = system();
@@ -34,7 +34,7 @@ describe("Entity Query", () => {
     // When I iterate over the query
     // Then I should get the position component directly
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(
       ({ entities }) => entities,
       [Position, Velocity.present()]
@@ -53,7 +53,7 @@ describe("Entity Query", () => {
     // When I iterate over the query.asEntities()
     // Then I should get the entities
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(
       ({ entities }) => entities,
       [Position, Velocity.present()]
@@ -72,7 +72,7 @@ describe("Entity Query", () => {
     // When I iterate over the query.withEntities()
     // Then I should get the entities + their components
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(
       ({ entities }) => entities,
       [Position, Velocity.present()]

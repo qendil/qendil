@@ -1,4 +1,4 @@
-import EcsWorld from "../utils/ecs";
+import EcsManager from "../utils/ecs";
 import InputManager, { InputAxis } from "../utils/input-manager";
 import {
   ThirdPersonController,
@@ -12,7 +12,7 @@ describe("ThirdPersonControlSystem", () => {
     // When I call the system
     // Then I should not get an error
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const input = new InputManager();
     const system = world.watch(ThirdPersonControlSystem);
 
@@ -29,7 +29,7 @@ describe("ThirdPersonControlSystem", () => {
     // When I call the system
     // Then the entity's velocity should be updated according to the input
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const input = new InputManager();
     const system = world.watch(ThirdPersonControlSystem);
     const entity = world

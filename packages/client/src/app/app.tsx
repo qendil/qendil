@@ -1,6 +1,6 @@
 import { BoxGeometry, MeshBasicMaterial } from "three";
 import coreInit, { makeGreeting } from "@qendil/core";
-import EcsWorld from "../utils/ecs";
+import EcsManager from "../utils/ecs";
 import classNames from "classnames";
 
 import type { ReactElement } from "react";
@@ -31,7 +31,7 @@ import {
   SmoothPositionUpdate,
 } from "../game/smooth-position";
 
-const gameWorld = new EcsWorld();
+const gameWorld = new EcsManager();
 const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
 const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
 const updatePosition = gameWorld.watch(VelocitySystem);

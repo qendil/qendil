@@ -1,4 +1,4 @@
-import EcsWorld from "./ecs-world";
+import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
 
 class Position extends EcsComponent {
@@ -23,13 +23,13 @@ class Vehicle extends EcsComponent {
   public wheels = 4;
 }
 
-describe("Entity Query Builder", () => {
+describe("EcsQueryBuilder", () => {
   it("keeps track of newly added components", () => {
     // Given a Position query
     // When I create a new entity with a Position component
     // Then the query should contain that entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(({ entities }) => entities, [Position]);
     const query = update();
 
@@ -45,7 +45,7 @@ describe("Entity Query Builder", () => {
     // When I remove the Position component from the entity
     // Then the query should not contain the entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(({ entities }) => entities, [Position]);
     const query = update();
 
@@ -63,7 +63,7 @@ describe("Entity Query Builder", () => {
     // When I add a rotation component to the entity
     // Then the query should contain that entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(
       ({ entities }) => entities,
       [Position, Rotation]
@@ -87,7 +87,7 @@ describe("Entity Query Builder", () => {
     // Then the query should contain the entity A
     // And the query should not contain the entities B and C
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entity1 = world.spawn().insert(Position).insert(Velocity);
     const entity2 = world.spawn().insert(Position);
     const entity3 = world
@@ -113,7 +113,7 @@ describe("Entity Query Builder", () => {
     // When I dispose the entity
     // Then the query should not contain the entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(({ entities }) => entities, [Position]);
     const query = system();
 
@@ -131,7 +131,7 @@ describe("Entity Query Builder", () => {
     // When I add a Rotation component to the entity
     // Then the query should no longer contain that entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(
       ({ entities }) => entities,
       [Position, Rotation.absent()]
@@ -154,7 +154,7 @@ describe("Entity Query Builder", () => {
     // When I remove then re-add the component to the entity
     // Then the query should contain that entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(({ entities }) => entities, [Position.added()]);
     const query = update();
 
@@ -173,7 +173,7 @@ describe("Entity Query Builder", () => {
     // When I create a Position-added query
     // Then it should contain the component
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entity = world.spawn().insert(Position);
 
     const update = world.watch(
@@ -192,7 +192,7 @@ describe("Entity Query Builder", () => {
     // When I change the value of the Position component
     // Then the query should contain the entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entity = world.spawn().insert(Position);
     const update = world.watch(
       ({ entities }) => entities,
@@ -212,7 +212,7 @@ describe("Entity Query Builder", () => {
     // When I update the value of the Position component to its same value
     // Then the query should not contain the entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entity = world.spawn().insert(Position, { x: 144 });
     const update = world.watch(
       ({ entities }) => entities,
@@ -236,7 +236,7 @@ describe("Entity Query Builder", () => {
     // When I remove Rotation from entity A
     // Then the query should contain both entities
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(
       ({ entities }) => entities,
       [Named, Position.added(), Velocity.changed(), Rotation.absent()]
@@ -301,7 +301,7 @@ describe("Entity Query Builder", () => {
     // When I remove the Position component
     // Then the query should still not contain the entity
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const update = world.watch(
       ({ entities }) => entities,
       [Position.absent(), Velocity.absent()]

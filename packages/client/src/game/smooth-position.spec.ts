@@ -1,4 +1,4 @@
-import EcsWorld from "../utils/ecs";
+import EcsManager from "../utils/ecs";
 import { Position } from "./position";
 import {
   SmoothPositionInit,
@@ -14,7 +14,7 @@ describe("SmoothPositionInit system", () => {
     // Then the SmoothPosition's current position and origin
     // ... position should match that of the Position component
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(SmoothPositionInit);
 
     const entity = world
@@ -42,7 +42,7 @@ describe("SmoothPositionUpdate system", () => {
     // When I channge the position
     // Then the smooth position component should be updated
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const system = world.watch(SmoothPositionUpdate);
 
     const entity = world
@@ -86,7 +86,7 @@ describe("SmoothPositionAnimate", () => {
     // ... that of the fixed update
     // Then the smooth position should be halfway through
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entity = world.spawn().insert(SmoothPosition).insert(Position);
     const update = world.watch(SmoothPositionUpdate);
     const animate = world.watch(SmoothPositionAnimate);
@@ -112,7 +112,7 @@ describe("SmoothPositionAnimate", () => {
     // When I change the position of one of them
     // Then only one of them will be animated
 
-    const world = new EcsWorld();
+    const world = new EcsManager();
     const entityA = world.spawn().insert(SmoothPosition).insert(Position);
     const entityB = world.spawn().insert(SmoothPosition).insert(Position);
     const update = world.watch(SmoothPositionUpdate);
