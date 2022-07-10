@@ -165,7 +165,7 @@ describe("EcsEntity", () => {
     );
   });
 
-  test("insert() accepts a component with a value", () => {
+  test("add() accepts a component with a value", () => {
     // Given an entity
     // When I call .add() with a component and a value
     // Then the entity should have a component with the correct value
@@ -176,7 +176,7 @@ describe("EcsEntity", () => {
     expect(entity.get(Position)).toEqual({ x: 42, y: 144 });
   });
 
-  test("insertNew() instanciates and adds a component", () => {
+  test("addNew() instanciates and adds a component", () => {
     // Given an entity
     // When I call .insertNew() with an instance of a component
     // Then the entity should have a component with the correct value

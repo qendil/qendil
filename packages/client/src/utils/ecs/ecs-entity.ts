@@ -52,13 +52,18 @@ export abstract class EcsEntity {
    */
   public dispose(): void {
     if (this.disposed) return;
-    this.disposed = true;
 
     for (const component of this.components.values()) {
       component.dispose(this);
     }
 
     this.hooks.onDispose(this);
+
+    // Imporant: this should come after hooks.onDispose()
+    // since it might still use some of its components to make a diff
+    this.components.clear();
+
+    this.disposed = true;
   }
 
   /**
@@ -222,8 +227,8 @@ export abstract class EcsEntity {
    * @returns `true` if all of the components are mapped to this entity
    */
   public hasAll(components: Iterable<EcsComponentConstructor>): boolean {
-    for (const additionalComponent of components) {
-      if (!this.components.has(additionalComponent)) return false;
+    for (const component of components) {
+      if (!this.components.has(component)) return false;
     }
 
     return true;
@@ -236,8 +241,8 @@ export abstract class EcsEntity {
    * @returns `true` if any of the components are mapped to this entity
    */
   public hasAny(components: Iterable<EcsComponentConstructor>): boolean {
-    for (const additionalComponent of components) {
-      if (this.components.has(additionalComponent)) return true;
+    for (const component of components) {
+      if (this.components.has(component)) return true;
     }
 
     return false;

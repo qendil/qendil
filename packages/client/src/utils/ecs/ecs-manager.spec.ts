@@ -8,18 +8,6 @@ class Position extends EcsComponent {
   public y = 0;
 }
 
-class DummyResource extends EcsResource {
-  public value = "hello";
-
-  public constructor(greeting?: string) {
-    super();
-
-    if (greeting !== undefined) {
-      this.value = `Hello ${greeting}!`;
-    }
-  }
-}
-
 describe("EcsManager", () => {
   it("properly disposes of its queries once", () => {
     // Given a world with queries
@@ -44,7 +32,7 @@ describe("EcsManager", () => {
     // Given a world with entities
     // When I call .dispose() on the world
     // And I call .dispose() on the world again
-    // Then the entities should be disposed
+    // Then the entities should be disposed once
 
     const world = new EcsManager();
     const entity = world.spawn();
@@ -56,17 +44,15 @@ describe("EcsManager", () => {
     expect(disposeSpy).toHaveBeenCalledOnce();
   });
 
-  it("properly disposes of its resources once", () => {
-    // Given a world with resources
+  it("properly disposes of its resource manager once", () => {
+    // Given a world with entities
     // When I call .dispose() on the world
     // And I call .dispose() on the world again
-    // Then the resources should be disposed
+    // Then the resource manager should be disposed once
 
     const world = new EcsManager();
-    world.addResource(DummyResource);
 
-    const resource = world.getResource(DummyResource);
-    const disposeSpy = vi.spyOn(resource, "dispose");
+    const disposeSpy = vi.spyOn(world.resources, "dispose");
 
     world.dispose();
     world.dispose();
@@ -98,68 +84,6 @@ describe("EcsManager", () => {
     expect(() => world.watch(() => {}, [])).toThrowError(
       "Cannot create a system in a disposed world."
     );
-  });
-
-  it("fails when attempting to add a resource after disposal", () => {
-    // Given a disposed world
-    // When I try to a global resource
-    // Then I should get an error
-
-    const world = new EcsManager();
-    world.dispose();
-
-    expect(() => world.addResource(DummyResource)).toThrowError(
-      "Cannot add a resource to a disposed manager."
-    );
-  });
-
-  it("fails to add an already existing resource", () => {
-    // Given a world with a resource
-    // When I try to add the same resource again
-    // Then I should get an error
-
-    const world = new EcsManager();
-    world.addResource(DummyResource);
-
-    expect(() => world.addResource(DummyResource)).toThrowError(
-      "A resource of type DummyResource already exists."
-    );
-  });
-
-  it("retrieves a global resource", () => {
-    // Given a world with a resource
-    // When I try to get the resource
-    // Then I should get the resource
-
-    const world = new EcsManager();
-    world.addResource(DummyResource, { value: "144" });
-
-    const resource = world.getResource(DummyResource);
-    expect(resource).toEqual({ value: "144" });
-  });
-
-  it("fails to retrieve non-existing resources", () => {
-    // Given a world
-    // When I try to get a non-existing resource
-    // Then I should get an error
-
-    const world = new EcsManager();
-
-    expect(() => world.getResource(DummyResource)).toThrowError(
-      "A resource of type DummyResource does not exist."
-    );
-  });
-
-  it("intanciates resources", () => {
-    // Given a world with a resource
-    // When I try to instantiate the resource
-    // Then I should get the resource
-
-    const world = new EcsManager();
-    world.addResourceNew(DummyResource, "world");
-
-    const resource = world.getResource(DummyResource);
-    expect(resource).toEqual({ value: "Hello world!" });
   });
 });
 
@@ -236,7 +160,7 @@ describe("EcsManager system", () => {
     }
 
     const world = new EcsManager();
-    world.addResource(A, { value: "world" });
+    world.resources.add(A, { value: "world" });
 
     const system = world.watch(({ resources }) => resources, {
       resources: [A],
