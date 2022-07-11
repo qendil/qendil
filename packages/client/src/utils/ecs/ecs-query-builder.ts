@@ -150,13 +150,8 @@ export default class EntityQueryBuilder<
    * @returns An EntityQuery, a function to signal an update,
    *  and a function to dispose it
    */
-  public wrap(): [EcsQuery<TFilter>, () => void, () => void] {
-    const query = new EntityQueryWrapper(this, this.components);
-
-    const update = (): void => this.update();
-    const dispose = (): void => this.dispose();
-
-    return [query, update, dispose];
+  public wrap(): EcsQuery<TFilter> {
+    return new EntityQueryWrapper(this, this.components);
   }
 
   /**

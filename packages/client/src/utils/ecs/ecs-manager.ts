@@ -1,21 +1,24 @@
 import { SetMap } from "../default-map";
 import EntityQueryBuilder from "./ecs-query-builder";
-import EcsSystem from "./ecs-system";
-import { EcsEntity } from "./ecs-entity";
 import { EcsFilterObject } from "./ecs-component";
+import { EcsEntity } from "./ecs-entity";
+import EcsSystem from "./ecs-system";
+import EcsResourceManager from "./ecs-resource-manager";
+import { EcsResourceFilterObject } from "./ecs-resource";
+import EcsResourceQuery from "./ecs-resource-query";
 
 import type {
   EcsComponentConstructor,
   EcsComponentFilter,
 } from "./ecs-component";
 import type { EcsEntityLifecycleHooks } from "./ecs-entity";
-import type { EcsQuery } from "./ecs-query";
 import type {
   EcsSystemHandle,
   SystemQuery,
   SystemQueryResult,
 } from "./ecs-system";
-import type { ComponentFilterTuple } from "./types";
+import type { EcsResourceConstructor } from "./ecs-resource";
+import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -33,24 +36,30 @@ export default class EcsManager {
   private nextEntityID = 0;
   private disposed = false;
   private readonly entities = new Set<EcsEntity>();
-  private readonly queries = new SetMap<
+
+  private readonly entityQueries = new SetMap<
     EcsComponentConstructor,
     EntityQueryBuilder<any>
   >();
+
+  private readonly resourceQueries = new SetMap<
+    EcsResourceConstructor,
+    EcsResourceQuery<any>
+  >();
+
+  public readonly resources = new EcsResourceManager({
+    onResourceChanged: this._resourceChanged.bind(this),
+  });
 
   /**
    * Disposes of the world and all its entities, components and systems.
    */
   public dispose(): void {
     if (this.disposed) return;
-    this.disposed = true;
 
-    for (const entity of this.entities) {
-      entity.dispose();
-    }
-
+    // Dispose of query builders
     const disposedBuilders = new Set<EntityQueryBuilder>();
-    for (const builders of this.queries.values()) {
+    for (const builders of this.entityQueries.values()) {
       for (const builder of builders) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         if (!disposedBuilders.has(builder)) {
@@ -61,8 +70,19 @@ export default class EcsManager {
       }
     }
 
+    this.entityQueries.clear();
+
+    // Dispose of entities
+    for (const entity of this.entities) {
+      entity.dispose();
+    }
+
     this.entities.clear();
-    this.queries.clear();
+
+    // Dispose of resources
+    this.resources.dispose();
+
+    this.disposed = true;
   }
 
   /**
@@ -102,11 +122,8 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TArgs extends unknown[],
-    TResult
-  >(
-    system: EcsSystem<TFilter, TArgs, TResult>
-  ): EcsSystemHandle<TArgs, TResult>;
+    TResourceFilter extends ResourceFilterTuple
+  >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -123,12 +140,11 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TArgs extends unknown[],
-    TResult
+    TResourceFilter extends ResourceFilterTuple
   >(
-    callback: (entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult,
-    query: SystemQuery<TFilter> | TFilter
-  ): EcsSystemHandle<TArgs, TResult>;
+    callback: (entities: SystemQueryResult<TFilter, TResourceFilter>) => void,
+    query: SystemQuery<TFilter, TResourceFilter> | TFilter
+  ): EcsSystemHandle;
 
   /**
    * Create a system that operates on entities that have all of the given
@@ -146,14 +162,13 @@ export default class EcsManager {
    */
   public watch<
     TFilter extends ComponentFilterTuple,
-    TArgs extends unknown[],
-    TResult
+    TResourceFilter extends ResourceFilterTuple
   >(
     callbackOrSystem:
-      | EcsSystem<TFilter, TArgs, TResult>
-      | ((entities: SystemQueryResult<TFilter>, ...args: TArgs) => TResult),
-    filterQuery?: SystemQuery<TFilter> | TFilter
-  ): EcsSystemHandle<TArgs, TResult> {
+      | EcsSystem<TFilter, TResourceFilter>
+      | ((query: SystemQueryResult<TFilter, TResourceFilter>) => void),
+    filterQuery?: SystemQuery<TFilter, TResourceFilter> | TFilter
+  ): EcsSystemHandle {
     if (callbackOrSystem instanceof EcsSystem) {
       const { handle, query } = callbackOrSystem;
       return this.watch(handle, query);
@@ -163,24 +178,41 @@ export default class EcsManager {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
+    if (filterQuery === undefined) {
+      throw new Error("Cannot create a system without a query.");
+    }
+
+    const callback = callbackOrSystem;
     const filters = Array.isArray(filterQuery)
-      ? filterQuery
-      : filterQuery?.entities;
+      ? { entities: filterQuery, resources: [] as TResourceFilter }
+      : filterQuery;
 
-    const [entities, updateQuery, disposeQuery] = this.createQuery(...filters);
-    let disposed = false;
+    const entityFilters = filters.entities ?? ([] as TFilter);
+    const entityQuery = this.createEntityQuery(entityFilters);
+    const entities = entityQuery.wrap();
 
-    const system: EcsSystemHandle<TArgs, TResult> = (...args) => {
-      const result = callbackOrSystem({ entities }, ...args);
-      updateQuery();
-      return result;
+    const resourceFilters = filters.resources ?? ([] as TResourceFilter);
+    const resourceQuery = this.createResourceQuery(resourceFilters);
+
+    const system: EcsSystemHandle = () => {
+      const resources = resourceQuery.getResources();
+
+      if (resources !== undefined) {
+        callback({ entities, resources });
+      }
+
+      entityQuery.update();
+      resourceQuery.update();
     };
 
+    let disposed = false;
     system.dispose = (): void => {
       if (disposed) return;
 
+      entityQuery.dispose();
+      resourceQuery.dispose();
+
       disposed = true;
-      disposeQuery();
     };
 
     return system;
@@ -195,7 +227,7 @@ export default class EcsManager {
    */
   private _disposeEntity(entity: EcsEntity): void {
     for (const component of entity.getComponents()) {
-      const queries = this.queries.get(component);
+      const queries = this.entityQueries.get(component);
 
       for (const builder of queries) {
         builder.delete(entity);
@@ -221,15 +253,14 @@ export default class EcsManager {
   /**
    * Create a query builder for the given filters.
    *
-   * @internal
    * @param filters - List of component filters to track
    * @returns a query, a function to update the query,
    *  and a function to dispose it
    */
-  private createQuery<TFilter extends ComponentFilterTuple>(
-    ...filters: TFilter
-  ): [EcsQuery<TFilter>, () => void, () => void] {
-    const builder = new EntityQueryBuilder(
+  public createEntityQuery<TFilter extends ComponentFilterTuple>(
+    filters: TFilter
+  ): EntityQueryBuilder<TFilter> {
+    const builder = new EntityQueryBuilder<TFilter>(
       filters,
       this.entities,
       this._disposeQueryBuilder.bind(this)
@@ -238,10 +269,10 @@ export default class EcsManager {
     // Add this query to all query sets related to the component
     for (const queryFilter of filters) {
       const filterComponent = this._getFilterComponent(queryFilter);
-      this.queries.get(filterComponent).add(builder);
+      this.entityQueries.get(filterComponent).add(builder);
     }
 
-    return builder.wrap();
+    return builder;
   }
 
   /**
@@ -255,7 +286,50 @@ export default class EcsManager {
   ): void {
     for (const filter of builder.filters) {
       const filterComponent = this._getFilterComponent(filter);
-      this.queries.get(filterComponent).delete(builder);
+      this.entityQueries.get(filterComponent).delete(builder);
+    }
+  }
+
+  /**
+   * Create a resource query for the given resource filters.
+   *
+   * @internal
+   * @param filters - List of resource filters to track
+   * @return a query, a function to update the query,
+   *  and a function to dispose it
+   */
+  private createResourceQuery<TResourceFilter extends ResourceFilterTuple>(
+    filters: TResourceFilter
+  ): EcsResourceQuery<TResourceFilter> {
+    const query = new EcsResourceQuery(
+      filters,
+      this.resources,
+      this._disposeResourceQuery.bind(this)
+    );
+
+    // Add this query to all query sets related to the component
+    for (const queryFilter of filters) {
+      if (queryFilter instanceof EcsResourceFilterObject) {
+        this.resourceQueries.get(queryFilter.resource).add(query);
+      }
+    }
+
+    return query;
+  }
+
+  /**
+   * Disposes of a resource query and removes it from internal query sets.
+   *
+   * @internal
+   * @param query - The query to dispose of
+   */
+  private _disposeResourceQuery<TResourceFilter extends ResourceFilterTuple>(
+    query: EcsResourceQuery<TResourceFilter>
+  ): void {
+    for (const filter of query.filters) {
+      if (filter instanceof EcsResourceFilterObject) {
+        this.resourceQueries.get(filter.resource).delete(query);
+      }
     }
   }
 
@@ -270,7 +344,7 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentAdded(entity, component);
@@ -288,7 +362,7 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentChanged(entity, component);
@@ -306,10 +380,24 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentRemoved(entity, component);
+    }
+  }
+
+  /**
+   * Called when a resource is changed.
+   *
+   * @internal
+   * @param constructor - The constructor of the entity that changed
+   */
+  private _resourceChanged(constructor: EcsResourceConstructor): void {
+    const queries = this.resourceQueries.get(constructor);
+
+    for (const query of queries) {
+      query._onResourceChanged(constructor);
     }
   }
 }

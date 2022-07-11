@@ -1,6 +1,8 @@
 import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
 
+import type { EcsEntity } from "./ecs-entity";
+
 class Position extends EcsComponent {
   public x = 0;
   public y = 0;
@@ -18,14 +20,22 @@ describe("EcsQuery", () => {
     // Then the query should contain that entity
 
     const world = new EcsManager();
-    const system = world.watch(({ entities }) => entities, [Position]);
 
-    const query = system();
-    expect(query.size).toBe(0);
+    let query: EcsEntity[] = [];
+    const system = world.watch(
+      ({ entities }) => {
+        query = [...entities.asEntities()];
+      },
+      [Position]
+    );
 
-    const entity = world.spawn().insert(Position);
-    expect(query.size).toBe(1);
-    expect(query.has(entity)).toBe(true);
+    system();
+    expect(query).toHaveLength(0);
+
+    const entity = world.spawn().add(Position);
+    system();
+    expect(query).toHaveLength(1);
+    expect(query).toContain(entity);
   });
 
   it("iterates over components", () => {
@@ -35,16 +45,19 @@ describe("EcsQuery", () => {
     // Then I should get the position component directly
 
     const world = new EcsManager();
+
+    let query: Array<[Position]> = [];
     const system = world.watch(
-      ({ entities }) => entities,
+      ({ entities }) => {
+        query = [...entities];
+      },
       [Position, Velocity.present()]
     );
-    const query = system();
 
-    world.spawn().insert(Position, { x: 12, y: 144 }).insert(Velocity);
+    world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);
 
-    const queryList = [...query];
-    expect(queryList).toEqual([[{ x: 12, y: 144 }]]);
+    system();
+    expect(query).toEqual([[{ x: 12, y: 144 }]]);
   });
 
   it("iterates over entities", () => {
@@ -54,16 +67,19 @@ describe("EcsQuery", () => {
     // Then I should get the entities
 
     const world = new EcsManager();
+
+    let query: EcsEntity[] = [];
     const system = world.watch(
-      ({ entities }) => entities,
+      ({ entities }) => {
+        query = [...entities.asEntities()];
+      },
       [Position, Velocity.present()]
     );
-    const query = system();
 
-    const entity = world.spawn().insert(Position).insert(Velocity);
+    const entity = world.spawn().add(Position).add(Velocity);
 
-    const queryList = [...query.asEntities()];
-    expect(queryList).toEqual([entity]);
+    system();
+    expect(query).toEqual([entity]);
   });
 
   it("iterates over entities and components", () => {
@@ -73,18 +89,18 @@ describe("EcsQuery", () => {
     // Then I should get the entities + their components
 
     const world = new EcsManager();
+
+    let query: Array<[EcsEntity, Position]> = [];
     const system = world.watch(
-      ({ entities }) => entities,
+      ({ entities }) => {
+        query = [...entities.withEntities()];
+      },
       [Position, Velocity.present()]
     );
-    const query = system();
 
-    const entity = world
-      .spawn()
-      .insert(Position, { x: 12, y: 144 })
-      .insert(Velocity);
+    const entity = world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);
 
-    const queryList = [...query.withEntities()];
-    expect(queryList).toEqual([[entity, { x: 12, y: 144 }]]);
+    system();
+    expect(query).toEqual([[entity, { x: 12, y: 144 }]]);
   });
 });

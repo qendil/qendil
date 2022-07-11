@@ -1,7 +1,8 @@
-import { Mesh as ThreeMesh } from "three";
-import { EcsComponent, EcsSystem } from "../utils/ecs";
+import { Mesh as ThreeMesh, Object3D } from "three";
+import { EcsComponent, EcsSystem } from "../../utils/ecs";
 import { Position } from "./position";
 import { SmoothPosition } from "./smooth-position";
+import { WorldScene } from "../resources/world-scene";
 
 /**
  * Tags entities that have a 3D mesh attached to them.
@@ -13,6 +14,14 @@ export class Mesh extends EcsComponent {
     super();
 
     this.mesh = new ThreeMesh(...args);
+  }
+
+  public dispose(): void {
+    const { parent } = this.mesh;
+
+    if (parent instanceof Object3D) {
+      parent.remove(this.mesh);
+    }
   }
 }
 
@@ -42,4 +51,19 @@ export const MeshSmoothPositionSystem = new EcsSystem(
     }
   },
   [Mesh, SmoothPosition, SmoothPosition.changed()]
+);
+
+/**
+ * Attaches the mesh to the main 3d scene.
+ */
+export const MeshAttachToScene = new EcsSystem(
+  ({ entities, resources: [{ scene }] }) => {
+    for (const [{ mesh }] of entities) {
+      scene.add(mesh);
+    }
+  },
+  {
+    entities: [Mesh, Mesh.changed()],
+    resources: [WorldScene],
+  }
 );

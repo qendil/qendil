@@ -1,32 +1,22 @@
 import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
 import EcsSystem from "./ecs-system";
+import EcsResource from "./ecs-resource";
+
+import type { EcsEntity } from "./ecs-entity";
 
 class Position extends EcsComponent {
   public x = 0;
   public y = 0;
 }
 
+class DummyResource extends EcsResource {
+  public value = "hello";
+}
+
 describe("EcsManager", () => {
-  it("properly disposes of its queries", () => {
-    // Given a world with queries
-    // When I call .dispose() on the world
-    // Then the queries should be disposed
-
-    const world = new EcsManager();
-    world.watch(({ entities }) => entities, [Position]);
-
-    /// @ts-expect-error 2341: We need to access the internal queries set
-    const [query] = world.queries.get(Position);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const disposeSpy = vi.spyOn(query!, "dispose");
-
-    world.dispose();
-    expect(disposeSpy).toHaveBeenCalledOnce();
-  });
-
-  it("properly disposes of its queries once", () => {
-    // Given a world with queries
+  it("properly disposes of its entity queries once", () => {
+    // Given a world with entity queries
     // When I call .dispose() on the world
     // And I call .dispose() on the world again
     // Then the queries should be disposed
@@ -35,25 +25,11 @@ describe("EcsManager", () => {
     world.watch(({ entities }) => entities, [Position]);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const [query] = world.queries.get(Position);
+    const [query] = world.entityQueries.get(Position);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const disposeSpy = vi.spyOn(query!, "dispose");
 
     world.dispose();
-    world.dispose();
-    expect(disposeSpy).toHaveBeenCalledOnce();
-  });
-
-  it("properly disposes of its entities", () => {
-    // Given a world with entities
-    // When I call .dispose() on the world
-    // Then the entities should be disposed
-
-    const world = new EcsManager();
-    const entity = world.spawn();
-
-    const disposeSpy = vi.spyOn(entity, "dispose");
-
     world.dispose();
     expect(disposeSpy).toHaveBeenCalledOnce();
   });
@@ -62,12 +38,27 @@ describe("EcsManager", () => {
     // Given a world with entities
     // When I call .dispose() on the world
     // And I call .dispose() on the world again
-    // Then the entities should be disposed
+    // Then the entities should be disposed once
 
     const world = new EcsManager();
     const entity = world.spawn();
 
     const disposeSpy = vi.spyOn(entity, "dispose");
+
+    world.dispose();
+    world.dispose();
+    expect(disposeSpy).toHaveBeenCalledOnce();
+  });
+
+  it("properly disposes of its resource manager once", () => {
+    // Given a world with entities
+    // When I call .dispose() on the world
+    // And I call .dispose() on the world again
+    // Then the resource manager should be disposed once
+
+    const world = new EcsManager();
+
+    const disposeSpy = vi.spyOn(world.resources, "dispose");
 
     world.dispose();
     world.dispose();
@@ -100,39 +91,23 @@ describe("EcsManager", () => {
       "Cannot create a system in a disposed world."
     );
   });
+
+  it("fails when attempting to create a system without a query", () => {
+    // Given a world
+    // When I try to create a system without a query
+    // Then I should get an error
+
+    const world = new EcsManager();
+
+    // @ts-expect-error 2345: This signature is not valid but possible
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(() => world.watch(() => {})).toThrowError(
+      "Cannot create a system without a query."
+    );
+  });
 });
 
-describe("GameWorld system", () => {
-  it("forwards arguments", () => {
-    // Given a system that accepts 2 arguments
-    // When I call the system with those 2 arguments
-    // Then I the system's callback should receive those same 2 arguments as parameters
-
-    const world = new EcsManager();
-
-    const system = world.watch(
-      (_query, argument1: string, argument2: number) => {
-        expect(argument1).toBe("hello");
-        expect(argument2).toBe(42);
-      },
-      [Position]
-    );
-
-    system("hello", 42);
-  });
-
-  it("forwards callbacks' return values", () => {
-    // Given a system with a callback that returns a value
-    // When I call the system
-    // Then I should receive the return value from the callback
-
-    const world = new EcsManager();
-    const system = world.watch(() => "test output", [Position]);
-
-    const returnValue = system();
-    expect(returnValue).toBe("test output");
-  });
-
+describe("EcsManager system", () => {
   it("has auto-updated queries", () => {
     // Given an entity A with a Position component
     // And an entity B with no components
@@ -147,22 +122,59 @@ describe("GameWorld system", () => {
     // Then only the entity B should be in the system's query
 
     const world = new EcsManager();
-    const system = world.watch(({ entities }) => entities, [Position.added()]);
 
-    const query = system();
-    const entityA = world.spawn().insert(Position);
+    let query: EcsEntity[] = [];
+    const system = world.watch(
+      ({ entities }) => {
+        query = [...entities.asEntities()];
+      },
+      [Position.added()]
+    );
+
+    const entityA = world.spawn().add(Position);
     const entityB = world.spawn();
-    expect([...query.asEntities()]).toContain(entityA);
-    expect([...query.asEntities()]).not.toContain(entityB);
-
     system();
-    expect([...query.asEntities()]).not.toContain(entityA);
-    expect([...query.asEntities()]).not.toContain(entityB);
 
+    expect(query).toContain(entityA);
+    expect(query).not.toContain(entityB);
+
+    // No operation here
     system();
-    entityB.insert(Position);
-    expect([...query.asEntities()]).not.toContain(entityA);
-    expect([...query.asEntities()]).toContain(entityB);
+
+    expect(query).not.toContain(entityA);
+    expect(query).not.toContain(entityB);
+
+    entityB.add(Position);
+    system();
+
+    expect(query).not.toContain(entityA);
+    expect(query).toContain(entityB);
+  });
+
+  it("queries resources", () => {
+    // Given a global resource A
+    // When I query the resource A
+    // Then it should be exposed in the system's query result
+
+    class A extends EcsResource {
+      public value = "hello";
+    }
+
+    const world = new EcsManager();
+    world.resources.add(A, { value: "world" });
+
+    let query: EcsResource[] = [];
+    const system = world.watch(
+      ({ resources }) => {
+        query = resources;
+      },
+      {
+        resources: [A],
+      }
+    );
+    system();
+
+    expect(query).toEqual([{ value: "world" }]);
   });
 
   it("properly disposes of system queries", () => {
@@ -172,9 +184,10 @@ describe("GameWorld system", () => {
 
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const queries = world.queries.get(Position);
+    const queries = world.entityQueries.get(Position);
 
-    const system = world.watch(({ entities }) => entities, [Position]);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
     expect(queries.size).toBe(1);
 
     system.dispose();
@@ -189,8 +202,9 @@ describe("GameWorld system", () => {
 
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const queries = world.queries.get(Position);
-    const system = world.watch(({ entities }) => entities, [Position]);
+    const queries = world.entityQueries.get(Position);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
 
     const [query] = queries;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -206,14 +220,24 @@ describe("GameWorld system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new EcsSystem(({ entities }) => [...entities], [Position]);
+    let query: Array<[Position]> = [];
+    const mySystem = new EcsSystem(
+      ({ entities }) => {
+        query = [...entities];
+      },
+      [Position]
+    );
 
     const world = new EcsManager();
-    world.spawn().insert(Position);
+    world.spawn().add(Position);
+
     const system = world.watch(mySystem);
 
-    expect(system()).toBeInstanceOf(Array);
-    expect(system()).toHaveLength(1);
+    system();
+    expect(query).toBeInstanceOf(Array);
+
+    system();
+    expect(query).toHaveLength(1);
   });
 
   it("accepts alternative syntax for system queries", () => {
@@ -221,15 +245,159 @@ describe("GameWorld system", () => {
     // When I call `.watch()` with the GameSystem instance
     // Then I should have a proper game system handle
 
-    const mySystem = new EcsSystem(({ entities }) => [...entities], {
-      entities: [Position],
-    });
+    let query: Array<[Position]> = [];
+    const mySystem = new EcsSystem(
+      ({ entities }) => {
+        query = [...entities];
+      },
+      {
+        entities: [Position],
+      }
+    );
 
     const world = new EcsManager();
-    world.spawn().insert(Position);
+    world.spawn().add(Position);
     const system = world.watch(mySystem);
 
-    expect(system()).toBeInstanceOf(Array);
-    expect(system()).toHaveLength(1);
+    system();
+    expect(query).toBeInstanceOf(Array);
+
+    system();
+    expect(query).toHaveLength(1);
+  });
+
+  it("does not call the callback if the resource query is empty", () => {
+    // Given a system with no resources
+    // And a system that queries for a resource
+    // When I run the system
+    // Then the system's callback should not be called
+
+    const world = new EcsManager();
+    const callback = vi.fn();
+    const system = world.watch(callback, { resources: [DummyResource] });
+
+    system();
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it("disposes of related entity queries correctly when disposing of the system", () => {
+    // Given a system that queries for some entities
+    // When I dispose of the system
+    // Then the related entity queries should be properly disposed
+
+    const world = new EcsManager();
+    // @ts-expect-error 2341: We need to access the internal queries set
+    const { entityQueries } = world;
+
+    world.spawn().add(Position);
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
+    expect(entityQueries.get(Position).size).toBe(1);
+
+    system.dispose();
+    expect(entityQueries.get(Position).size).toBe(0);
+  });
+
+  it("disposes of related resource queries correctly when disposing of the system", () => {
+    // Given a system that queries for some resources
+    // When I dispose of the system
+    // Then the related resource queries should be properly disposed
+
+    const world = new EcsManager();
+    // @ts-expect-error 2341: We need to access the internal queries set
+    const { resourceQueries, resources } = world;
+
+    resources.add(DummyResource);
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, {
+      resources: [DummyResource.changed()],
+    });
+    expect(resourceQueries.get(DummyResource).size).toBe(1);
+
+    system.dispose();
+    expect(resourceQueries.get(DummyResource).size).toBe(0);
+  });
+});
+
+describe("EcsManager resources", () => {
+  it("considers previously added resources as changed resources", () => {
+    // Given a resource A in the resource manager
+    // When I create a system that queries for changes on A
+    // And I run that system
+    // Then the system's callback should be called
+
+    const world = new EcsManager();
+    world.resources.add(DummyResource);
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    system();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it("considers newly added resources as changed resources", () => {
+    // Given a resource A that's not in the ECS manager
+    // And a system that queries for changes on A
+    // When I run the system
+    // Then the system's callback should be called
+    // When the resource A is added to the ECS manager
+    // And I run the system
+    // Then the system's callback should be called
+
+    const world = new EcsManager();
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    // First call to the system to reset its "changed" flags
+    system();
+
+    callback.mockClear();
+    system();
+    expect(callback).not.toHaveBeenCalled();
+
+    callback.mockClear();
+    world.resources.add(DummyResource);
+    system();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it("queries changed resources", () => {
+    // Given a resource A
+    // And a system that queries for changed A
+    // When I run the system
+    // Then its callback should not run
+    // When I change the resource A
+    // And I run the system
+    // Then the system's callback should run
+
+    const world = new EcsManager();
+    world.resources.add(DummyResource);
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    // First call to the system to reset its "changed" flags
+    system();
+
+    callback.mockClear();
+    system();
+    expect(callback).not.toHaveBeenCalled();
+
+    const resource = world.resources.get(DummyResource);
+    resource.value = "cheers";
+
+    callback.mockClear();
+    system();
+    expect(callback).toHaveBeenCalled();
   });
 });

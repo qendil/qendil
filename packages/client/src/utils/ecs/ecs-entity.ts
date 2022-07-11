@@ -2,7 +2,7 @@ import type EcsComponent from "./ecs-component";
 import type { EcsComponentConstructor } from "./ecs-component";
 
 /**
- * Lifecycle hooks privately exposed by the game world.
+ * Lifecycle hooks privately exposed by the ECS manager.
  *
  * @internal
  */
@@ -52,31 +52,34 @@ export abstract class EcsEntity {
    */
   public dispose(): void {
     if (this.disposed) return;
-    this.disposed = true;
 
     for (const component of this.components.values()) {
       component.dispose(this);
     }
 
     this.hooks.onDispose(this);
+
+    // Imporant: this should come after hooks.onDispose()
+    // since it might still use some of its components to make a diff
+    this.components.clear();
+
+    this.disposed = true;
   }
 
   /**
-   * Creates a new component and adds it to the entity.
-   * This is different from `insert` because it calls the component's
-   *  constructor with the passed arguments.
+   * Intanciate and add a component to the entity.
    *
    * @param constructor - The component to add
    * @param args - Values to pass to the constructor when creating the component
    * @returns The entity itself
    */
-  public insertNew<T extends EcsComponent, TArgs extends any[]>(
+  public addNew<T extends EcsComponent, TArgs extends any[]>(
     constructor: EcsComponentConstructor<T, TArgs>,
     ...args: TArgs
   ): this {
     const component = new constructor(...args);
 
-    return this.insertComponent(constructor, component);
+    return this.addComponent(component);
   }
 
   /**
@@ -86,7 +89,7 @@ export abstract class EcsEntity {
    * @param values - Initial values for the component
    * @returns The entity itself
    */
-  public insert<T extends EcsComponent>(
+  public add<T extends EcsComponent>(
     constructor: EcsComponentConstructor<T>,
     values?: Partial<Record<keyof T, any>>
   ): this {
@@ -95,20 +98,21 @@ export abstract class EcsEntity {
       Object.assign(component, values);
     }
 
-    return this.insertComponent(constructor, component);
+    return this.addComponent(component);
   }
 
   /**
    * Used internally to add and wrap a component to the entity
    *
-   * @param constructor - The constructor of the added component
    * @param component - The component instance to add
    * @returns The entity itself
    */
-  private insertComponent(
-    constructor: EcsComponentConstructor,
-    component: EcsComponent
-  ): this {
+  private addComponent<T extends EcsComponent>(component: T): this {
+    // Extract the constructor type
+    const { constructor } = Object.getPrototypeOf(component) as {
+      constructor: EcsComponentConstructor<T>;
+    };
+
     // Make sure the entity was not disposed
     if (this.disposed) {
       throw new Error(
@@ -125,10 +129,10 @@ export abstract class EcsEntity {
 
     // Wrap the component with a proxy to monitor changes
     const proxy = new Proxy(component, {
-      set: (target, property, value): boolean => {
-        const originalValue = Reflect.get(target, property) as unknown;
+      set: (target, key, value): boolean => {
+        const originalValue = Reflect.get(target, key) as unknown;
 
-        const result = Reflect.set(target, property, value);
+        const result = Reflect.set(target, key, value);
 
         // Make sure to trigger the hook after the component has been updated
         if (value !== originalValue) {
@@ -223,8 +227,8 @@ export abstract class EcsEntity {
    * @returns `true` if all of the components are mapped to this entity
    */
   public hasAll(components: Iterable<EcsComponentConstructor>): boolean {
-    for (const additionalComponent of components) {
-      if (!this.components.has(additionalComponent)) return false;
+    for (const component of components) {
+      if (!this.components.has(component)) return false;
     }
 
     return true;
@@ -237,8 +241,8 @@ export abstract class EcsEntity {
    * @returns `true` if any of the components are mapped to this entity
    */
   public hasAny(components: Iterable<EcsComponentConstructor>): boolean {
-    for (const additionalComponent of components) {
-      if (this.components.has(additionalComponent)) return true;
+    for (const component of components) {
+      if (this.components.has(component)) return true;
     }
 
     return false;
