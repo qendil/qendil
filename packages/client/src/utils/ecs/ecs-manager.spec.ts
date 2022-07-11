@@ -15,8 +15,8 @@ class DummyResource extends EcsResource {
 }
 
 describe("EcsManager", () => {
-  it("properly disposes of its queries once", () => {
-    // Given a world with queries
+  it("properly disposes of its entity queries once", () => {
+    // Given a world with entity queries
     // When I call .dispose() on the world
     // And I call .dispose() on the world again
     // Then the queries should be disposed
@@ -186,7 +186,8 @@ describe("EcsManager system", () => {
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.entityQueries.get(Position);
 
-    const system = world.watch(({ entities }) => entities, [Position]);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
     expect(queries.size).toBe(1);
 
     system.dispose();
@@ -202,7 +203,8 @@ describe("EcsManager system", () => {
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.entityQueries.get(Position);
-    const system = world.watch(({ entities }) => entities, [Position]);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
 
     const [query] = queries;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -276,6 +278,46 @@ describe("EcsManager system", () => {
 
     system();
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  it("disposes of related entity queries correctly when disposing of the system", () => {
+    // Given a system that queries for some entities
+    // When I dispose of the system
+    // Then the related entity queries should be properly disposed
+
+    const world = new EcsManager();
+    // @ts-expect-error 2341: We need to access the internal queries set
+    const { entityQueries } = world;
+
+    world.spawn().add(Position);
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, [Position]);
+    expect(entityQueries.get(Position).size).toBe(1);
+
+    system.dispose();
+    expect(entityQueries.get(Position).size).toBe(0);
+  });
+
+  it("disposes of related resource queries correctly when disposing of the system", () => {
+    // Given a system that queries for some resources
+    // When I dispose of the system
+    // Then the related resource queries should be properly disposed
+
+    const world = new EcsManager();
+    // @ts-expect-error 2341: We need to access the internal queries set
+    const { resourceQueries, resources } = world;
+
+    resources.add(DummyResource);
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const system = world.watch(() => {}, {
+      resources: [DummyResource.changed()],
+    });
+    expect(resourceQueries.get(DummyResource).size).toBe(1);
+
+    system.dispose();
+    expect(resourceQueries.get(DummyResource).size).toBe(0);
   });
 });
 
