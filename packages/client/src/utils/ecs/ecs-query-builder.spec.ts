@@ -28,7 +28,7 @@ class Vehicle extends EcsComponent {
   public wheels = 4;
 }
 
-function createQuery(
+function createEntityQuery(
   world: EcsManager,
   ...filters: ComponentFilterTuple
 ): [
@@ -36,8 +36,11 @@ function createQuery(
   () => void,
   () => void
 ] {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  return (world as any).createQuery(...filters);
+  const query = world.createEntityQuery(filters);
+  const update = (): void => query.update();
+  const dispose = (): void => query.dispose();
+
+  return [query.wrap(), update, dispose];
 }
 
 describe("EcsQueryBuilder", () => {
@@ -47,7 +50,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should contain that entity
 
     const world = new EcsManager();
-    const [query] = createQuery(world, Position);
+    const [query] = createEntityQuery(world, Position);
 
     expect(query.size).toBe(0);
 
@@ -62,7 +65,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should not contain the entity
 
     const world = new EcsManager();
-    const [query] = createQuery(world, Position);
+    const [query] = createEntityQuery(world, Position);
 
     const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
@@ -79,7 +82,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should contain that entity
 
     const world = new EcsManager();
-    const [query] = createQuery(world, Position, Rotation);
+    const [query] = createEntityQuery(world, Position, Rotation);
 
     expect(query.size).toBe(0);
 
@@ -103,7 +106,12 @@ describe("EcsQueryBuilder", () => {
     const entity2 = world.spawn().add(Position);
     const entity3 = world.spawn().add(Position).add(Velocity).add(Rotation);
 
-    const [query] = createQuery(world, Position, Velocity, Rotation.absent());
+    const [query] = createEntityQuery(
+      world,
+      Position,
+      Velocity,
+      Rotation.absent()
+    );
 
     expect([...query.asEntities()]).toContain(entity1);
     expect([...query.asEntities()]).not.toContain(entity2);
@@ -117,7 +125,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should not contain the entity
 
     const world = new EcsManager();
-    const [query] = createQuery(world, Position);
+    const [query] = createEntityQuery(world, Position);
 
     const entity = world.spawn().add(Position);
     expect(query.has(entity)).toBeTruthy();
@@ -134,7 +142,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should no longer contain that entity
 
     const world = new EcsManager();
-    const [query] = createQuery(world, Position, Rotation.absent());
+    const [query] = createEntityQuery(world, Position, Rotation.absent());
 
     const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
@@ -153,7 +161,7 @@ describe("EcsQueryBuilder", () => {
     // Then the query should contain that entity
 
     const world = new EcsManager();
-    const [query, update] = createQuery(world, Position.added());
+    const [query, update] = createEntityQuery(world, Position.added());
 
     const entity = world.spawn().add(Position);
     expect([...query.asEntities()]).toContain(entity);
@@ -191,7 +199,7 @@ describe("EcsQueryBuilder", () => {
 
     const world = new EcsManager();
     const entity = world.spawn().add(Position);
-    const [query, update] = createQuery(world, Position.changed());
+    const [query, update] = createEntityQuery(world, Position.changed());
 
     update();
     expect([...query.asEntities()]).not.toContain(entity);
@@ -208,7 +216,7 @@ describe("EcsQueryBuilder", () => {
 
     const world = new EcsManager();
     const entity = world.spawn().add(Position, { x: 144 });
-    const [query, update] = createQuery(world, Position.changed());
+    const [query, update] = createEntityQuery(world, Position.changed());
 
     update();
     expect([...query.asEntities()]).not.toContain(entity);
@@ -229,7 +237,7 @@ describe("EcsQueryBuilder", () => {
 
     const world = new EcsManager();
 
-    const [query, update] = createQuery(
+    const [query, update] = createEntityQuery(
       world,
       Named,
       Position.added(),

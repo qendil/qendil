@@ -26,9 +26,7 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
    */
   public *[Symbol.iterator](): IterableIterator<ComponentInstances<TFilter>> {
     for (const entity of this.entities) {
-      yield this.components.map((component) =>
-        entity.get(component)
-      ) as ComponentInstances<TFilter>;
+      yield this.getComponents(entity);
     }
   }
 
@@ -39,12 +37,7 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
     [EcsEntity, ...ComponentInstances<TFilter>]
   > {
     for (const entity of this.entities) {
-      yield [
-        entity,
-        ...(this.components.map((component) =>
-          entity.get(component)
-        ) as ComponentInstances<TFilter>),
-      ];
+      yield [entity, ...this.getComponents(entity)];
     }
   }
 
@@ -70,5 +63,18 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
    */
   public get size(): number {
     return this.entities.size;
+  }
+
+  /**
+   * Retrieves the component instances from a given entity.
+   *
+   * @internal
+   * @param entity - The entity to get the components from
+   * @returns The component instances of that entity
+   */
+  private getComponents(entity: EcsEntity): ComponentInstances<TFilter> {
+    return this.components.map((component) =>
+      entity.get(component)
+    ) as ComponentInstances<TFilter>;
   }
 }

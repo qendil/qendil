@@ -10,6 +10,8 @@ class Position extends EcsComponent {
   public y = 0;
 }
 
+class DummyResource extends EcsResource {}
+
 describe("EcsManager", () => {
   it("properly disposes of its queries once", () => {
     // Given a world with queries
@@ -85,6 +87,20 @@ describe("EcsManager", () => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     expect(() => world.watch(() => {}, [])).toThrowError(
       "Cannot create a system in a disposed world."
+    );
+  });
+
+  it("fails when attempting to create a system without a query", () => {
+    // Given a world
+    // When I try to create a system without a query
+    // Then I should get an error
+
+    const world = new EcsManager();
+
+    // @ts-expect-error 2345: This signature is not valid but possible
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    expect(() => world.watch(() => {})).toThrowError(
+      "Cannot create a system without a query."
     );
   });
 });
@@ -244,5 +260,19 @@ describe("EcsManager system", () => {
 
     system();
     expect(query).toHaveLength(1);
+  });
+
+  it("does not call the callback if the resource query is empty", () => {
+    // Given a system with no resources
+    // And a system that queries for a resource
+    // When I run the system
+    // Then the system's callback should not be called
+
+    const world = new EcsManager();
+    const callback = vi.fn();
+    const system = world.watch(callback, { resources: [DummyResource] });
+
+    system();
+    expect(callback).not.toHaveBeenCalled();
   });
 });

@@ -1,26 +1,24 @@
 import { SetMap } from "../default-map";
 import EntityQueryBuilder from "./ecs-query-builder";
+import { EcsFilterObject } from "./ecs-component";
+import { EcsEntity } from "./ecs-entity";
 import EcsSystem from "./ecs-system";
 import EcsResourceManager from "./ecs-resource-manager";
-import { EcsEntity } from "./ecs-entity";
-import { EcsFilterObject } from "./ecs-component";
+import { EcsResourceFilterObject } from "./ecs-resource";
+import EcsResourceQuery from "./ecs-resource-query";
 
 import type {
   EcsComponentConstructor,
   EcsComponentFilter,
 } from "./ecs-component";
 import type { EcsEntityLifecycleHooks } from "./ecs-entity";
-import type { EcsQuery } from "./ecs-query";
 import type {
   EcsSystemHandle,
   SystemQuery,
   SystemQueryResult,
 } from "./ecs-system";
-import type {
-  ComponentFilterTuple,
-  ResourceFilterTuple,
-  ResourceInstances,
-} from "./types";
+import type { EcsResourceConstructor } from "./ecs-resource";
+import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -42,6 +40,11 @@ export default class EcsManager {
   private readonly queries = new SetMap<
     EcsComponentConstructor,
     EntityQueryBuilder<any>
+  >();
+
+  private readonly resourceQueries = new SetMap<
+    EcsResourceConstructor,
+    EcsResourceQuery<any>
   >();
 
   public readonly resources = new EcsResourceManager();
@@ -161,7 +164,7 @@ export default class EcsManager {
   >(
     callbackOrSystem:
       | EcsSystem<TFilter, TResourceFilter>
-      | ((entities: SystemQueryResult<TFilter, TResourceFilter>) => void),
+      | ((query: SystemQueryResult<TFilter, TResourceFilter>) => void),
     filterQuery?: SystemQuery<TFilter, TResourceFilter> | TFilter
   ): EcsSystemHandle {
     if (callbackOrSystem instanceof EcsSystem) {
@@ -173,34 +176,41 @@ export default class EcsManager {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
+    if (filterQuery === undefined) {
+      throw new Error("Cannot create a system without a query.");
+    }
+
     const callback = callbackOrSystem;
-
     const filters = Array.isArray(filterQuery)
-      ? { entities: filterQuery, resources: [] }
-      : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        filterQuery!;
+      ? { entities: filterQuery, resources: [] as TResourceFilter }
+      : filterQuery;
 
-    const entitiesFilter: ComponentFilterTuple = filters.entities ?? [];
-    const [entities, updateQuery, disposeQuery] = this.createQuery(
-      ...entitiesFilter
-    );
+    const entityFilters = filters.entities ?? ([] as TFilter);
+    const entityQuery = this.createEntityQuery(entityFilters);
+    const entities = entityQuery.wrap();
 
-    const resourceFilter = filters.resources ?? [];
-    const resources = resourceFilter.map((resourceConstructor) =>
-      this.resources.get(resourceConstructor)
-    ) as ResourceInstances<TResourceFilter>;
+    const resourceFilters = filters.resources ?? ([] as TResourceFilter);
+    const resourceQuery = this.createResourceQuery(resourceFilters);
 
     const system: EcsSystemHandle = () => {
-      callback({ entities, resources });
-      updateQuery();
+      const resources = resourceQuery.getResources();
+
+      if (resources !== undefined) {
+        callback({ entities, resources });
+      }
+
+      entityQuery.update();
+      resourceQuery.update();
     };
 
     let disposed = false;
     system.dispose = (): void => {
       if (disposed) return;
 
+      entityQuery.dispose();
+      resourceQuery.dispose();
+
       disposed = true;
-      disposeQuery();
     };
 
     return system;
@@ -241,15 +251,14 @@ export default class EcsManager {
   /**
    * Create a query builder for the given filters.
    *
-   * @internal
    * @param filters - List of component filters to track
    * @returns a query, a function to update the query,
    *  and a function to dispose it
    */
-  private createQuery<TFilter extends ComponentFilterTuple>(
-    ...filters: TFilter
-  ): [EcsQuery<TFilter>, () => void, () => void] {
-    const builder = new EntityQueryBuilder(
+  public createEntityQuery<TFilter extends ComponentFilterTuple>(
+    filters: TFilter
+  ): EntityQueryBuilder<TFilter> {
+    const builder = new EntityQueryBuilder<TFilter>(
       filters,
       this.entities,
       this._disposeQueryBuilder.bind(this)
@@ -261,7 +270,7 @@ export default class EcsManager {
       this.queries.get(filterComponent).add(builder);
     }
 
-    return builder.wrap();
+    return builder;
   }
 
   /**
@@ -276,6 +285,49 @@ export default class EcsManager {
     for (const filter of builder.filters) {
       const filterComponent = this._getFilterComponent(filter);
       this.queries.get(filterComponent).delete(builder);
+    }
+  }
+
+  /**
+   * Create a resource query for the given resource filters.
+   *
+   * @internal
+   * @param filters - List of resource filters to track
+   * @return a query, a function to update the query,
+   *  and a function to dispose it
+   */
+  private createResourceQuery<TResourceFilter extends ResourceFilterTuple>(
+    filters: TResourceFilter
+  ): EcsResourceQuery<TResourceFilter> {
+    const query = new EcsResourceQuery(
+      filters,
+      this.resources,
+      this._disposeResourceQuery.bind(this)
+    );
+
+    // Add this query to all query sets related to the component
+    for (const queryFilter of filters) {
+      if (queryFilter instanceof EcsResourceFilterObject) {
+        this.resourceQueries.get(queryFilter.resource).add(query);
+      }
+    }
+
+    return query;
+  }
+
+  /**
+   * Disposes of a resource query and removes it from internal query sets.
+   *
+   * @internal
+   * @param query - The query to dispose of
+   */
+  private _disposeResourceQuery<TResourceFilter extends ResourceFilterTuple>(
+    query: EcsResourceQuery<TResourceFilter>
+  ): void {
+    for (const filter of query.filters) {
+      if (filter instanceof EcsResourceFilterObject) {
+        this.resourceQueries.get(filter.resource).delete(query);
+      }
     }
   }
 
