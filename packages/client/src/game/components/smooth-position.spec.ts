@@ -1,6 +1,6 @@
-import { EcsManager } from "../utils/ecs";
-import { FrameInfoResource } from "./frame-info-resource";
-import { GameConfigResource } from "./game-config-resource";
+import { EcsManager } from "../../utils/ecs";
+import { FrameInfo } from "../resources/frame-info";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 import {
   SmoothPositionInit,
@@ -90,8 +90,8 @@ describe("SmoothPositionAnimate", () => {
 
     const world = new EcsManager();
     world.resources
-      .add(GameConfigResource, { fixedUpdateRate: 1 / 30 })
-      .add(FrameInfoResource, { frametime: 1 / 60 });
+      .add(GameConfig, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfo, { frametime: 1 / 60 });
 
     const entity = world.spawn().add(SmoothPosition).add(Position);
     const update = world.watch(SmoothPositionUpdate);
@@ -120,8 +120,8 @@ describe("SmoothPositionAnimate", () => {
 
     const world = new EcsManager();
     world.resources
-      .add(GameConfigResource, { fixedUpdateRate: 1 / 30 })
-      .add(FrameInfoResource, { frametime: 1 / 60 });
+      .add(GameConfig, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfo, { frametime: 1 / 60 });
 
     const entityA = world.spawn().add(SmoothPosition).add(Position);
     const entityB = world.spawn().add(SmoothPosition).add(Position);

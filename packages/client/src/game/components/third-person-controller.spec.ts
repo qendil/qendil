@@ -1,6 +1,6 @@
-import { EcsManager } from "../utils/ecs";
-import { InputAxis } from "../utils/input-manager";
-import { InputResource } from "./input-resource";
+import { EcsManager } from "../../utils/ecs";
+import { InputAxis } from "../../utils/input-manager";
+import { Input } from "../resources/input";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
@@ -14,7 +14,7 @@ describe("ThirdPersonControlSystem", () => {
     // Then I should not get an error
 
     const world = new EcsManager();
-    world.resources.add(InputResource);
+    world.resources.add(Input);
 
     const system = world.watch(ThirdPersonControlSystem);
 
@@ -32,8 +32,8 @@ describe("ThirdPersonControlSystem", () => {
     // Then the entity's velocity should be updated according to the input
 
     const world = new EcsManager();
-    world.resources.add(InputResource);
-    const { input } = world.resources.get(InputResource);
+    world.resources.add(Input);
+    const { input } = world.resources.get(Input);
 
     const system = world.watch(ThirdPersonControlSystem);
     const entity = world

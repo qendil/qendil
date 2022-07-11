@@ -1,6 +1,6 @@
-import { EcsComponent, EcsSystem } from "../utils/ecs";
-import { FrameInfoResource } from "./frame-info-resource";
-import { GameConfigResource } from "./game-config-resource";
+import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { FrameInfo } from "../resources/frame-info";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 
 /**
@@ -76,6 +76,6 @@ export const SmoothPositionAnimate = new EcsSystem(
   },
   {
     entities: [Position, SmoothPosition, SmoothPosition.present()],
-    resources: [FrameInfoResource, GameConfigResource],
+    resources: [FrameInfo, GameConfig],
   }
 );

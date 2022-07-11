@@ -1,5 +1,5 @@
-import { EcsManager } from "../utils/ecs";
-import { GameConfigResource } from "./game-config-resource";
+import { EcsManager } from "../../utils/ecs";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 import { Velocity, VelocitySystem } from "./velocity";
 
@@ -10,7 +10,7 @@ describe("VelocitySystem", () => {
     // Then the position should be updated accordingly
 
     const world = new EcsManager();
-    world.resources.add(GameConfigResource, { fixedUpdateRate: 1 });
+    world.resources.add(GameConfig, { fixedUpdateRate: 1 });
 
     const system = world.watch(VelocitySystem);
     const entity = world

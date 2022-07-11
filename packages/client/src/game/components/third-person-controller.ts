@@ -1,8 +1,8 @@
-import { EcsComponent, EcsSystem } from "../utils/ecs";
-import { InputAxis } from "../utils/input-manager";
+import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { InputAxis } from "../../utils/input-manager";
 import { Velocity } from "./velocity";
 
-import { InputResource } from "./input-resource";
+import { Input } from "../resources/input";
 
 /**
  * Tags entities that are controlled by a third-person camera.
@@ -35,5 +35,5 @@ export const ThirdPersonControlSystem = new EcsSystem(
       }
     }
   },
-  { entities: [ThirdPersonController.present()], resources: [InputResource] }
+  { entities: [ThirdPersonController.present()], resources: [Input] }
 );

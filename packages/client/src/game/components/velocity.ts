@@ -1,5 +1,5 @@
-import { EcsComponent, EcsSystem } from "../utils/ecs";
-import { GameConfigResource } from "./game-config-resource";
+import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 
 /**
@@ -27,6 +27,6 @@ export const VelocitySystem = new EcsSystem(
   },
   {
     entities: [Position, Velocity],
-    resources: [GameConfigResource],
+    resources: [GameConfig],
   }
 );

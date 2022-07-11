@@ -3,7 +3,7 @@ import coreInit, { makeGreeting } from "@qendil/core";
 import { EcsManager } from "../utils/ecs";
 import classNames from "classnames";
 
-import type { ReactElement } from "react";
+import { useEffect } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
 import useGameView from "../hooks/use-game-view";
@@ -15,24 +15,42 @@ import commonClasses from "../style/common.module.css";
 
 import {
   Mesh,
+  MeshAttachToScene,
   MeshPositionSystem,
   MeshSmoothPositionSystem,
-} from "../game/mesh";
-import { Position } from "../game/position";
-import { VelocitySystem, Velocity } from "../game/velocity";
+} from "../game/components/mesh";
+import { Position } from "../game/components/position";
+import { VelocitySystem, Velocity } from "../game/components/velocity";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
-} from "../game/third-person-controller";
+} from "../game/components/third-person-controller";
 import {
   SmoothPosition,
   SmoothPositionAnimate,
   SmoothPositionInit,
   SmoothPositionUpdate,
-} from "../game/smooth-position";
-import { InputResource } from "../game/input-resource";
-import { FrameInfoResource } from "../game/frame-info-resource";
-import { GameConfigResource } from "../game/game-config-resource";
+} from "../game/components/smooth-position";
+import { Input, UpdateInputConfig } from "../game/resources/input";
+import { FrameInfo } from "../game/resources/frame-info";
+import { GameConfig } from "../game/resources/game-config";
+import { WorldScene } from "../game/resources/world-scene";
+
+import type { ReactElement } from "react";
+
+const gameWorld = new EcsManager();
+
+const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
+const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
+const updatePosition = gameWorld.watch(VelocitySystem);
+const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
+const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
+const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
+const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
+const attachMeshesToScene = gameWorld.watch(MeshAttachToScene);
+const updateInputConfig = gameWorld.watch(UpdateInputConfig);
+
+gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -52,80 +70,63 @@ export default function App(): ReactElement {
 
   const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
 
-  const WorldView = useGameView(
-    ({ scene, makePerspectiveCamera }) => {
-      const gameWorld = new EcsManager();
+  useEffect(() => {
+    const { input } = gameWorld.resources.get(Input);
+    bindInput(input);
+  }, [bindInput]);
 
-      gameWorld.resources
-        .add(InputResource)
-        .add(FrameInfoResource)
-        .add(GameConfigResource);
+  const WorldView = useGameView(({ scene, makePerspectiveCamera }) => {
+    const camera = makePerspectiveCamera();
+    camera.position.z = 5;
 
-      const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
-      const updateMeshSmoothPosition = gameWorld.watch(
-        MeshSmoothPositionSystem
-      );
-      const updatePosition = gameWorld.watch(VelocitySystem);
-      const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
-      const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
-      const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
-      const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
+    const geometry = new BoxGeometry();
+    const material = new MeshBasicMaterial({ color: 0xffcc00 });
 
-      const camera = makePerspectiveCamera();
-      camera.position.z = 5;
+    const cube = gameWorld
+      .spawn()
+      .addNew(Mesh, geometry, material)
+      .add(Position)
+      .add(SmoothPosition)
+      .add(Velocity, { factor: 3 })
+      .add(ThirdPersonController);
 
-      const geometry = new BoxGeometry();
-      const material = new MeshBasicMaterial({ color: 0xffcc00 });
+    const { input } = gameWorld.resources.get(Input);
+    const frameInfo = gameWorld.resources.get(FrameInfo);
+    const gameConfig = gameWorld.resources.get(GameConfig);
+    const { scene: worldScene } = gameWorld.resources.get(WorldScene);
+    scene.add(worldScene);
 
-      const { input } = gameWorld.resources.get(InputResource);
-      bindInput(input);
+    return {
+      camera,
+      fixedUpdateRate: gameConfig.fixedUpdateRate,
+      onSetup(renderer): void {
+        renderer.setClearColor(0x8a326c);
+      },
+      onUpdate(frametime): void {
+        frameInfo.frametime = frametime;
 
-      const cube = gameWorld
-        .spawn()
-        .addNew(Mesh, geometry, material)
-        .add(Position)
-        .add(SmoothPosition)
-        .add(Velocity, { factor: 3 })
-        .add(ThirdPersonController);
+        updateInputConfig();
+        attachMeshesToScene();
+        smoothPositionInit();
+        smoothPositionUpdate();
+        smoothPositionAnimate();
+        updateStickControl();
+        updateMeshPosition();
+        updateMeshSmoothPosition();
 
-      const { mesh } = cube.get(Mesh);
-      scene.add(mesh);
+        input.update();
+      },
+      onFixedUpdate(): void {
+        updatePosition();
+      },
+      onDispose(): void {
+        material.dispose();
+        geometry.dispose();
 
-      const frameInfo = gameWorld.resources.get(FrameInfoResource);
-      const gameConfig = gameWorld.resources.get(GameConfigResource);
-
-      return {
-        camera,
-        fixedUpdateRate: gameConfig.fixedUpdateRate,
-        onSetup(renderer): void {
-          renderer.setClearColor(0x8a326c);
-        },
-        onUpdate(frametime): void {
-          frameInfo.frametime = frametime;
-
-          smoothPositionInit();
-          smoothPositionUpdate();
-          smoothPositionAnimate();
-          updateStickControl();
-          updateMeshPosition();
-          updateMeshSmoothPosition();
-
-          input.update();
-        },
-        onFixedUpdate(): void {
-          updatePosition();
-        },
-        onDispose(): void {
-          material.dispose();
-          geometry.dispose();
-          cube.dispose();
-
-          gameWorld.dispose();
-        },
-      };
-    },
-    [bindInput]
-  );
+        cube.dispose();
+      },
+    };
+  }, []);
 
   const worldView = (
     <WorldView
