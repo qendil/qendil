@@ -1,5 +1,5 @@
+import EcsManager from "./ecs-manager";
 import EcsResource from "./ecs-resource";
-import EcsResourceManager from "./ecs-resource-manager";
 
 class DummyResource extends EcsResource {
   public value = "hello";
@@ -21,7 +21,8 @@ describe("EcsResourceManager", () => {
     // When I try to add a resource
     // Then the resource should be created
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.addNew(DummyResource, "world");
 
     const resource = manager.get(DummyResource);
@@ -33,7 +34,8 @@ describe("EcsResourceManager", () => {
     // When I try to instantiate a resource
     // Then the resource should be created
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.addNew(DummyResource, "world");
 
     const resource = manager.get(DummyResource);
@@ -45,7 +47,8 @@ describe("EcsResourceManager", () => {
     // When I try to a global resource
     // Then I should get an error
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.dispose();
 
     expect(() => manager.add(DummyResource)).toThrowError(
@@ -58,7 +61,8 @@ describe("EcsResourceManager", () => {
     // When I try to add the same resource again
     // Then I should get an error
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource);
 
     expect(() => manager.add(DummyResource)).toThrowError(
@@ -71,7 +75,8 @@ describe("EcsResourceManager", () => {
     // When I try to get the resource
     // Then I should get the resource
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource, { value: "144" });
 
     const resource = manager.get(DummyResource);
@@ -83,7 +88,8 @@ describe("EcsResourceManager", () => {
     // When I try to get a non-existing resource
     // Then I should get an error
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
 
     expect(() => manager.get(DummyResource)).toThrowError(
       "A resource of type DummyResource does not exist."
@@ -96,7 +102,8 @@ describe("EcsResourceManager", () => {
     // And I call .dispose() on the world again
     // Then the resources should be disposed
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource);
 
     const resource = manager.get(DummyResource);
@@ -112,7 +119,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resource A
     // Then I should get true
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource);
 
     expect(manager.has(DummyResource)).toBe(true);
@@ -123,7 +131,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resource A
     // Then I should get false
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
 
     expect(manager.has(DummyResource)).toBe(false);
   });
@@ -133,7 +142,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resources A and B
     // Then I should get true
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource).add(FakeResource);
 
     expect(manager.hasAll([DummyResource, FakeResource])).toBe(true);
@@ -144,7 +154,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resources A and B
     // Then I should get false
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource);
 
     expect(manager.hasAll([DummyResource, FakeResource])).toBe(false);
@@ -155,7 +166,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resources A or B
     // Then I should get true
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
     manager.add(DummyResource);
 
     expect(manager.hasAny([DummyResource, FakeResource])).toBe(true);
@@ -166,7 +178,8 @@ describe("EcsResourceManager", () => {
     // When I check for the presence of resources A or B
     // Then I should get false
 
-    const manager = new EcsResourceManager();
+    const world = new EcsManager();
+    const manager = world.resources;
 
     expect(manager.hasAny([DummyResource, FakeResource])).toBe(false);
   });

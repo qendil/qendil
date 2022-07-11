@@ -10,7 +10,9 @@ class Position extends EcsComponent {
   public y = 0;
 }
 
-class DummyResource extends EcsResource {}
+class DummyResource extends EcsResource {
+  public value = "hello";
+}
 
 describe("EcsManager", () => {
   it("properly disposes of its queries once", () => {
@@ -23,7 +25,7 @@ describe("EcsManager", () => {
     world.watch(({ entities }) => entities, [Position]);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const [query] = world.queries.get(Position);
+    const [query] = world.entityQueries.get(Position);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const disposeSpy = vi.spyOn(query!, "dispose");
 
@@ -182,7 +184,7 @@ describe("EcsManager system", () => {
 
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const queries = world.queries.get(Position);
+    const queries = world.entityQueries.get(Position);
 
     const system = world.watch(({ entities }) => entities, [Position]);
     expect(queries.size).toBe(1);
@@ -199,7 +201,7 @@ describe("EcsManager system", () => {
 
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
-    const queries = world.queries.get(Position);
+    const queries = world.entityQueries.get(Position);
     const system = world.watch(({ entities }) => entities, [Position]);
 
     const [query] = queries;
@@ -274,5 +276,86 @@ describe("EcsManager system", () => {
 
     system();
     expect(callback).not.toHaveBeenCalled();
+  });
+});
+
+describe("EcsManager resources", () => {
+  it("considers previously added resources as changed resources", () => {
+    // Given a resource A in the resource manager
+    // When I create a system that queries for changes on A
+    // And I run that system
+    // Then the system's callback should be called
+
+    const world = new EcsManager();
+    world.resources.add(DummyResource);
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    system();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it("considers newly added resources as changed resources", () => {
+    // Given a resource A that's not in the ECS manager
+    // And a system that queries for changes on A
+    // When I run the system
+    // Then the system's callback should be called
+    // When the resource A is added to the ECS manager
+    // And I run the system
+    // Then the system's callback should be called
+
+    const world = new EcsManager();
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    // First call to the system to reset its "changed" flags
+    system();
+
+    callback.mockClear();
+    system();
+    expect(callback).not.toHaveBeenCalled();
+
+    callback.mockClear();
+    world.resources.add(DummyResource);
+    system();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it("queries changed resources", () => {
+    // Given a resource A
+    // And a system that queries for changed A
+    // When I run the system
+    // Then its callback should not run
+    // When I change the resource A
+    // And I run the system
+    // Then the system's callback should run
+
+    const world = new EcsManager();
+    world.resources.add(DummyResource);
+
+    const callback = vi.fn();
+    const system = world.watch(callback, {
+      resources: [DummyResource.changed()],
+    });
+
+    // First call to the system to reset its "changed" flags
+    system();
+
+    callback.mockClear();
+    system();
+    expect(callback).not.toHaveBeenCalled();
+
+    const resource = world.resources.get(DummyResource);
+    resource.value = "cheers";
+
+    callback.mockClear();
+    system();
+    expect(callback).toHaveBeenCalled();
   });
 });

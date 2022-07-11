@@ -2,7 +2,7 @@ import type EcsComponent from "./ecs-component";
 import type { EcsComponentConstructor } from "./ecs-component";
 
 /**
- * Lifecycle hooks privately exposed by the game world.
+ * Lifecycle hooks privately exposed by the ECS manager.
  *
  * @internal
  */

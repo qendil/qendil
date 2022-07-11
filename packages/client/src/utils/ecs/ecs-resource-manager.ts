@@ -3,10 +3,22 @@ import type {
   EcsResourceConstructor,
 } from "./ecs-resource";
 
+/**
+ * Lifecycle hookes privately exposed by the ECS manager.
+ */
+export type EcsResourceLifecycleHooks = {
+  onResourceChanged: (resource: EcsResourceConstructor) => void;
+};
+
 export default class EcsResourceManager {
   private disposed = false;
+  private readonly hooks: EcsResourceLifecycleHooks;
 
   private readonly resources = new Map<EcsResourceConstructor, EcsResource>();
+
+  public constructor(hooks: EcsResourceLifecycleHooks) {
+    this.hooks = hooks;
+  }
 
   /**
    * Disposes of all resources of this manager
@@ -80,10 +92,27 @@ export default class EcsResourceManager {
       throw new Error(`A resource of type ${constructor.name} already exists.`);
     }
 
-    // TODO: Wrap the resource with a proxy to monitor changes
+    // Wrap the resource with a proxy to monitor changes
+    const proxy = new Proxy(resource, {
+      set: (target, key, value): boolean => {
+        const originalValue = Reflect.get(target, key) as unknown;
 
-    this.resources.set(constructor, resource);
+        const result = Reflect.set(target, key, value);
+
+        // Make sure to trigger the hook after the resource has been updated
+        if (value !== originalValue) {
+          this.hooks.onResourceChanged(constructor);
+        }
+
+        return result;
+      },
+    });
+
+    this.resources.set(constructor, proxy);
+
     // TODO: Trigger Add hook for the resource
+    // Trigger the changed hook when adding resources
+    this.hooks.onResourceChanged(constructor);
 
     return this;
   }

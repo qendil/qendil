@@ -37,7 +37,7 @@ export default class EcsManager {
   private disposed = false;
   private readonly entities = new Set<EcsEntity>();
 
-  private readonly queries = new SetMap<
+  private readonly entityQueries = new SetMap<
     EcsComponentConstructor,
     EntityQueryBuilder<any>
   >();
@@ -47,7 +47,9 @@ export default class EcsManager {
     EcsResourceQuery<any>
   >();
 
-  public readonly resources = new EcsResourceManager();
+  public readonly resources = new EcsResourceManager({
+    onResourceChanged: this._resourceChanged.bind(this),
+  });
 
   /**
    * Disposes of the world and all its entities, components and systems.
@@ -57,7 +59,7 @@ export default class EcsManager {
 
     // Dispose of query builders
     const disposedBuilders = new Set<EntityQueryBuilder>();
-    for (const builders of this.queries.values()) {
+    for (const builders of this.entityQueries.values()) {
       for (const builder of builders) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         if (!disposedBuilders.has(builder)) {
@@ -68,7 +70,7 @@ export default class EcsManager {
       }
     }
 
-    this.queries.clear();
+    this.entityQueries.clear();
 
     // Dispose of entities
     for (const entity of this.entities) {
@@ -225,7 +227,7 @@ export default class EcsManager {
    */
   private _disposeEntity(entity: EcsEntity): void {
     for (const component of entity.getComponents()) {
-      const queries = this.queries.get(component);
+      const queries = this.entityQueries.get(component);
 
       for (const builder of queries) {
         builder.delete(entity);
@@ -267,7 +269,7 @@ export default class EcsManager {
     // Add this query to all query sets related to the component
     for (const queryFilter of filters) {
       const filterComponent = this._getFilterComponent(queryFilter);
-      this.queries.get(filterComponent).add(builder);
+      this.entityQueries.get(filterComponent).add(builder);
     }
 
     return builder;
@@ -284,7 +286,7 @@ export default class EcsManager {
   ): void {
     for (const filter of builder.filters) {
       const filterComponent = this._getFilterComponent(filter);
-      this.queries.get(filterComponent).delete(builder);
+      this.entityQueries.get(filterComponent).delete(builder);
     }
   }
 
@@ -342,7 +344,7 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentAdded(entity, component);
@@ -360,7 +362,7 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentChanged(entity, component);
@@ -378,10 +380,24 @@ export default class EcsManager {
     entity: EcsEntity,
     component: EcsComponentConstructor
   ): void {
-    const queries = this.queries.get(component);
+    const queries = this.entityQueries.get(component);
 
     for (const builder of queries) {
       builder._onEntityComponentRemoved(entity, component);
+    }
+  }
+
+  /**
+   * Called when a resource is changed.
+   *
+   * @internal
+   * @param constructor - The constructor of the entity that changed
+   */
+  private _resourceChanged(constructor: EcsResourceConstructor): void {
+    const queries = this.resourceQueries.get(constructor);
+
+    for (const query of queries) {
+      query._onResourceChanged(constructor);
     }
   }
 }
