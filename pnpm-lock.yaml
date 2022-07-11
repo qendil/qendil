@@ -61,7 +61,7 @@ importers:
       '@qendil/client-workers': workspace:*
       '@qendil/core': workspace:*
       '@sentry/react': ^7.6.0
-      '@testing-library/dom': ^8.15.0
+      '@testing-library/dom': ^8.16.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.3.0
       '@testing-library/user-event': ^14.2.1
@@ -135,10 +135,10 @@ importers:
       cordova-plugin-statusbar: 3.0.0
       libxmljs: 0.19.10
     devDependencies:
-      '@testing-library/dom': 8.15.0
+      '@testing-library/dom': 8.16.0
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/user-event': 14.2.1_lym66lg3md65st2hyshur4m3cy
+      '@testing-library/user-event': 14.2.1_gwcpuyfvwbszhlmedmugzivgzu
       '@types/testing-library__jest-dom': 5.14.5
       c8: 7.11.3
       electron-devtools-installer: 3.2.0
@@ -1852,8 +1852,8 @@ packages:
     dev: false
     optional: true
 
-  /@testing-library/dom/8.15.0:
-    resolution: {integrity: sha512-KtMhnUST7iUvZPl3LlRKH9V/JGbMIwgCxSeGno+c2VRRgC21l27Ky8rU8n/xRcfUAsO4w9fn3Z70Dq3Tcg6KAg==}
+  /@testing-library/dom/8.16.0:
+    resolution: {integrity: sha512-uxF4zmnLHHDlmW4l+0WDjcgLVwCvH+OVLpD8Dfp+Bjfz85prwxWGbwXgJdLtkgjD0qfOzkJF9SmA6YZPsMYX4w==}
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.16.7
@@ -1889,19 +1889,19 @@ packages:
       react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.18.3
-      '@testing-library/dom': 8.15.0
+      '@testing-library/dom': 8.16.0
       '@types/react-dom': 18.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: true
 
-  /@testing-library/user-event/14.2.1_lym66lg3md65st2hyshur4m3cy:
+  /@testing-library/user-event/14.2.1_gwcpuyfvwbszhlmedmugzivgzu:
     resolution: {integrity: sha512-HOr1QiODrq+0j9lKU5i10y9TbhxMBMRMGimNx10asdmau9cb8Xb1Vyg0GvTwyIL2ziQyh2kAloOtAQFBQVuecA==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@testing-library/dom': 8.15.0
+      '@testing-library/dom': 8.16.0
     dev: true
 
   /@tootallnate/once/1.1.2:
