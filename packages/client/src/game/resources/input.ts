@@ -18,6 +18,17 @@ const KEYBOARD_MAP = {
     KeyF: InputAction.Interact,
     Tab: InputAction.Cancel,
   },
+  world: {
+    KeyW: InputAction.Up,
+    ArrowUp: InputAction.Up,
+    KeyD: InputAction.Right,
+    ArrowRight: InputAction.Right,
+    KeyS: InputAction.Down,
+    ArrowDown: InputAction.Down,
+    KeyA: InputAction.Left,
+    ArrowLeft: InputAction.Left,
+    KeyF: InputAction.Interact,
+  },
 } as const;
 
 /**
