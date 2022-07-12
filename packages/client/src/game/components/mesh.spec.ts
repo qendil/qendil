@@ -25,7 +25,7 @@ describe("Mesh component", () => {
 
     const world = new EcsManager();
     world.resources.add(WorldScene);
-    const system = world.watch(MeshAttachToScene);
+    const system = world.addSystem(MeshAttachToScene);
 
     const entity = world.spawn().add(Mesh);
 
@@ -47,7 +47,7 @@ describe("MeshPositionSystem", () => {
 
     const world = new EcsManager();
     const entity = world.spawn().add(Mesh).add(Position);
-    const system = world.watch(MeshPositionSystem);
+    const system = world.addSystem(MeshPositionSystem);
 
     const position = entity.get(Position);
     const { mesh } = entity.get(Mesh);
@@ -73,7 +73,7 @@ describe("MeshPositionSystem", () => {
 
     const world = new EcsManager();
     const entity = world.spawn().add(Mesh).add(Position).add(SmoothPosition);
-    const system = world.watch(MeshPositionSystem);
+    const system = world.addSystem(MeshPositionSystem);
 
     const position = entity.get(Position);
     const { mesh } = entity.get(Mesh);
@@ -103,9 +103,9 @@ describe("MeshPositionSystem", () => {
       .add(FrameInfo, { frametime: 1 / 60 });
     const entity = world.spawn().add(Mesh).add(Position).add(SmoothPosition);
 
-    const meshPosition = world.watch(MeshSmoothPositionSystem);
-    const positionUpdate = world.watch(SmoothPositionUpdate);
-    const positionAnimate = world.watch(SmoothPositionAnimate);
+    const meshPosition = world.addSystem(MeshSmoothPositionSystem);
+    const positionUpdate = world.addSystem(SmoothPositionUpdate);
+    const positionAnimate = world.addSystem(SmoothPositionAnimate);
 
     const position = entity.get(Position);
     const { mesh } = entity.get(Mesh);
@@ -139,7 +139,7 @@ describe("MeshAttachToScene", () => {
 
     const world = new EcsManager();
     world.resources.add(WorldScene);
-    const system = world.watch(MeshAttachToScene);
+    const system = world.addSystem(MeshAttachToScene);
 
     const entity = world.spawn().add(Mesh);
 

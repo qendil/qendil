@@ -12,7 +12,7 @@ describe("UpdateInputConfig", () => {
     const world = new EcsManager();
     world.resources.add(Input);
     const input = world.resources.get(Input);
-    const system = world.watch(UpdateInputConfig);
+    const system = world.addSystem(UpdateInputConfig);
 
     // Initial call to the system to reset the changes watcher
     system();

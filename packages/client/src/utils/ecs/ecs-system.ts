@@ -5,6 +5,9 @@ import type {
   ResourceInstances,
 } from "./types";
 
+/**
+ * An object to query entities and components for a system.
+ */
 export type SystemQuery<
   TFilter extends ComponentFilterTuple,
   TResourceFilter extends ResourceFilterTuple
@@ -13,6 +16,9 @@ export type SystemQuery<
   resources?: TResourceFilter;
 };
 
+/**
+ * An object with the results of a System Query.
+ */
 export type SystemQueryResult<
   TFilter extends ComponentFilterTuple,
   TResourceFilter extends ResourceFilterTuple
@@ -27,8 +33,8 @@ export type SystemQueryResult<
  * Systems operate on all entities of a given Component filter.
  */
 export default class EcsSystem<
-  TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple
+  TFilter extends ComponentFilterTuple = ComponentFilterTuple,
+  TResourceFilter extends ResourceFilterTuple = ResourceFilterTuple
 > {
   public readonly query: SystemQuery<TFilter, TResourceFilter>;
   public readonly handle: (

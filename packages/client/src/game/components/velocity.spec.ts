@@ -12,7 +12,7 @@ describe("VelocitySystem", () => {
     const world = new EcsManager();
     world.resources.add(GameConfig, { fixedUpdateRate: 1 });
 
-    const system = world.watch(VelocitySystem);
+    const system = world.addSystem(VelocitySystem);
     const entity = world
       .spawn()
       .add(Velocity, { x: 10, y: -100 })

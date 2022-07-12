@@ -40,15 +40,18 @@ import type { ReactElement } from "react";
 
 const gameWorld = new EcsManager();
 
-const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
-const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
-const updatePosition = gameWorld.watch(VelocitySystem);
-const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
-const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
-const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
-const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
-const attachMeshesToScene = gameWorld.watch(MeshAttachToScene);
-const updateInputConfig = gameWorld.watch(UpdateInputConfig);
+const gameUpdate = gameWorld
+  .addRunner()
+  .add(UpdateInputConfig)
+  .add(MeshAttachToScene)
+  .add(SmoothPositionInit)
+  .add(SmoothPositionUpdate)
+  .add(SmoothPositionAnimate)
+  .add(ThirdPersonControlSystem)
+  .add(MeshPositionSystem)
+  .add(MeshSmoothPositionSystem);
+
+const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
 
 gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
 
@@ -94,6 +97,7 @@ export default function App(): ReactElement {
     const frameInfo = gameWorld.resources.get(FrameInfo);
     const gameConfig = gameWorld.resources.get(GameConfig);
     const { scene: worldScene } = gameWorld.resources.get(WorldScene);
+
     scene.add(worldScene);
 
     return {
@@ -105,19 +109,12 @@ export default function App(): ReactElement {
       onUpdate(frametime): void {
         frameInfo.frametime = frametime;
 
-        updateInputConfig();
-        attachMeshesToScene();
-        smoothPositionInit();
-        smoothPositionUpdate();
-        smoothPositionAnimate();
-        updateStickControl();
-        updateMeshPosition();
-        updateMeshSmoothPosition();
+        gameUpdate();
 
         input.update();
       },
       onFixedUpdate(): void {
-        updatePosition();
+        gameFixedUpdate();
       },
       onDispose(): void {
         material.dispose();

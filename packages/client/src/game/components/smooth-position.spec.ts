@@ -17,7 +17,7 @@ describe("SmoothPositionInit system", () => {
     // ... position should match that of the Position component
 
     const world = new EcsManager();
-    const system = world.watch(SmoothPositionInit);
+    const system = world.addSystem(SmoothPositionInit);
 
     const entity = world
       .spawn()
@@ -45,7 +45,7 @@ describe("SmoothPositionUpdate system", () => {
     // Then the smooth position component should be updated
 
     const world = new EcsManager();
-    const system = world.watch(SmoothPositionUpdate);
+    const system = world.addSystem(SmoothPositionUpdate);
 
     const entity = world
       .spawn()
@@ -94,8 +94,8 @@ describe("SmoothPositionAnimate", () => {
       .add(FrameInfo, { frametime: 1 / 60 });
 
     const entity = world.spawn().add(SmoothPosition).add(Position);
-    const update = world.watch(SmoothPositionUpdate);
-    const animate = world.watch(SmoothPositionAnimate);
+    const update = world.addSystem(SmoothPositionUpdate);
+    const animate = world.addSystem(SmoothPositionAnimate);
 
     const position = entity.get(Position);
     position.x = 10;
@@ -125,8 +125,8 @@ describe("SmoothPositionAnimate", () => {
 
     const entityA = world.spawn().add(SmoothPosition).add(Position);
     const entityB = world.spawn().add(SmoothPosition).add(Position);
-    const update = world.watch(SmoothPositionUpdate);
-    const animate = world.watch(SmoothPositionAnimate);
+    const update = world.addSystem(SmoothPositionUpdate);
+    const animate = world.addSystem(SmoothPositionAnimate);
 
     update();
     animate();

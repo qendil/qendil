@@ -16,7 +16,7 @@ describe("ThirdPersonControlSystem", () => {
     const world = new EcsManager();
     world.resources.add(Input);
 
-    const system = world.watch(ThirdPersonControlSystem);
+    const system = world.addSystem(ThirdPersonControlSystem);
 
     world.spawn().add(ThirdPersonController);
 
@@ -35,7 +35,7 @@ describe("ThirdPersonControlSystem", () => {
     world.resources.add(Input);
     const { input } = world.resources.get(Input);
 
-    const system = world.watch(ThirdPersonControlSystem);
+    const system = world.addSystem(ThirdPersonControlSystem);
     const entity = world
       .spawn()
       .add(ThirdPersonController)

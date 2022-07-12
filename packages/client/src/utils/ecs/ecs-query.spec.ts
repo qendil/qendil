@@ -22,7 +22,7 @@ describe("EcsQuery", () => {
     const world = new EcsManager();
 
     let query: EcsEntity[] = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ entities }) => {
         query = [...entities.asEntities()];
       },
@@ -47,7 +47,7 @@ describe("EcsQuery", () => {
     const world = new EcsManager();
 
     let query: Array<[Position]> = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ entities }) => {
         query = [...entities];
       },
@@ -69,7 +69,7 @@ describe("EcsQuery", () => {
     const world = new EcsManager();
 
     let query: EcsEntity[] = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ entities }) => {
         query = [...entities.asEntities()];
       },
@@ -91,7 +91,7 @@ describe("EcsQuery", () => {
     const world = new EcsManager();
 
     let query: Array<[EcsEntity, Position]> = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ entities }) => {
         query = [...entities.withEntities()];
       },

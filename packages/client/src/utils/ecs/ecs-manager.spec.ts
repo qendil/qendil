@@ -22,7 +22,7 @@ describe("EcsManager", () => {
     // Then the queries should be disposed
 
     const world = new EcsManager();
-    world.watch(({ entities }) => entities, [Position]);
+    world.addSystem(({ entities }) => entities, [Position]);
 
     /// @ts-expect-error 2341: We need to access the internal queries set
     const [query] = world.entityQueries.get(Position);
@@ -87,7 +87,7 @@ describe("EcsManager", () => {
     world.dispose();
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    expect(() => world.watch(() => {}, [])).toThrowError(
+    expect(() => world.addSystem(() => {}, [])).toThrowError(
       "Cannot create a system in a disposed world."
     );
   });
@@ -101,7 +101,7 @@ describe("EcsManager", () => {
 
     // @ts-expect-error 2345: This signature is not valid but possible
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    expect(() => world.watch(() => {})).toThrowError(
+    expect(() => world.addSystem(() => {})).toThrowError(
       "Cannot create a system without a query."
     );
   });
@@ -124,7 +124,7 @@ describe("EcsManager system", () => {
     const world = new EcsManager();
 
     let query: EcsEntity[] = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ entities }) => {
         query = [...entities.asEntities()];
       },
@@ -164,7 +164,7 @@ describe("EcsManager system", () => {
     world.resources.add(A, { value: "world" });
 
     let query: EcsResource[] = [];
-    const system = world.watch(
+    const system = world.addSystem(
       ({ resources }) => {
         query = resources;
       },
@@ -187,7 +187,7 @@ describe("EcsManager system", () => {
     const queries = world.entityQueries.get(Position);
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.watch(() => {}, [Position]);
+    const system = world.addSystem(() => {}, [Position]);
     expect(queries.size).toBe(1);
 
     system.dispose();
@@ -204,7 +204,7 @@ describe("EcsManager system", () => {
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.entityQueries.get(Position);
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.watch(() => {}, [Position]);
+    const system = world.addSystem(() => {}, [Position]);
 
     const [query] = queries;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -217,7 +217,7 @@ describe("EcsManager system", () => {
 
   it("accepts alternative syntax for systems", () => {
     // Given a GameSystem instance
-    // When I call `.watch()` with the GameSystem instance
+    // When I call `.addSystem()` with the GameSystem instance
     // Then I should have a proper game system handle
 
     let query: Array<[Position]> = [];
@@ -231,7 +231,7 @@ describe("EcsManager system", () => {
     const world = new EcsManager();
     world.spawn().add(Position);
 
-    const system = world.watch(mySystem);
+    const system = world.addSystem(mySystem);
 
     system();
     expect(query).toBeInstanceOf(Array);
@@ -242,7 +242,7 @@ describe("EcsManager system", () => {
 
   it("accepts alternative syntax for system queries", () => {
     // Given a GameSystem instance
-    // When I call `.watch()` with the GameSystem instance
+    // When I call `.addSystem()` with the GameSystem instance
     // Then I should have a proper game system handle
 
     let query: Array<[Position]> = [];
@@ -257,7 +257,7 @@ describe("EcsManager system", () => {
 
     const world = new EcsManager();
     world.spawn().add(Position);
-    const system = world.watch(mySystem);
+    const system = world.addSystem(mySystem);
 
     system();
     expect(query).toBeInstanceOf(Array);
@@ -274,7 +274,7 @@ describe("EcsManager system", () => {
 
     const world = new EcsManager();
     const callback = vi.fn();
-    const system = world.watch(callback, { resources: [DummyResource] });
+    const system = world.addSystem(callback, { resources: [DummyResource] });
 
     system();
     expect(callback).not.toHaveBeenCalled();
@@ -292,7 +292,7 @@ describe("EcsManager system", () => {
     world.spawn().add(Position);
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.watch(() => {}, [Position]);
+    const system = world.addSystem(() => {}, [Position]);
     expect(entityQueries.get(Position).size).toBe(1);
 
     system.dispose();
@@ -311,7 +311,7 @@ describe("EcsManager system", () => {
     resources.add(DummyResource);
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.watch(() => {}, {
+    const system = world.addSystem(() => {}, {
       resources: [DummyResource.changed()],
     });
     expect(resourceQueries.get(DummyResource).size).toBe(1);
@@ -332,7 +332,7 @@ describe("EcsManager resources", () => {
     world.resources.add(DummyResource);
 
     const callback = vi.fn();
-    const system = world.watch(callback, {
+    const system = world.addSystem(callback, {
       resources: [DummyResource.changed()],
     });
 
@@ -352,7 +352,7 @@ describe("EcsManager resources", () => {
     const world = new EcsManager();
 
     const callback = vi.fn();
-    const system = world.watch(callback, {
+    const system = world.addSystem(callback, {
       resources: [DummyResource.changed()],
     });
 
@@ -382,7 +382,7 @@ describe("EcsManager resources", () => {
     world.resources.add(DummyResource);
 
     const callback = vi.fn();
-    const system = world.watch(callback, {
+    const system = world.addSystem(callback, {
       resources: [DummyResource.changed()],
     });
 

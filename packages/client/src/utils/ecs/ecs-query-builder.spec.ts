@@ -181,7 +181,7 @@ describe("EcsQueryBuilder", () => {
     const world = new EcsManager();
     const entity = world.spawn().add(Position);
 
-    const update = world.watch(
+    const update = world.addSystem(
       ({ entities }) => {
         expect([...entities.asEntities()]).toContain(entity);
       },
@@ -295,7 +295,7 @@ describe("EcsQueryBuilder", () => {
 
     const world = new EcsManager();
     let query: EcsEntity[] = [];
-    const update = world.watch(
+    const update = world.addSystem(
       ({ entities }) => {
         query = [...entities.asEntities()];
       },

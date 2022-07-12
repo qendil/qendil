@@ -6,6 +6,7 @@ import EcsSystem from "./ecs-system";
 import EcsResourceManager from "./ecs-resource-manager";
 import { EcsResourceFilterObject } from "./ecs-resource";
 import EcsResourceQuery from "./ecs-resource-query";
+import { makeSystemRunner } from "./ecs-system-runner";
 
 import type {
   EcsComponentConstructor,
@@ -19,6 +20,7 @@ import type {
 } from "./ecs-system";
 import type { EcsResourceConstructor } from "./ecs-resource";
 import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
+import type { EcsSystemRunner } from "./ecs-system-runner";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -120,7 +122,7 @@ export default class EcsManager {
    * @param system - A GameSystem instance to define the system
    * @returns A system handle
    */
-  public watch<
+  public addSystem<
     TFilter extends ComponentFilterTuple,
     TResourceFilter extends ResourceFilterTuple
   >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle;
@@ -136,9 +138,9 @@ export default class EcsManager {
    *  It receives and entity set as its first argument
    *  Arguments and return value are forwarded when the system is invoked
    * @param query - List of component filters to track
-   * @returns A system hanlde
+   * @returns A system handle
    */
-  public watch<
+  public addSystem<
     TFilter extends ComponentFilterTuple,
     TResourceFilter extends ResourceFilterTuple
   >(
@@ -160,7 +162,7 @@ export default class EcsManager {
    *  Arguments and return value are forwarded when the system is invoked
    * @returns A system handle
    */
-  public watch<
+  public addSystem<
     TFilter extends ComponentFilterTuple,
     TResourceFilter extends ResourceFilterTuple
   >(
@@ -171,7 +173,7 @@ export default class EcsManager {
   ): EcsSystemHandle {
     if (callbackOrSystem instanceof EcsSystem) {
       const { handle, query } = callbackOrSystem;
-      return this.watch(handle, query);
+      return this.addSystem(handle, query);
     }
 
     if (this.disposed) {
@@ -399,5 +401,14 @@ export default class EcsManager {
     for (const query of queries) {
       query._onResourceChanged(constructor);
     }
+  }
+
+  /**
+   * Add a system runner.
+   *
+   * @returns an ECS systems runner.
+   */
+  public addRunner(): EcsSystemRunner {
+    return makeSystemRunner(this);
   }
 }
