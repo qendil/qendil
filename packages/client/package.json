@@ -72,7 +72,7 @@
   },
   "optionalDependencies": {
     "cordova": "^11.0.0",
-    "cordova-android": "^10.1.2",
+    "cordova-android": "^11.0.0",
     "cordova-electron": "^3.1.0",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-statusbar": "^3.0.0",
