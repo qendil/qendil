@@ -1,5 +1,4 @@
 import useGameView from "./use-game-view";
-import InputManager from "../../utils/input-manager";
 import { render, renderHook } from "@testing-library/react";
 
 describe("useGameView hook", () => {
@@ -19,25 +18,6 @@ describe("useGameView hook", () => {
       }
     }
     vi.stubGlobal("WebGL2RenderingContext", _mockClass(WebGL2RenderingContext));
-  });
-
-  it("updates input manager every frame", async () => {
-    // Given a GameView with an input manager
-    // When I wait for a frame to render
-    // Then the input manager should be updated once
-
-    const mockInputManagerUpdate = vi.spyOn(InputManager.prototype, "update");
-    const { result } = renderHook(() => useGameView(() => ({}), []));
-    const { current: GameView } = result;
-
-    render(<GameView />);
-
-    mockInputManagerUpdate.mockClear();
-    await new Promise((resolve) => {
-      requestAnimationFrame(resolve);
-    });
-
-    expect(mockInputManagerUpdate).toHaveBeenCalledOnce();
   });
 
   it("calls fixedUpdate twice when framerate is double the update rate", () => {

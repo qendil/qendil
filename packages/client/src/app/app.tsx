@@ -1,9 +1,9 @@
 import { BoxGeometry, MeshBasicMaterial } from "three";
 import coreInit, { makeGreeting } from "@qendil/core";
-import GameWorld from "../utils/game-world";
+import { EcsManager } from "../utils/ecs";
 import classNames from "classnames";
 
-import type { ReactElement } from "react";
+import { useEffect } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
 import useGameView from "../hooks/use-game-view";
@@ -15,30 +15,45 @@ import commonClasses from "../style/common.module.css";
 
 import {
   Mesh,
+  MeshAttachToScene,
   MeshPositionSystem,
   MeshSmoothPositionSystem,
-} from "../game/mesh";
-import { Position } from "../game/position";
-import { VelocitySystem, Velocity } from "../game/velocity";
+} from "../game/components/mesh";
+import { Position } from "../game/components/position";
+import { VelocitySystem, Velocity } from "../game/components/velocity";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
-} from "../game/third-person-controller";
+} from "../game/components/third-person-controller";
 import {
   SmoothPosition,
   SmoothPositionAnimate,
   SmoothPositionInit,
   SmoothPositionUpdate,
-} from "../game/smooth-position";
+} from "../game/components/smooth-position";
+import { Input, UpdateInputConfig } from "../game/resources/input";
+import { FrameInfo } from "../game/resources/frame-info";
+import { GameConfig } from "../game/resources/game-config";
+import { WorldScene } from "../game/resources/world-scene";
 
-const gameWorld = new GameWorld();
-const updateMeshPosition = gameWorld.watch(MeshPositionSystem);
-const updateMeshSmoothPosition = gameWorld.watch(MeshSmoothPositionSystem);
-const updatePosition = gameWorld.watch(VelocitySystem);
-const updateStickControl = gameWorld.watch(ThirdPersonControlSystem);
-const smoothPositionInit = gameWorld.watch(SmoothPositionInit);
-const smoothPositionUpdate = gameWorld.watch(SmoothPositionUpdate);
-const smoothPositionAnimate = gameWorld.watch(SmoothPositionAnimate);
+import type { ReactElement } from "react";
+
+const gameWorld = new EcsManager();
+
+const gameUpdate = gameWorld
+  .addRunner()
+  .add(UpdateInputConfig)
+  .add(MeshAttachToScene)
+  .add(SmoothPositionInit)
+  .add(SmoothPositionUpdate)
+  .add(SmoothPositionAnimate)
+  .add(ThirdPersonControlSystem)
+  .add(MeshPositionSystem)
+  .add(MeshSmoothPositionSystem);
+
+const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
+
+gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -58,53 +73,57 @@ export default function App(): ReactElement {
 
   const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
 
-  const WorldView = useGameView(
-    ({ scene, input, makePerspectiveCamera }) => {
-      const camera = makePerspectiveCamera();
-      camera.position.z = 5;
+  useEffect(() => {
+    const { input } = gameWorld.resources.get(Input);
+    bindInput(input);
+  }, [bindInput]);
 
-      const geometry = new BoxGeometry();
-      const material = new MeshBasicMaterial({ color: 0xffcc00 });
+  const WorldView = useGameView(({ scene, makePerspectiveCamera }) => {
+    const camera = makePerspectiveCamera();
+    camera.position.z = 5;
 
-      bindInput(input);
+    const geometry = new BoxGeometry();
+    const material = new MeshBasicMaterial({ color: 0xffcc00 });
 
-      const cube = gameWorld
-        .spawn()
-        .insertNew(Mesh, geometry, material)
-        .insert(Position)
-        .insert(SmoothPosition)
-        .insert(Velocity, { factor: 3 })
-        .insert(ThirdPersonController);
+    const cube = gameWorld
+      .spawn()
+      .addNew(Mesh, geometry, material)
+      .add(Position)
+      .add(SmoothPosition)
+      .add(Velocity, { factor: 3 })
+      .add(ThirdPersonController);
 
-      const { mesh } = cube.get(Mesh);
-      scene.add(mesh);
+    const { input } = gameWorld.resources.get(Input);
+    const frameInfo = gameWorld.resources.get(FrameInfo);
+    const gameConfig = gameWorld.resources.get(GameConfig);
+    const { scene: worldScene } = gameWorld.resources.get(WorldScene);
 
-      return {
-        camera,
-        fixedUpdateRate: 1 / 20,
-        onSetup(renderer): void {
-          renderer.setClearColor(0x8a326c);
-        },
-        onUpdate(frametime): void {
-          smoothPositionInit();
-          smoothPositionUpdate();
-          smoothPositionAnimate(frametime, 1 / 20);
-          updateStickControl(input);
-          updateMeshPosition();
-          updateMeshSmoothPosition();
-        },
-        onFixedUpdate(frametime): void {
-          updatePosition(frametime);
-        },
-        onDispose(): void {
-          material.dispose();
-          geometry.dispose();
-          cube.dispose();
-        },
-      };
-    },
-    [bindInput]
-  );
+    scene.add(worldScene);
+
+    return {
+      camera,
+      fixedUpdateRate: gameConfig.fixedUpdateRate,
+      onSetup(renderer): void {
+        renderer.setClearColor(0x8a326c);
+      },
+      onUpdate(frametime): void {
+        frameInfo.frametime = frametime;
+
+        gameUpdate();
+
+        input.update();
+      },
+      onFixedUpdate(): void {
+        gameFixedUpdate();
+      },
+      onDispose(): void {
+        material.dispose();
+        geometry.dispose();
+
+        cube.dispose();
+      },
+    };
+  }, []);
 
   const worldView = (
     <WorldView

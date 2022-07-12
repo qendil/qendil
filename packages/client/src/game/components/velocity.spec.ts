@@ -1,4 +1,5 @@
-import GameWorld from "../utils/game-world";
+import { EcsManager } from "../../utils/ecs";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 import { Velocity, VelocitySystem } from "./velocity";
 
@@ -8,15 +9,17 @@ describe("VelocitySystem", () => {
     // When I trigger the system with dt=1
     // Then the position should be updated accordingly
 
-    const world = new GameWorld();
-    const system = world.watch(VelocitySystem);
+    const world = new EcsManager();
+    world.resources.add(GameConfig, { fixedUpdateRate: 1 });
+
+    const system = world.addSystem(VelocitySystem);
     const entity = world
       .spawn()
-      .insert(Velocity, { x: 10, y: -100 })
-      .insert(Position, { x: 100, y: 500 });
+      .add(Velocity, { x: 10, y: -100 })
+      .add(Position, { x: 100, y: 500 });
     const position = entity.get(Position);
 
-    system(1);
+    system();
 
     expect(position).toEqual({ x: 110, y: 400, z: 0 });
   });

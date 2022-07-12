@@ -1,26 +1,8 @@
-import { useEffect, useMemo } from "react";
-import InputManager, { InputAction } from "../../utils/input-manager";
 import type {
   ThreeViewInitalizerOptions,
   ThreeViewOptions,
 } from "../use-three-view";
 import useThreeView from "../use-three-view";
-
-// Temporary until we have settings
-const KEYBOARD_MAP = {
-  menu: {
-    KeyW: InputAction.Up,
-    ArrowUp: InputAction.Up,
-    KeyD: InputAction.Right,
-    ArrowRight: InputAction.Right,
-    KeyS: InputAction.Down,
-    ArrowDown: InputAction.Down,
-    KeyA: InputAction.Left,
-    ArrowLeft: InputAction.Left,
-    KeyF: InputAction.Interact,
-    Tab: InputAction.Cancel,
-  },
-} as const;
 
 export type GameViewOptions = ThreeViewOptions & {
   /**
@@ -32,19 +14,9 @@ export type GameViewOptions = ThreeViewOptions & {
    * Called every fixed amount of time, disregarding the framerate.
    */
   onFixedUpdate?: (frametime: number) => void;
-
-  /**
-   * Input context to use. Defaults to "menu".
-   */
-  inputContext?: keyof typeof KEYBOARD_MAP;
 };
 
-export type GameViewInitializerOptions = ThreeViewInitalizerOptions & {
-  /**
-   * Input manager
-   */
-  input: InputManager;
-};
+export type GameViewInitializerOptions = ThreeViewInitalizerOptions;
 
 export type GameViewInitializer = (
   options: GameViewInitializerOptions
@@ -60,33 +32,18 @@ export default function useGameView(
   initalizer: GameViewInitializer,
   deps: unknown[]
 ): ReturnType<typeof useThreeView> {
-  const input = useMemo(() => new InputManager(), []);
-
-  useEffect(() => {
-    input.bind();
-
-    return () => {
-      input.dispose();
-    };
-  }, [input]);
-
   return useThreeView((threeInitializerOptions) => {
     const initializerOptions = {
       ...threeInitializerOptions,
-      input,
     };
 
     const {
       fixedUpdateRate = 1 / 50,
-      inputContext = "menu",
       onFixedUpdate,
       onUpdate: onThreeViewUpdate,
       onDispose: onThreeViewDispose,
       ...options
     } = initalizer(initializerOptions) ?? {};
-
-    // Setup input context
-    input.setKeymap(KEYBOARD_MAP[inputContext]);
 
     // Setup onFixedUpdate
     let fixedUpdateID: ReturnType<typeof setTimeout> | undefined;
@@ -119,9 +76,6 @@ export default function useGameView(
     // Update input after renders
     const onUpdate = (frametime: number): void => {
       onThreeViewUpdate?.(frametime);
-
-      // Update input
-      input.update();
     };
 
     const onDispose = (): void => {

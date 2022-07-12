@@ -1,13 +1,13 @@
-import { GameComponent, GameSystem } from "../utils/game-world";
-import { InputAxis } from "../utils/input-manager";
+import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { InputAxis } from "../../utils/input-manager";
 import { Velocity } from "./velocity";
 
-import type InputManager from "../utils/input-manager";
+import { Input } from "../resources/input";
 
 /**
  * Tags entities that are controlled by a third-person camera.
  */
-export class ThirdPersonController extends GameComponent {
+export class ThirdPersonController extends EcsComponent {
   // Nothing here
 }
 
@@ -18,13 +18,14 @@ export class ThirdPersonController extends GameComponent {
  * - Changes the velocity based on the joystick.
  * - Changes the direction of the entity based on the direction of the joystick.
  */
-export const ThirdPersonControlSystem = new GameSystem(
-  [ThirdPersonController.present()],
-  (query, input: InputManager) => {
+export const ThirdPersonControlSystem = new EcsSystem(
+  ({ entities, resources: [inputResource] }) => {
+    const { input } = inputResource;
+
     const lx = input.getAxis(InputAxis.LX);
     const ly = input.getAxis(InputAxis.LY);
 
-    for (const entity of query.asEntities()) {
+    for (const entity of entities.asEntities()) {
       const velocity = entity.tryGet(Velocity);
       if (velocity !== undefined) {
         const { factor: speed } = velocity;
@@ -33,5 +34,6 @@ export const ThirdPersonControlSystem = new GameSystem(
         velocity.y = -ly * speed;
       }
     }
-  }
+  },
+  { entities: [ThirdPersonController.present()], resources: [Input] }
 );

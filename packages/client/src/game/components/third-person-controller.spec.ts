@@ -1,5 +1,6 @@
-import GameWorld from "../utils/game-world";
-import InputManager, { InputAxis } from "../utils/input-manager";
+import { EcsManager } from "../../utils/ecs";
+import { InputAxis } from "../../utils/input-manager";
+import { Input } from "../resources/input";
 import {
   ThirdPersonController,
   ThirdPersonControlSystem,
@@ -12,14 +13,15 @@ describe("ThirdPersonControlSystem", () => {
     // When I call the system
     // Then I should not get an error
 
-    const world = new GameWorld();
-    const input = new InputManager();
-    const system = world.watch(ThirdPersonControlSystem);
+    const world = new EcsManager();
+    world.resources.add(Input);
 
-    world.spawn().insert(ThirdPersonController);
+    const system = world.addSystem(ThirdPersonControlSystem);
+
+    world.spawn().add(ThirdPersonController);
 
     expect(() => {
-      system(input);
+      system();
     }).not.toThrow();
   });
 
@@ -29,23 +31,25 @@ describe("ThirdPersonControlSystem", () => {
     // When I call the system
     // Then the entity's velocity should be updated according to the input
 
-    const world = new GameWorld();
-    const input = new InputManager();
-    const system = world.watch(ThirdPersonControlSystem);
+    const world = new EcsManager();
+    world.resources.add(Input);
+    const { input } = world.resources.get(Input);
+
+    const system = world.addSystem(ThirdPersonControlSystem);
     const entity = world
       .spawn()
-      .insert(ThirdPersonController)
-      .insert(Velocity, { factor: 1 });
+      .add(ThirdPersonController)
+      .add(Velocity, { factor: 1 });
     const velocity = entity.get(Velocity);
 
-    system(input);
+    system();
 
     expect(velocity).toEqual({ factor: 1, x: 0, y: -0, z: 0 });
 
     vi.spyOn(input, "getAxis").mockImplementation((axis: InputAxis) =>
       axis === InputAxis.LX ? 0.5 : -0.75
     );
-    system(input);
+    system();
 
     expect(velocity).toEqual(
       expect.objectContaining({ x: 0.5, y: 0.75, z: 0 })

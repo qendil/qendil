@@ -1,4 +1,6 @@
-import GameWorld from "../utils/game-world";
+import { EcsManager } from "../../utils/ecs";
+import { FrameInfo } from "../resources/frame-info";
+import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 import {
   SmoothPositionInit,
@@ -14,13 +16,13 @@ describe("SmoothPositionInit system", () => {
     // Then the SmoothPosition's current position and origin
     // ... position should match that of the Position component
 
-    const world = new GameWorld();
-    const system = world.watch(SmoothPositionInit);
+    const world = new EcsManager();
+    const system = world.addSystem(SmoothPositionInit);
 
     const entity = world
       .spawn()
-      .insert(SmoothPosition)
-      .insert(Position, { x: 42, y: 12, z: 144 });
+      .add(SmoothPosition)
+      .add(Position, { x: 42, y: 12, z: 144 });
 
     system();
 
@@ -42,13 +44,13 @@ describe("SmoothPositionUpdate system", () => {
     // When I channge the position
     // Then the smooth position component should be updated
 
-    const world = new GameWorld();
-    const system = world.watch(SmoothPositionUpdate);
+    const world = new EcsManager();
+    const system = world.addSystem(SmoothPositionUpdate);
 
     const entity = world
       .spawn()
-      .insert(SmoothPosition)
-      .insert(Position, { x: 42, y: 12, z: 144 });
+      .add(SmoothPosition)
+      .add(Position, { x: 42, y: 12, z: 144 });
 
     // Call system to ignore the first update
     system();
@@ -86,10 +88,14 @@ describe("SmoothPositionAnimate", () => {
     // ... that of the fixed update
     // Then the smooth position should be halfway through
 
-    const world = new GameWorld();
-    const entity = world.spawn().insert(SmoothPosition).insert(Position);
-    const update = world.watch(SmoothPositionUpdate);
-    const animate = world.watch(SmoothPositionAnimate);
+    const world = new EcsManager();
+    world.resources
+      .add(GameConfig, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfo, { frametime: 1 / 60 });
+
+    const entity = world.spawn().add(SmoothPosition).add(Position);
+    const update = world.addSystem(SmoothPositionUpdate);
+    const animate = world.addSystem(SmoothPositionAnimate);
 
     const position = entity.get(Position);
     position.x = 10;
@@ -97,7 +103,7 @@ describe("SmoothPositionAnimate", () => {
     position.z = 1000;
 
     update();
-    animate(1 / 60, 1 / 30);
+    animate();
 
     const smooth = entity.get(SmoothPosition);
 
@@ -112,20 +118,25 @@ describe("SmoothPositionAnimate", () => {
     // When I change the position of one of them
     // Then only one of them will be animated
 
-    const world = new GameWorld();
-    const entityA = world.spawn().insert(SmoothPosition).insert(Position);
-    const entityB = world.spawn().insert(SmoothPosition).insert(Position);
-    const update = world.watch(SmoothPositionUpdate);
-    const animate = world.watch(SmoothPositionAnimate);
+    const world = new EcsManager();
+    world.resources
+      .add(GameConfig, { fixedUpdateRate: 1 / 30 })
+      .add(FrameInfo, { frametime: 1 / 60 });
+
+    const entityA = world.spawn().add(SmoothPosition).add(Position);
+    const entityB = world.spawn().add(SmoothPosition).add(Position);
+    const update = world.addSystem(SmoothPositionUpdate);
+    const animate = world.addSystem(SmoothPositionAnimate);
 
     update();
-    animate(1 / 30, 1 / 30);
+    animate();
+    animate(); // Play 2 frames here to finish both animations
 
     const position = entityA.get(Position);
     position.x = 10;
 
     update();
-    animate(1 / 60, 1 / 30);
+    animate();
 
     const smoothA = entityA.get(SmoothPosition);
     const smoothB = entityB.get(SmoothPosition);
