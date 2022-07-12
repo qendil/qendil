@@ -1,5 +1,5 @@
 import { SetMap } from "../default-map";
-import EntityQueryBuilder from "./ecs-query-builder";
+import EcsQueryBuilder from "./ecs-query-builder";
 import { EcsFilterObject } from "./ecs-component";
 import { EcsEntity } from "./ecs-entity";
 import EcsSystem from "./ecs-system";
@@ -41,7 +41,7 @@ export default class EcsManager {
 
   private readonly entityQueries = new SetMap<
     EcsComponentConstructor,
-    EntityQueryBuilder<any>
+    EcsQueryBuilder<any>
   >();
 
   private readonly resourceQueries = new SetMap<
@@ -60,7 +60,7 @@ export default class EcsManager {
     if (this.disposed) return;
 
     // Dispose of query builders
-    const disposedBuilders = new Set<EntityQueryBuilder>();
+    const disposedBuilders = new Set<EcsQueryBuilder>();
     for (const builders of this.entityQueries.values()) {
       for (const builder of builders) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -186,7 +186,7 @@ export default class EcsManager {
 
     const callback = callbackOrSystem;
     const filters = Array.isArray(filterQuery)
-      ? { entities: filterQuery, resources: [] as TResourceFilter }
+      ? { entities: filterQuery }
       : filterQuery;
 
     const entityFilters = filters.entities ?? ([] as TFilter);
@@ -261,8 +261,8 @@ export default class EcsManager {
    */
   public createEntityQuery<TFilter extends ComponentFilterTuple>(
     filters: TFilter
-  ): EntityQueryBuilder<TFilter> {
-    const builder = new EntityQueryBuilder<TFilter>(
+  ): EcsQueryBuilder<TFilter> {
+    const builder = new EcsQueryBuilder<TFilter>(
       filters,
       this.entities,
       this._disposeQueryBuilder.bind(this)
@@ -284,7 +284,7 @@ export default class EcsManager {
    * @param builder - The query builder to dispose of
    */
   private _disposeQueryBuilder<TFilter extends ComponentFilterTuple>(
-    builder: EntityQueryBuilder<TFilter>
+    builder: EcsQueryBuilder<TFilter>
   ): void {
     for (const filter of builder.filters) {
       const filterComponent = this._getFilterComponent(filter);

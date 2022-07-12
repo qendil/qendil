@@ -6,6 +6,7 @@ import type {
 } from "./ecs-resource";
 import type EcsResourceManager from "./ecs-resource-manager";
 import type { ResourceFilterTuple, ResourceInstances } from "./types";
+import { SetMap } from "../default-map";
 
 export default class EcsResourceQuery<
   TResourceFilter extends ResourceFilterTuple = []
@@ -13,8 +14,8 @@ export default class EcsResourceQuery<
   public readonly filters: TResourceFilter;
   private readonly manager: EcsResourceManager;
 
-  private readonly resourcesToChange = new Set<EcsResourceConstructor>();
-  private readonly changedResources = new Set<EcsResourceConstructor>();
+  private readonly operations = new SetMap<string, EcsResourceConstructor>();
+  private readonly tracked = new SetMap<string, EcsResourceConstructor>();
 
   private readonly onDispose: (
     query: EcsResourceQuery<TResourceFilter>
@@ -33,11 +34,8 @@ export default class EcsResourceQuery<
       if (constructor instanceof EcsResourceFilterObject) {
         const { operation, resource } = constructor;
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (operation === "changed") {
-          this.resourcesToChange.add(resource);
-          this.changedResources.add(resource);
-        }
+        this.operations.get(operation).add(resource);
+        this.tracked.get(operation).add(resource);
       }
     }
   }
@@ -53,7 +51,7 @@ export default class EcsResourceQuery<
    * Update the query.
    */
   public update(): void {
-    this.changedResources.clear();
+    this.tracked.clear();
   }
 
   /**
@@ -73,8 +71,10 @@ export default class EcsResourceQuery<
       resourceList.push(this.manager.get(constructor));
     }
 
-    if (this.changedResources.size !== this.resourcesToChange.size) {
-      return undefined;
+    for (const [operation, resources] of this.operations) {
+      if (this.tracked.get(operation).size !== resources.size) {
+        return undefined;
+      }
     }
 
     return resourceList as ResourceInstances<TResourceFilter>;
@@ -83,11 +83,12 @@ export default class EcsResourceQuery<
   /**
    * Notifies the query that a resource has changed.
    *
+   * @internal
    * @param resource - The resource that changed
    */
   public _onResourceChanged(resource: EcsResourceConstructor): void {
-    if (this.resourcesToChange.has(resource)) {
-      this.changedResources.add(resource);
+    if (this.operations.get("changed").has(resource)) {
+      this.tracked.get("changed").add(resource);
     }
   }
 }

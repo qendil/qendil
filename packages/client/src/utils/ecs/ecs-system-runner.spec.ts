@@ -1,6 +1,6 @@
 import EcsComponent from "./ecs-component";
 import EcsManager from "./ecs-manager";
-import EntityQueryBuilder from "./ecs-query-builder";
+import EcsQueryBuilder from "./ecs-query-builder";
 import EcsSystem from "./ecs-system";
 
 describe("ECS System runner", () => {
@@ -42,8 +42,8 @@ describe("ECS System runner", () => {
     const runner = world.addRunner().add(SystemA);
 
     // There's nothing else to spy on,
-    // so we just spy on when the EntityQueryBuilder is disposed
-    const disposeSpy = vi.spyOn(EntityQueryBuilder.prototype, "dispose");
+    // so we just spy on when the EcsQueryBuilder is disposed
+    const disposeSpy = vi.spyOn(EcsQueryBuilder.prototype, "dispose");
     runner.dispose();
 
     expect(disposeSpy).toHaveBeenCalledOnce();
