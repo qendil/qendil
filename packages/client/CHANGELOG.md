@@ -7,6 +7,7 @@
 **Implemented enhancements:**
 
 - Ecs add resources [\#168](https://github.com/qendil/qendil/pull/168)
+- Ecs improvements [\#167](https://github.com/qendil/qendil/pull/167)
 - Add smooth position animation [\#164](https://github.com/qendil/qendil/pull/164)
 - ECS Refactoring and improvements [\#125](https://github.com/qendil/qendil/pull/125)
 
