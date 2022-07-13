@@ -1,4 +1,4 @@
-import { ArrayMap, SetMap } from "../default-map";
+import { ArrayMap, SetMap } from "@qendil/client-common/default-map";
 
 export enum InputAction {
   Interact = "interact",

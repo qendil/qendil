@@ -1,4 +1,4 @@
-import { EcsManager } from "../../utils/ecs";
+import { EcsManager } from "@qendil/client-common/ecs";
 import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";
 import { Velocity, VelocitySystem } from "./velocity";

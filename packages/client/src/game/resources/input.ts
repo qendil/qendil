@@ -1,4 +1,4 @@
-import { EcsResource, EcsSystem } from "../../utils/ecs";
+import { EcsResource, EcsSystem } from "@qendil/client-common/ecs";
 import InputManager, { InputAction } from "../../utils/input-manager";
 
 const GLOBAL_INPUT_MANAGER = new InputManager();

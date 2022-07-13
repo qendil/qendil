@@ -1,4 +1,4 @@
-import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { EcsComponent, EcsSystem } from "@qendil/client-common/ecs";
 import { InputAxis } from "../../utils/input-manager";
 import { Velocity } from "./velocity";
 
