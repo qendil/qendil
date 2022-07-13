@@ -17,6 +17,7 @@
 
 **Other changes:**
 
+- Extract the client-common package [\#174](https://github.com/qendil/qendil/pull/174)
 - Rename client workers [\#163](https://github.com/qendil/qendil/pull/163)
 
 ## [0.1.0](https://github.com/qendil/qendil/tree/client/0.1.0) (2022-06-26)
