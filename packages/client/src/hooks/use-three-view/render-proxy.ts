@@ -1,7 +1,7 @@
 import type { Camera, Scene, WebGLRendererParameters } from "three";
 import { WebGLRenderer } from "three";
 
-import DefaultMap from "../../utils/default-map";
+import DefaultMap from "@qendil/client-common/default-map";
 
 // eslint-disable-next-line camelcase
 type WebGlLoseContext = WEBGL_lose_context;

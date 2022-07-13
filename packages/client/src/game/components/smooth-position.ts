@@ -1,4 +1,4 @@
-import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { EcsComponent, EcsSystem } from "@qendil/client-common/ecs";
 import { FrameInfo } from "../resources/frame-info";
 import { GameConfig } from "../resources/game-config";
 import { Position } from "./position";

@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../../ts-out/workers",
+    "outDir": "../../ts-out/client-workers",
     "lib": [
       "Webworker",
       "Webworker.Iterable",

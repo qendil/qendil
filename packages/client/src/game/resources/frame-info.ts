@@ -1,4 +1,4 @@
-import { EcsResource } from "../../utils/ecs";
+import { EcsResource } from "@qendil/client-common/ecs";
 
 /**
  * Tracks informations about the last frame.

@@ -1,5 +1,5 @@
 import { Scene } from "three";
-import { EcsResource } from "../../utils/ecs";
+import { EcsResource } from "@qendil/client-common/ecs";
 
 /**
  * Contains the main 3D scene of the game.

@@ -1,4 +1,4 @@
-import { EcsManager } from "../../utils/ecs";
+import { EcsManager } from "@qendil/client-common/ecs";
 import InputManager from "../../utils/input-manager";
 import { Input, UpdateInputConfig } from "./input";
 

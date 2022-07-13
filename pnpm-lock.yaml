@@ -58,6 +58,7 @@ importers:
   packages/client:
     specifiers:
       '@juggle/resize-observer': ^3.3.1
+      '@qendil/client-common': workspace:*
       '@qendil/client-workers': workspace:*
       '@qendil/core': workspace:*
       '@sentry/react': ^7.6.0
@@ -101,6 +102,7 @@ importers:
       workbox-window: ^6.5.3
     dependencies:
       '@juggle/resize-observer': 3.3.1
+      '@qendil/client-common': link:../client-common
       '@qendil/client-workers': link:../client-workers
       '@qendil/core': link:../core
       '@sentry/react': 7.6.0_react@18.2.0
@@ -144,6 +146,16 @@ importers:
       electron-devtools-installer: 3.2.0
       jsdom: 20.0.0
       vitest: 0.18.0_c8@7.11.3+jsdom@20.0.0
+
+  packages/client-common:
+    specifiers:
+      c8: ^7.11.3
+      vite: ^2.9.14
+      vitest: ^0.18.0
+    devDependencies:
+      c8: 7.11.3
+      vite: 2.9.14
+      vitest: 0.18.0_c8@7.11.3
 
   packages/client-workers:
     specifiers:

@@ -1,4 +1,4 @@
-import { EcsComponent } from "../../utils/ecs";
+import { EcsComponent } from "@qendil/client-common/ecs";
 
 /**
  * Tags entities that have a position.

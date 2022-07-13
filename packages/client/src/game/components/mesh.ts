@@ -1,5 +1,5 @@
 import { Mesh as ThreeMesh, Object3D } from "three";
-import { EcsComponent, EcsSystem } from "../../utils/ecs";
+import { EcsComponent, EcsSystem } from "@qendil/client-common/ecs";
 import { Position } from "./position";
 import { SmoothPosition } from "./smooth-position";
 import { WorldScene } from "../resources/world-scene";
