@@ -1,9 +1,17 @@
+import type EcsManager from "./ecs-manager";
 import type { EcsQuery } from "./ecs-query";
 import type {
   ComponentFilterTuple,
   ResourceFilterTuple,
   ResourceInstances,
 } from "./types";
+
+/**
+ * Represents a command to run on an ECS manager.
+ *
+ * Exposed to ECS systems and run directly after the system.
+ */
+export type EcsCommand = (manager: EcsManager) => void;
 
 /**
  * An object to query entities and components for a system.
@@ -25,6 +33,7 @@ export type SystemQueryResult<
 > = {
   entities: EcsQuery<TFilter>;
   resources: ResourceInstances<TResourceFilter>;
+  command: (command: EcsCommand) => void;
 };
 
 /**

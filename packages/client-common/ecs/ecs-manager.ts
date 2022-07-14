@@ -17,6 +17,7 @@ import type {
   EcsSystemHandle,
   SystemQuery,
   SystemQueryResult,
+  EcsCommand,
 } from "./ecs-system";
 import type { EcsResourceConstructor } from "./ecs-resource";
 import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
@@ -196,11 +197,20 @@ export default class EcsManager {
     const resourceFilters = filters.resources ?? ([] as TResourceFilter);
     const resourceQuery = this.createResourceQuery(resourceFilters);
 
+    const commands: EcsCommand[] = [];
+    const command = (pending: EcsCommand): void => {
+      commands.push(pending);
+    };
+
     const system: EcsSystemHandle = () => {
       const resources = resourceQuery.getResources();
 
       if (resources !== undefined) {
-        callback({ entities, resources });
+        callback({ entities, resources, command });
+      }
+
+      for (const pendingCommand of commands) {
+        pendingCommand(this);
       }
 
       entityQuery.update();
