@@ -5,6 +5,7 @@ import { WorldScene } from "../resources/world-scene";
 import {
   Mesh,
   MeshAttachToScene,
+  MeshColor,
   MeshPositionSystem,
   MeshSmoothPositionSystem,
 } from "./mesh";
@@ -35,6 +36,51 @@ describe("Mesh component", () => {
 
     entity.dispose();
     expect(scene.children).toHaveLength(0);
+  });
+
+  it("correctly disposes of the geometry and material when disposed", () => {
+    // Given an entity with a mesh component
+    // When the entity is disposed
+    // The entity's geometry and material should be disposed
+
+    const world = new EcsManager();
+    world.resources.add(WorldScene);
+    const system = world.addSystem(MeshAttachToScene);
+
+    const entity = world.spawn().add(Mesh);
+
+    system();
+
+    const { geometry, material } = entity.get(Mesh);
+    const spyGeometryDispose = vi.spyOn(geometry, "dispose");
+    const spyMaterialDispose = vi.spyOn(material, "dispose");
+
+    entity.dispose();
+
+    expect(spyGeometryDispose).toHaveBeenCalled();
+    expect(spyMaterialDispose).toHaveBeenCalled();
+  });
+});
+
+describe("MeshColor", () => {
+  it("correctly updates the material's color", () => {
+    // Given an entity with a mesh component
+    // When I update the mesh's color
+    // The mesh's material should be updated accordingly
+
+    const world = new EcsManager();
+    const entity = world.spawn().add(Mesh);
+    const system = world.addSystem(MeshColor);
+
+    const mesh = entity.get(Mesh);
+    const { material } = mesh;
+
+    expect(material.color.getHex()).toBe(0xffffff);
+
+    mesh.color = 0xffcc00;
+    system();
+
+    expect(material.color.getHex()).toBe(0xffcc00);
   });
 });
 
