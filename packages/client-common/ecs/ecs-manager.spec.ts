@@ -349,6 +349,37 @@ describe("EcsManager system", () => {
     expect(query).toHaveLength(1);
     expect(query).toEqual([[{ x: 144, y: 12 }]]);
   });
+
+  it("cleans up commands after each run", () => {
+    // Given a system that runs a command that spawns a single entity
+    // When I call the system 3 times
+    // Then only 3 entities should be spawned
+
+    const world = new EcsManager();
+    const spawningSystem = world.addSystem(({ command }) => {
+      command((manager) => {
+        manager.spawn().add(Position);
+      });
+    }, []);
+
+    let query: EcsEntity[] = [];
+    const querySystem = world.addSystem(
+      ({ entities }) => {
+        query = [...entities.asEntities()];
+      },
+      [Position]
+    );
+
+    querySystem();
+    expect(query).toHaveLength(0);
+
+    spawningSystem();
+    spawningSystem();
+    spawningSystem();
+    querySystem();
+
+    expect(query).toHaveLength(3);
+  });
 });
 
 describe("EcsManager resources", () => {
