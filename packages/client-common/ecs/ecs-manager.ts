@@ -213,6 +213,9 @@ export default class EcsManager {
         pendingCommand(this);
       }
 
+      // Clear the commands stack
+      commands.length = 0;
+
       entityQuery.update();
       resourceQuery.update();
     };
