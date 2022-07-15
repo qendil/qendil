@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Standalone mesh component [\#179](https://github.com/qendil/qendil/pull/179)
 - Ecs add resources [\#168](https://github.com/qendil/qendil/pull/168)
 - Ecs improvements [\#167](https://github.com/qendil/qendil/pull/167)
 - Add smooth position animation [\#164](https://github.com/qendil/qendil/pull/164)
