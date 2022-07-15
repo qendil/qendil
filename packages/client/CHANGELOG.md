@@ -17,6 +17,7 @@
 
 **Other changes:**
 
+- Add a basic ECS commands system [\#177](https://github.com/qendil/qendil/pull/177)
 - Extract the client-common package [\#174](https://github.com/qendil/qendil/pull/174)
 - Rename client workers [\#163](https://github.com/qendil/qendil/pull/163)
 
