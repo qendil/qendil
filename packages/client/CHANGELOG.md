@@ -13,6 +13,7 @@
 
 **Fixed bugs:**
 
+- Fix ECS commands not cleaning up after each run [\#180](https://github.com/qendil/qendil/pull/180)
 - Fix useWasm failing when the initializer resolves to undefined [\#129](https://github.com/qendil/qendil/pull/129)
 
 **Other changes:**
