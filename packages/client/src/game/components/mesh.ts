@@ -1,4 +1,9 @@
-import { Mesh as ThreeMesh, Object3D } from "three";
+import {
+  BoxGeometry,
+  Mesh as ThreeMesh,
+  MeshBasicMaterial,
+  Object3D,
+} from "three";
 import { EcsComponent, EcsSystem } from "@qendil/client-common/ecs";
 import { Position } from "./position";
 import { SmoothPosition } from "./smooth-position";
@@ -8,13 +13,11 @@ import { WorldScene } from "../resources/world-scene";
  * Tags entities that have a 3D mesh attached to them.
  */
 export class Mesh extends EcsComponent {
-  public mesh: ThreeMesh;
+  public material = new MeshBasicMaterial();
+  public geometry = new BoxGeometry();
+  public mesh = new ThreeMesh(this.geometry, this.material);
 
-  public constructor(...args: ConstructorParameters<typeof ThreeMesh>) {
-    super();
-
-    this.mesh = new ThreeMesh(...args);
-  }
+  public color = 0;
 
   public dispose(): void {
     const { parent } = this.mesh;
@@ -22,8 +25,20 @@ export class Mesh extends EcsComponent {
     if (parent instanceof Object3D) {
       parent.remove(this.mesh);
     }
+
+    this.geometry.dispose();
+    this.material.dispose();
   }
 }
+
+export const MeshColor = new EcsSystem(
+  ({ entities }) => {
+    for (const [{ material, color }] of entities) {
+      material.color.setHex(color);
+    }
+  },
+  [Mesh, Mesh.changed()]
+);
 
 /**
  * Updates the mesh's position based on the entity's position.

@@ -1,4 +1,3 @@
-import { BoxGeometry, MeshBasicMaterial } from "three";
 import coreInit, { makeGreeting } from "@qendil/core";
 import { EcsManager } from "@qendil/client-common/ecs";
 import classNames from "classnames";
@@ -16,6 +15,7 @@ import commonClasses from "../style/common.module.css";
 import {
   Mesh,
   MeshAttachToScene,
+  MeshColor,
   MeshPositionSystem,
   MeshSmoothPositionSystem,
 } from "../game/components/mesh";
@@ -49,6 +49,7 @@ const gameUpdate = gameWorld
   .add(SmoothPositionAnimate)
   .add(ThirdPersonControlSystem)
   .add(MeshPositionSystem)
+  .add(MeshColor)
   .add(MeshSmoothPositionSystem);
 
 const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
@@ -82,12 +83,9 @@ export default function App(): ReactElement {
     const camera = makePerspectiveCamera();
     camera.position.z = 5;
 
-    const geometry = new BoxGeometry();
-    const material = new MeshBasicMaterial({ color: 0xffcc00 });
-
     const cube = gameWorld
       .spawn()
-      .addNew(Mesh, geometry, material)
+      .add(Mesh, { color: Math.random() * 0xffffff })
       .add(Position)
       .add(SmoothPosition)
       .add(Velocity, { factor: 3 })
@@ -117,9 +115,6 @@ export default function App(): ReactElement {
         gameFixedUpdate();
       },
       onDispose(): void {
-        material.dispose();
-        geometry.dispose();
-
         cube.dispose();
       },
     };
