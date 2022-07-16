@@ -17,7 +17,8 @@
     "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "exports": {
-    "./service-worker": "./src/service-worker/index.ts"
+    "./service-worker": "./src/service-worker/index.ts",
+    "./world-worker": "./src/world-worker/index.ts"
   },
   "dependencies": {
     "workbox-precaching": "^6.5.3",

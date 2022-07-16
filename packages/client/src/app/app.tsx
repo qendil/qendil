@@ -37,6 +37,7 @@ import { GameConfig } from "../game/resources/game-config";
 import { WorldScene } from "../game/resources/world-scene";
 
 import type { ReactElement } from "react";
+import initWorker from "../game/init-worker";
 
 const gameWorld = new EcsManager();
 
@@ -55,6 +56,14 @@ const gameUpdate = gameWorld
 const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
 
 gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
+
+initWorker(gameWorld)
+  .then(() => {
+    // TODO
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert

@@ -128,7 +128,6 @@ module.exports = {
       { ignoreStringArrays: true },
     ],
     "@typescript-eslint/return-await": ["error", "in-try-catch"],
-    "@typescript-eslint/sort-type-union-intersection-members": "warn",
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "@typescript-eslint/unbound-method": ["error", { ignoreStatic: true }],
     "@typescript-eslint/no-unsafe-assignment": "off",
@@ -210,6 +209,7 @@ module.exports = {
       "error",
       { checkArrowFunctions: false },
     ],
+    "unicorn/require-post-message-target-origin": "off",
   },
   overrides: [
     {
