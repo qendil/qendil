@@ -16,23 +16,26 @@ export type EcsCommand = (manager: EcsManager) => void;
 /**
  * An object to query entities and components for a system.
  */
-export type SystemQuery<
-  TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple
-> = {
-  entities?: TFilter;
-  resources?: TResourceFilter;
+export type SystemQuery = Record<
+  Exclude<string, "command" | "resources">,
+  ComponentFilterTuple | ResourceFilterTuple
+> & {
+  resources?: ResourceFilterTuple;
+  command?: never;
 };
 
 /**
  * An object with the results of a System Query.
  */
-export type SystemQueryResult<
-  TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple
-> = {
-  entities: EcsQuery<TFilter>;
-  resources: ResourceInstances<TResourceFilter>;
+export type SystemQueryResult<T extends SystemQuery> = {
+  [K in Exclude<
+    keyof T,
+    "command" | "resources"
+  >]: T[K] extends ComponentFilterTuple ? EcsQuery<T[K]> : undefined;
+} & {
+  resources: T["resources"] extends ResourceFilterTuple
+    ? ResourceInstances<T["resources"]>
+    : [];
   command: (command: EcsCommand) => void;
 };
 
@@ -41,18 +44,13 @@ export type SystemQueryResult<
  *
  * Systems operate on all entities of a given Component filter.
  */
-export default class EcsSystem<
-  TFilter extends ComponentFilterTuple = ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple = ResourceFilterTuple
-> {
-  public readonly query: SystemQuery<TFilter, TResourceFilter>;
-  public readonly callback: (
-    query: SystemQueryResult<TFilter, TResourceFilter>
-  ) => void;
+export default class EcsSystem<T extends SystemQuery> {
+  public readonly query: T;
+  public readonly callback: (query: SystemQueryResult<T>) => void;
 
   public constructor(
-    query: SystemQuery<TFilter, TResourceFilter>,
-    callback: (query: SystemQueryResult<TFilter, TResourceFilter>) => void
+    query: T,
+    callback: (query: SystemQueryResult<T>) => void
   ) {
     this.query = query;
 

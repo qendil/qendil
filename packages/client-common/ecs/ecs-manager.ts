@@ -1,10 +1,10 @@
-import { SetMap } from "../default-map";
 import EcsQueryBuilder from "./ecs-query-builder";
+import EcsResourceManager from "./ecs-resource-manager";
+import EcsResourceQuery from "./ecs-resource-query";
+import { SetMap } from "../default-map";
 import { EcsFilterObject } from "./ecs-component";
 import { EcsEntity } from "./ecs-entity";
-import EcsResourceManager from "./ecs-resource-manager";
 import { EcsResourceFilterObject } from "./ecs-resource";
-import EcsResourceQuery from "./ecs-resource-query";
 import { makeSystemRunner } from "./ecs-system-runner";
 
 import type {
@@ -16,10 +16,13 @@ import type {
   default as EcsSystem,
   EcsSystemHandle,
   EcsCommand,
+  SystemQuery,
+  SystemQueryResult,
 } from "./ecs-system";
 import type { EcsResourceConstructor } from "./ecs-resource";
 import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
 import type { EcsSystemRunner } from "./ecs-system-runner";
+import type { EcsQuery } from "./ecs-query";
 
 /**
  * Unexposed wrapper that implements GameEntity
@@ -121,21 +124,32 @@ export default class EcsManager {
    * @param system - A GameSystem instance to define the system
    * @returns A system handle
    */
-  public addSystem<
-    TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple
-  >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle {
+  public addSystem<T extends SystemQuery>(
+    system: EcsSystem<T>
+  ): EcsSystemHandle {
     const { callback, query } = system;
 
     if (this.disposed) {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
-    const entityFilters = query.entities ?? ([] as TFilter);
-    const entityQuery = this.createEntityQuery(entityFilters);
-    const entities = entityQuery.wrap();
+    const entityQueries: Record<string, EcsQuery<ComponentFilterTuple>> = {};
+    const entityQueryBuilders: Array<EcsQueryBuilder<ComponentFilterTuple>> =
+      [];
 
-    const resourceFilters = query.resources ?? ([] as TResourceFilter);
+    for (const key in query) {
+      if (key === "command") continue;
+      if (key === "resources") continue;
+
+      const filters = query[key] as ComponentFilterTuple | undefined;
+      if (filters === undefined) continue;
+
+      const builder = this.createEntityQuery(filters);
+      entityQueryBuilders.push(builder);
+      entityQueries[key] = builder.wrap();
+    }
+
+    const resourceFilters = query.resources ?? [];
     const resourceQuery = this.createResourceQuery(resourceFilters);
 
     const commands: EcsCommand[] = [];
@@ -147,7 +161,11 @@ export default class EcsManager {
       const resources = resourceQuery.getResources();
 
       if (resources !== undefined) {
-        callback({ entities, resources, command });
+        callback({
+          ...entityQueries,
+          resources,
+          command,
+        } as SystemQueryResult<T>);
       }
 
       for (const pendingCommand of commands) {
@@ -157,7 +175,10 @@ export default class EcsManager {
       // Clear the commands stack
       commands.length = 0;
 
-      entityQuery.update();
+      for (const entityQuery of entityQueryBuilders) {
+        entityQuery.update();
+      }
+
       resourceQuery.update();
     };
 
@@ -165,7 +186,10 @@ export default class EcsManager {
     handle.dispose = (): void => {
       if (disposed) return;
 
-      entityQuery.dispose();
+      for (const entityQuery of entityQueryBuilders) {
+        entityQuery.dispose();
+      }
+
       resourceQuery.dispose();
 
       disposed = true;

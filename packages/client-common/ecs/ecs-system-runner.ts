@@ -1,12 +1,16 @@
 import type EcsManager from "./ecs-manager";
-import type { default as EcsSystem, EcsSystemHandle } from "./ecs-system";
+import type {
+  default as EcsSystem,
+  EcsSystemHandle,
+  SystemQuery,
+} from "./ecs-system";
 
 /**
  * A helper to manage and run systems in bulk.
  */
 export type EcsSystemRunner = {
   (): void;
-  add: (system: EcsSystem) => EcsSystemRunner;
+  add: <T extends SystemQuery>(system: EcsSystem<T>) => EcsSystemRunner;
   dispose: () => void;
 };
 
@@ -25,7 +29,9 @@ export function makeSystemRunner(manager: EcsManager): EcsSystemRunner {
     }
   };
 
-  scheduler.add = (system: EcsSystem): EcsSystemRunner => {
+  scheduler.add = <T extends SystemQuery>(
+    system: EcsSystem<T>
+  ): EcsSystemRunner => {
     const handle = manager.addSystem(system);
     systems.push(handle);
 
