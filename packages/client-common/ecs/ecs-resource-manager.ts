@@ -4,21 +4,27 @@ import type {
 } from "./ecs-resource";
 
 /**
- * Lifecycle hookes privately exposed by the ECS manager.
+ * Lifecycle hooks privately exposed by the ECS manager.
+ *
+ * @internal
  */
 export type EcsResourceLifecycleHooks = {
   onResourceChanged: (resource: EcsResourceConstructor) => void;
 };
 
+/**
+ * A pseudo entity that contains global resources
+ *
+ * @internal
+ */
 export default class EcsResourceManager {
-  private disposed = false;
-  private readonly hooks: EcsResourceLifecycleHooks;
-
   private readonly resources = new Map<EcsResourceConstructor, EcsResource>();
+  private disposed = false;
 
-  public constructor(hooks: EcsResourceLifecycleHooks) {
-    this.hooks = hooks;
-  }
+  /**
+   * @internal
+   */
+  public constructor(private readonly hooks: EcsResourceLifecycleHooks) {}
 
   /**
    * Disposes of all resources of this manager

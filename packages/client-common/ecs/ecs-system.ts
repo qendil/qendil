@@ -8,31 +8,39 @@ import type {
 
 /**
  * Represents a command to run on an ECS manager.
- *
  * Exposed to ECS systems and run directly after the system.
+ *
+ * @internal
  */
 export type EcsCommand = (manager: EcsManager) => void;
 
 /**
  * An object to query entities and components for a system.
+ *
+ * @internal
  */
-export type SystemQuery<
-  TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple
-> = {
-  entities?: TFilter;
-  resources?: TResourceFilter;
+export type SystemQuery = Record<
+  Exclude<string, "command" | "resources">,
+  ComponentFilterTuple | ResourceFilterTuple
+> & {
+  resources?: ResourceFilterTuple;
+  command?: never;
 };
 
 /**
  * An object with the results of a System Query.
+ *
+ * @internal
  */
-export type SystemQueryResult<
-  TFilter extends ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple
-> = {
-  entities: EcsQuery<TFilter>;
-  resources: ResourceInstances<TResourceFilter>;
+export type SystemQueryResult<T extends SystemQuery> = {
+  [K in Exclude<
+    keyof T,
+    "command" | "resources"
+  >]: T[K] extends ComponentFilterTuple ? EcsQuery<T[K]> : undefined;
+} & {
+  resources: T["resources"] extends ResourceFilterTuple
+    ? ResourceInstances<T["resources"]>
+    : [];
   command: (command: EcsCommand) => void;
 };
 
@@ -41,22 +49,17 @@ export type SystemQueryResult<
  *
  * Systems operate on all entities of a given Component filter.
  */
-export default class EcsSystem<
-  TFilter extends ComponentFilterTuple = ComponentFilterTuple,
-  TResourceFilter extends ResourceFilterTuple = ResourceFilterTuple
-> {
-  public readonly query: SystemQuery<TFilter, TResourceFilter>;
-  public readonly handle: (
-    query: SystemQueryResult<TFilter, TResourceFilter>
-  ) => void;
+export default class EcsSystem<T extends SystemQuery> {
+  public readonly query: T;
+  public readonly callback: (query: SystemQueryResult<T>) => void;
 
   public constructor(
-    handler: (query: SystemQueryResult<TFilter, TResourceFilter>) => void,
-    query: SystemQuery<TFilter, TResourceFilter> | TFilter
+    query: T,
+    callback: (query: SystemQueryResult<T>) => void
   ) {
-    this.query = Array.isArray(query) ? { entities: query } : query;
+    this.query = query;
 
-    this.handle = handler;
+    this.callback = callback;
   }
 }
 

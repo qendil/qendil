@@ -12,15 +12,15 @@ describe("ECS System runner", () => {
     // Then A, B and C are run in that order
 
     const callbackA = vi.fn();
-    const SystemA = new EcsSystem(callbackA, {});
+    const SystemA = new EcsSystem({}, callbackA);
     const callbackB = vi.fn(() => {
       expect(callbackA).toHaveBeenCalledOnce();
     });
-    const SystemB = new EcsSystem(callbackB, {});
+    const SystemB = new EcsSystem({}, callbackB);
     const callbackC = vi.fn(() => {
       expect(callbackB).toHaveBeenCalledOnce();
     });
-    const SystemC = new EcsSystem(callbackC, {});
+    const SystemC = new EcsSystem({}, callbackC);
 
     const world = new EcsManager();
     const runner = world.addRunner().add(SystemA).add(SystemB).add(SystemC);
@@ -36,7 +36,7 @@ describe("ECS System runner", () => {
     // Then the systems A should be disposed of
 
     class DummyComponent extends EcsComponent {}
-    const SystemA = new EcsSystem(vi.fn(), [DummyComponent]);
+    const SystemA = new EcsSystem({ entities: [DummyComponent] }, vi.fn());
 
     const world = new EcsManager();
     const runner = world.addRunner().add(SystemA);

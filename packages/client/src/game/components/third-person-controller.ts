@@ -7,9 +7,7 @@ import { Input } from "../resources/input";
 /**
  * Tags entities that are controlled by a third-person camera.
  */
-export class ThirdPersonController extends EcsComponent {
-  // Nothing here
-}
+export class ThirdPersonController extends EcsComponent {}
 
 /**
  * Updates controllable entities based on the input.
@@ -19,6 +17,7 @@ export class ThirdPersonController extends EcsComponent {
  * - Changes the direction of the entity based on the direction of the joystick.
  */
 export const ThirdPersonControlSystem = new EcsSystem(
+  { entities: [ThirdPersonController.present()], resources: [Input] },
   ({ entities, resources: [inputResource] }) => {
     const { input } = inputResource;
 
@@ -34,6 +33,5 @@ export const ThirdPersonControlSystem = new EcsSystem(
         velocity.y = -ly * speed;
       }
     }
-  },
-  { entities: [ThirdPersonController.present()], resources: [Input] }
+  }
 );
