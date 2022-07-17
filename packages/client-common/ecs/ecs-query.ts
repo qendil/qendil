@@ -69,4 +69,18 @@ export class EcsQuery<TFilter extends ComponentFilterTuple> {
       entity.get(component)
     ) as ComponentInstances<TFilter>;
   }
+
+  /**
+   * Update the query. This resets changes monitor.
+   */
+  public update(): void {
+    this.builder.update();
+  }
+
+  /**
+   * Dispose the query, and clean up internal references to it.
+   */
+  public dispose(): void {
+    this.builder.dispose();
+  }
 }

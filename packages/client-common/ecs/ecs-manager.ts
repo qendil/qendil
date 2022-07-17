@@ -124,8 +124,6 @@ export default class EcsManager {
     }
 
     const entityQueries: Record<string, EcsQuery<ComponentFilterTuple>> = {};
-    const entityQueryBuilders: Array<EcsQueryBuilder<ComponentFilterTuple>> =
-      [];
 
     for (const key in query) {
       if (key === "command") continue;
@@ -134,9 +132,8 @@ export default class EcsManager {
       const filters = query[key] as ComponentFilterTuple | undefined;
       if (filters === undefined) continue;
 
-      const builder = this.createEntityQuery(filters);
-      entityQueryBuilders.push(builder);
-      entityQueries[key] = builder.wrap();
+      const entityQuery = this.watch(...filters);
+      entityQueries[key] = entityQuery;
     }
 
     const resourceFilters = query.resources ?? [];
@@ -165,7 +162,7 @@ export default class EcsManager {
       // Clear the commands stack
       commands.length = 0;
 
-      for (const entityQuery of entityQueryBuilders) {
+      for (const entityQuery of Object.values(entityQueries)) {
         entityQuery.update();
       }
 
@@ -176,7 +173,7 @@ export default class EcsManager {
     handle.dispose = (): void => {
       if (disposed) return;
 
-      for (const entityQuery of entityQueryBuilders) {
+      for (const entityQuery of Object.values(entityQueries)) {
         entityQuery.dispose();
       }
 
@@ -227,7 +224,7 @@ export default class EcsManager {
    * @param filters - List of component filters to track
    * @returns a query builder
    */
-  public createEntityQuery<TFilter extends ComponentFilterTuple>(
+  private createEntityQuery<TFilter extends ComponentFilterTuple>(
     filters: TFilter
   ): EcsQueryBuilder<TFilter> {
     const builder = new EcsQueryBuilder<TFilter>(
@@ -243,6 +240,18 @@ export default class EcsManager {
     }
 
     return builder;
+  }
+
+  /**
+   * Create an entity query object for the given filters.
+   *
+   * @param filters - List of component filters to track
+   * @returns a query object
+   */
+  public watch<TFilter extends ComponentFilterTuple>(
+    ...filters: TFilter
+  ): EcsQuery<TFilter> {
+    return this.createEntityQuery(filters).wrap();
   }
 
   /**
