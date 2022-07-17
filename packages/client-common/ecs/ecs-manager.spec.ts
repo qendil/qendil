@@ -10,6 +10,10 @@ class Position extends EcsComponent {
   public y = 0;
 }
 
+class Rotation extends EcsComponent {
+  public angle = 0;
+}
+
 class DummyResource extends EcsResource {
   public value = "hello";
 }
@@ -135,6 +139,35 @@ describe("EcsManager system", () => {
 
     expect(query).not.toContain(entityA);
     expect(query).toContain(entityB);
+  });
+
+  it("can query more than one set of entities", () => {
+    // Given entities with Position component
+    // And entities with Rotation component
+    // And a system that queries entities with Position and Rotation separately
+    // When I run the system
+    // Then I should get two querysets for each of Position and Rotation
+
+    const world = new EcsManager();
+    world.spawn().add(Position, { x: 144, y: 42 });
+    world.spawn().add(Rotation, { angle: 12 });
+
+    let queryPosition: Array<[Position]> = [];
+    let queryRotation: Array<[Rotation]> = [];
+    const system = world.addSystem(
+      new EcsSystem(
+        { position: [Position], rotation: [Rotation] },
+        ({ position, rotation }) => {
+          queryPosition = [...position];
+          queryRotation = [...rotation];
+        }
+      )
+    );
+
+    system();
+
+    expect(queryPosition).toEqual([[{ x: 144, y: 42 }]]);
+    expect(queryRotation).toEqual([[{ angle: 12 }]]);
   });
 
   it("queries resources", () => {
