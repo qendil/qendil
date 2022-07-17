@@ -8,13 +8,16 @@ import type {
 
 /**
  * Represents a command to run on an ECS manager.
- *
  * Exposed to ECS systems and run directly after the system.
+ *
+ * @internal
  */
 export type EcsCommand = (manager: EcsManager) => void;
 
 /**
  * An object to query entities and components for a system.
+ *
+ * @internal
  */
 export type SystemQuery = Record<
   Exclude<string, "command" | "resources">,
@@ -26,6 +29,8 @@ export type SystemQuery = Record<
 
 /**
  * An object with the results of a System Query.
+ *
+ * @internal
  */
 export type SystemQueryResult<T extends SystemQuery> = {
   [K in Exclude<

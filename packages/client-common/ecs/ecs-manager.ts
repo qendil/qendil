@@ -1,11 +1,11 @@
-import EcsQueryBuilder from "./ecs-query-builder";
 import EcsResourceManager from "./ecs-resource-manager";
 import EcsResourceQuery from "./ecs-resource-query";
-import { SetMap } from "../default-map";
-import { EcsFilterObject } from "./ecs-component";
-import { EcsEntity } from "./ecs-entity";
+import EcsQueryBuilder from "./ecs-query-builder";
 import { EcsResourceFilterObject } from "./ecs-resource";
 import { makeSystemRunner } from "./ecs-system-runner";
+import { EcsFilterObject } from "./ecs-component";
+import { EcsEntity } from "./ecs-entity";
+import { SetMap } from "../default-map";
 
 import type {
   EcsComponentConstructor,
@@ -18,10 +18,10 @@ import type {
   SystemQuery,
   SystemQueryResult,
 } from "./ecs-system";
+import type { EcsQuery } from "./ecs-query";
+import type { EcsSystemRunner } from "./ecs-system-runner";
 import type { EcsResourceConstructor } from "./ecs-resource";
 import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
-import type { EcsSystemRunner } from "./ecs-system-runner";
-import type { EcsQuery } from "./ecs-query";
 
 /**
  * Stores and exposes operations on entities, components, and systems.
@@ -223,9 +223,9 @@ export default class EcsManager {
   /**
    * Create a query builder for the given filters.
    *
+   * @internal
    * @param filters - List of component filters to track
-   * @returns a query, a function to update the query,
-   *  and a function to dispose it
+   * @returns a query builder
    */
   public createEntityQuery<TFilter extends ComponentFilterTuple>(
     filters: TFilter

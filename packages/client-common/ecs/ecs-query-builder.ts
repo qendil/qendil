@@ -11,6 +11,8 @@ import type { ComponentFilterTuple, ComponentTuple } from "./types";
 
 /**
  * Builds and maintains a query of component filters.
+ *
+ * @internal
  */
 export default class EcsQueryBuilder<
   TFilter extends ComponentFilterTuple = EcsComponentFilter[]

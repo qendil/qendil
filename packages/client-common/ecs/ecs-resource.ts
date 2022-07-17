@@ -1,5 +1,7 @@
 /**
  * A reference to a resource by its constructor.
+ *
+ * @internal
  */
 export type EcsResourceConstructor<
   T extends EcsResource = EcsResource,
@@ -10,6 +12,8 @@ type OperationType = "changed";
 
 /**
  * A class that allows for filtering resources
+ *
+ * @internal
  */
 export class EcsResourceFilterObject<T extends EcsResource = EcsResource> {
   public readonly operation: OperationType;
@@ -26,6 +30,8 @@ export class EcsResourceFilterObject<T extends EcsResource = EcsResource> {
 
 /**
  * A representation of a resource filter.
+ *
+ * @internal
  */
 export type EcsResourceFilter<T extends EcsResource = EcsResource> =
   | EcsResourceConstructor<T>

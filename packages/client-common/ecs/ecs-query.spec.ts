@@ -1,8 +1,8 @@
 import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
+import EcsSystem from "./ecs-system";
 
 import type { EcsEntity } from "./ecs-entity";
-import EcsSystem from "./ecs-system";
 
 class Position extends EcsComponent {
   public x = 0;

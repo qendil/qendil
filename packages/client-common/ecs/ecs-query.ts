@@ -1,5 +1,5 @@
-import type { EcsEntity } from "./ecs-entity";
 import type EcsQueryBuilder from "./ecs-query-builder";
+import type { EcsEntity } from "./ecs-entity";
 import type { ComponentFilterTuple, ComponentInstances } from "./types";
 
 /**

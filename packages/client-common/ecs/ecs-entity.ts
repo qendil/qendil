@@ -1,5 +1,7 @@
-import type EcsComponent from "./ecs-component";
-import type { EcsComponentConstructor } from "./ecs-component";
+import type {
+  default as EcsComponent,
+  EcsComponentConstructor,
+} from "./ecs-component";
 
 /**
  * Lifecycle hooks privately exposed by the ECS manager.

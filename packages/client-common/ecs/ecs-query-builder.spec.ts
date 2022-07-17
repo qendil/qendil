@@ -1,11 +1,11 @@
 import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
+import EcsSystem from "./ecs-system";
 
 import type { EcsComponentFilter } from "./ecs-component";
 import type { EcsEntity } from "./ecs-entity";
-import type { ComponentFilterTuple } from "./types";
 import type { EcsQuery } from "./ecs-query";
-import EcsSystem from "./ecs-system";
+import type { ComponentFilterTuple } from "./types";
 
 class Position extends EcsComponent {
   public x = 0;
