@@ -43,10 +43,8 @@ export class Input extends EcsResource {
  * Updates the input manager with other config.
  */
 export const UpdateInputConfig = new EcsSystem(
+  { resources: [Input, Input.changed()] },
   ({ resources: [{ input, keymap }] }) => {
     input.setKeymap(KEYBOARD_MAP[keymap]);
-  },
-  {
-    resources: [Input, Input.changed()],
   }
 );

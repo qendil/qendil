@@ -21,6 +21,7 @@ export class SmoothPosition extends EcsComponent {
  * to the position component.
  */
 export const SmoothPositionInit = new EcsSystem(
+  { entities: [SmoothPosition, Position, Position.added()] },
   ({ entities }) => {
     for (const [smooth, { x, y, z }] of entities) {
       smooth.x = x;
@@ -31,14 +32,14 @@ export const SmoothPositionInit = new EcsSystem(
       smooth.originalZ = z;
       smooth.animationPercent = 0;
     }
-  },
-  [SmoothPosition, Position, Position.added()]
+  }
 );
 
 /**
  * Updates the source position when the position component changes.
  */
 export const SmoothPositionUpdate = new EcsSystem(
+  { entities: [SmoothPosition, Position.changed()] },
   ({ entities }) => {
     for (const [smooth] of entities) {
       const { x, y, z } = smooth;
@@ -48,14 +49,17 @@ export const SmoothPositionUpdate = new EcsSystem(
       smooth.originalY = y;
       smooth.originalZ = z;
     }
-  },
-  [SmoothPosition, Position.changed()]
+  }
 );
 
 /**
  * Animates the position of the entity.
  */
 export const SmoothPositionAnimate = new EcsSystem(
+  {
+    entities: [Position, SmoothPosition, SmoothPosition.present()],
+    resources: [FrameInfo, GameConfig],
+  },
   ({ entities, resources: [frameInfo, gameConfig] }) => {
     const { frametime } = frameInfo;
     const { fixedUpdateRate } = gameConfig;
@@ -73,9 +77,5 @@ export const SmoothPositionAnimate = new EcsSystem(
       smooth.y = originalY + (y - originalY) * percent;
       smooth.z = originalZ + (z - originalZ) * percent;
     }
-  },
-  {
-    entities: [Position, SmoothPosition, SmoothPosition.present()],
-    resources: [FrameInfo, GameConfig],
   }
 );

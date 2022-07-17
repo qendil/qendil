@@ -1,5 +1,6 @@
 import EcsManager from "./ecs-manager";
 import EcsComponent from "./ecs-component";
+import EcsSystem from "./ecs-system";
 
 import type { EcsEntity } from "./ecs-entity";
 
@@ -23,10 +24,9 @@ describe("EcsQuery", () => {
 
     let query: EcsEntity[] = [];
     const system = world.addSystem(
-      ({ entities }) => {
+      new EcsSystem({ entities: [Position] }, ({ entities }) => {
         query = [...entities.asEntities()];
-      },
-      [Position]
+      })
     );
 
     system();
@@ -48,10 +48,12 @@ describe("EcsQuery", () => {
 
     let query: Array<[Position]> = [];
     const system = world.addSystem(
-      ({ entities }) => {
-        query = [...entities];
-      },
-      [Position, Velocity.present()]
+      new EcsSystem(
+        { entities: [Position, Velocity.present()] },
+        ({ entities }) => {
+          query = [...entities];
+        }
+      )
     );
 
     world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);
@@ -70,10 +72,12 @@ describe("EcsQuery", () => {
 
     let query: EcsEntity[] = [];
     const system = world.addSystem(
-      ({ entities }) => {
-        query = [...entities.asEntities()];
-      },
-      [Position, Velocity.present()]
+      new EcsSystem(
+        { entities: [Position, Velocity.present()] },
+        ({ entities }) => {
+          query = [...entities.asEntities()];
+        }
+      )
     );
 
     const entity = world.spawn().add(Position).add(Velocity);
@@ -92,10 +96,12 @@ describe("EcsQuery", () => {
 
     let query: Array<[EcsEntity, Position]> = [];
     const system = world.addSystem(
-      ({ entities }) => {
-        query = [...entities.withEntities()];
-      },
-      [Position, Velocity.present()]
+      new EcsSystem(
+        { entities: [Position, Velocity.present()] },
+        ({ entities }) => {
+          query = [...entities.withEntities()];
+        }
+      )
     );
 
     const entity = world.spawn().add(Position, { x: 12, y: 144 }).add(Velocity);

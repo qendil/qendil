@@ -2,6 +2,8 @@ import type { EcsEntity } from "./ecs-entity";
 
 /**
  * A reference to a component by its constructor.
+ *
+ * @internal
  */
 export type EcsComponentConstructor<
   T extends EcsComponent = EcsComponent,
@@ -12,6 +14,8 @@ type OperationType = "absent" | "added" | "changed" | "present";
 
 /**
  * A class that allows for filtering by a component.
+ *
+ * @internal
  */
 export class EcsFilterObject<T extends EcsComponent = EcsComponent> {
   public readonly operation: OperationType;
@@ -28,6 +32,8 @@ export class EcsFilterObject<T extends EcsComponent = EcsComponent> {
 
 /**
  * A representation of a component filter.
+ *
+ * @internal
  */
 export type EcsComponentFilter<T extends EcsComponent = EcsComponent> =
   | EcsComponentConstructor<T>

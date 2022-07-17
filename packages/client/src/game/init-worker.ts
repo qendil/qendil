@@ -90,7 +90,8 @@ function handleMessage(
       const entity = manager
         .spawn()
         .add(Position, message.position)
-        .add(Mesh, message.mesh);
+        .add(Mesh, message.mesh)
+        .add(SmoothPosition);
       workerEntities.set(message.id, entity);
       break;
     }

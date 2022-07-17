@@ -7,8 +7,14 @@ import type { EcsResourceConstructor, EcsResourceFilter } from "./ecs-resource";
 // eslint-disable-next-line @typescript-eslint/ban-types
 type TupleType = {} | [unknown];
 
+/**
+ * @internal
+ */
 export type ComponentFilterTuple = [] | (EcsComponentFilter[] & TupleType);
 
+/**
+ * @internal
+ */
 export type ComponentTuple<T extends EcsComponentFilter[]> = T extends []
   ? []
   : T extends [infer H, ...infer R extends EcsComponentFilter[]]
@@ -17,6 +23,9 @@ export type ComponentTuple<T extends EcsComponentFilter[]> = T extends []
     : ComponentTuple<R>
   : never;
 
+/**
+ * @internal
+ */
 export type ComponentInstances<T extends EcsComponentFilter[]> = T extends []
   ? []
   : T extends [infer H, ...infer R extends EcsComponentFilter[]]
@@ -25,8 +34,14 @@ export type ComponentInstances<T extends EcsComponentFilter[]> = T extends []
     : ComponentInstances<R>
   : never;
 
+/**
+ * @internal
+ */
 export type ResourceFilterTuple = [] | (EcsResourceFilter[] & TupleType);
 
+/**
+ * @internal
+ */
 export type ResourceInstances<T extends EcsResourceFilter[]> = T extends []
   ? []
   : T extends [infer H, ...infer R extends EcsResourceFilter[]]

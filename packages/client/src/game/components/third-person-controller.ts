@@ -7,9 +7,7 @@ import WorkerConnection from "../resources/worker-connection";
 /**
  * Tags entities that are controlled by a third-person camera.
  */
-export class ThirdPersonController extends EcsComponent {
-  // Nothing here
-}
+export class ThirdPersonController extends EcsComponent {}
 
 /**
  * Updates controllable entities based on the input.
@@ -19,9 +17,12 @@ export class ThirdPersonController extends EcsComponent {
  * - Changes the direction of the entity based on the direction of the joystick.
  */
 export const ThirdPersonControlSystem = new EcsSystem(
+  {
+    entities: [ThirdPersonController.present()],
+    resources: [Input, WorkerConnection],
+  },
   ({ entities, resources: [inputResource, { postMessage }] }) => {
     if (entities.size === 0) return;
-
     const { input } = inputResource;
 
     if (
@@ -40,9 +41,5 @@ export const ThirdPersonControlSystem = new EcsSystem(
       x: speed * lx,
       y: speed * -ly,
     });
-  },
-  {
-    entities: [ThirdPersonController.present()],
-    resources: [Input, WorkerConnection],
   }
 );

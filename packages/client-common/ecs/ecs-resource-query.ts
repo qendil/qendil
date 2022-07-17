@@ -1,4 +1,5 @@
 import { EcsResourceFilterObject } from "./ecs-resource";
+import { SetMap } from "../default-map";
 
 import type {
   default as EcsResource,
@@ -6,30 +7,24 @@ import type {
 } from "./ecs-resource";
 import type EcsResourceManager from "./ecs-resource-manager";
 import type { ResourceFilterTuple, ResourceInstances } from "./types";
-import { SetMap } from "../default-map";
 
-export default class EcsResourceQuery<
-  TResourceFilter extends ResourceFilterTuple = []
-> {
-  public readonly filters: TResourceFilter;
-  private readonly manager: EcsResourceManager;
-
+/**
+ * A class that represents the results of a resource query.
+ *
+ * @internal
+ */
+export default class EcsResourceQuery<T extends ResourceFilterTuple = []> {
   private readonly operations = new SetMap<string, EcsResourceConstructor>();
   private readonly tracked = new SetMap<string, EcsResourceConstructor>();
 
-  private readonly onDispose: (
-    query: EcsResourceQuery<TResourceFilter>
-  ) => void;
-
+  /**
+   * @internal
+   */
   public constructor(
-    filters: TResourceFilter,
-    manager: EcsResourceManager,
-    onDispose: (query: EcsResourceQuery<TResourceFilter>) => void
+    public readonly filters: T,
+    private readonly manager: EcsResourceManager,
+    private readonly onDispose: (query: EcsResourceQuery<T>) => void
   ) {
-    this.filters = filters;
-    this.manager = manager;
-    this.onDispose = onDispose;
-
     for (const constructor of this.filters) {
       if (constructor instanceof EcsResourceFilterObject) {
         const { operation, resource } = constructor;
@@ -57,7 +52,7 @@ export default class EcsResourceQuery<
   /**
    * Get resources that match the query.
    */
-  public getResources(): ResourceInstances<TResourceFilter> | undefined {
+  public getResources(): ResourceInstances<T> | undefined {
     const resourceList: EcsResource[] = [];
     for (const constructor of this.filters) {
       if (constructor instanceof EcsResourceFilterObject) {
@@ -77,7 +72,7 @@ export default class EcsResourceQuery<
       }
     }
 
-    return resourceList as ResourceInstances<TResourceFilter>;
+    return resourceList as ResourceInstances<T>;
   }
 
   /**

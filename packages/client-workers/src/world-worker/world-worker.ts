@@ -1,9 +1,6 @@
 import { EcsManager } from "@qendil/client-common/ecs";
-import {
-  PlayerEntity,
-  UpdateClientPosition,
-} from "./game/components/player-entity";
-import { Position } from "./game/components/position";
+import { PlayerEntity } from "./game/components/player-entity";
+import { Position, UpdateClientPosition } from "./game/components/position";
 import { Velocity, VelocitySystem } from "./game/components/velocity";
 import { GameConfig } from "./game/resources/game-config";
 import { NetworkEntity } from "./game/components/network-entity";
@@ -52,13 +49,16 @@ const update = gameWorld
   .addRunner()
   .add(VelocitySystem)
   .add(UpdateClientPosition);
+
 gameWorld.resources.add(GameConfig);
 
-const networkEntitiesQuery = gameWorld
-  .createEntityQuery([NetworkEntity, Position.present(), Mesh.present()])
-  .wrap();
+const networkEntitiesQuery = gameWorld.watch(
+  NetworkEntity,
+  Position.present(),
+  Mesh.present()
+);
 
-const playerEntities = gameWorld.createEntityQuery([PlayerEntity]).wrap();
+const playerEntities = gameWorld.watch(PlayerEntity);
 
 export class Client {
   public readonly postMessage: PostMessageCallback;
