@@ -21,6 +21,7 @@
     "./world-worker": "./src/world-worker/index.ts"
   },
   "dependencies": {
+    "@qendil/client-common": "workspace:*",
     "workbox-precaching": "^6.5.3",
     "workbox-routing": "^6.5.3"
   },

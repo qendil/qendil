@@ -57,6 +57,8 @@ export default class InputManager {
     [InputAxis.RT]: 0,
   };
 
+  private readonly axesChanges = new Map<InputAxis, boolean>();
+
   private readonly keyToAxisValues = {
     [InputAxis.LX]: 0,
     [InputAxis.LY]: 0,
@@ -105,6 +107,17 @@ export default class InputManager {
   }
 
   /**
+   * Updates the value of an input axis.
+   *
+   * @param axis - The axis to update the value of
+   * @param value - The new value of the axis
+   */
+  private updateAxisValue(axis: InputAxis, value: number): void {
+    this.axesValues[axis] = value;
+    this.axesChanges.set(axis, true);
+  }
+
+  /**
    * Updates the value of a joystick.
    *
    * Also caps the distance from the center to 1,
@@ -132,8 +145,8 @@ export default class InputManager {
     const xAxis = joystick === "l" ? InputAxis.LX : InputAxis.RX;
     const yAxis = joystick === "l" ? InputAxis.LY : InputAxis.RY;
 
-    this.axesValues[xAxis] = xCapped;
-    this.axesValues[yAxis] = yCapped;
+    this.updateAxisValue(xAxis, xCapped);
+    this.updateAxisValue(yAxis, yCapped);
 
     return [xCapped, yCapped];
   }
@@ -173,6 +186,16 @@ export default class InputManager {
   }
 
   /**
+   * Check if an axis changed.
+   *
+   * @param axis - The axis to check
+   * @returns True if the axis' value changed since the last input update
+   */
+  public hasAxisChanged(axis: InputAxis): boolean {
+    return this.axesChanges.get(axis) ?? false;
+  }
+
+  /**
    * Get the value of a joystick axis.
    *
    * @param axis - The axis to retrieve the value of
@@ -187,6 +210,7 @@ export default class InputManager {
    */
   public update(): void {
     this.previousKeysDown = new Set(this.currentKeysDown);
+    this.axesChanges.clear();
   }
 
   private keydownHandler(event: KeyboardEvent): void {
@@ -267,7 +291,7 @@ export default class InputManager {
     // Reset axes
     this.axesActionStacks.clear();
     for (const axis of Object.keys(this.axesValues)) {
-      this.axesValues[axis as InputAxis] = 0;
+      this.updateAxisValue(axis as InputAxis, 0);
     }
   }
 

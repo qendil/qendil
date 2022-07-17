@@ -13,20 +13,14 @@ import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
 
 import {
-  Mesh,
   MeshAttachToScene,
   MeshColor,
   MeshPositionSystem,
   MeshSmoothPositionSystem,
 } from "../game/components/mesh";
-import { Position } from "../game/components/position";
-import { VelocitySystem, Velocity } from "../game/components/velocity";
+import { VelocitySystem } from "../game/components/velocity";
+import { ThirdPersonControlSystem } from "../game/components/third-person-controller";
 import {
-  ThirdPersonController,
-  ThirdPersonControlSystem,
-} from "../game/components/third-person-controller";
-import {
-  SmoothPosition,
   SmoothPositionAnimate,
   SmoothPositionInit,
   SmoothPositionUpdate,
@@ -38,6 +32,7 @@ import { WorldScene } from "../game/resources/world-scene";
 
 import type { ReactElement } from "react";
 import initWorker from "../game/init-worker";
+import WorkerConnection from "../game/resources/worker-connection";
 
 const gameWorld = new EcsManager();
 
@@ -58,8 +53,8 @@ const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
 gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
 
 initWorker(gameWorld)
-  .then(() => {
-    // TODO
+  .then(({ postMessage, dispose }) => {
+    gameWorld.resources.addNew(WorkerConnection, postMessage, dispose);
   })
   .catch((error) => {
     console.error(error);
@@ -92,14 +87,6 @@ export default function App(): ReactElement {
     const camera = makePerspectiveCamera();
     camera.position.z = 5;
 
-    const cube = gameWorld
-      .spawn()
-      .add(Mesh, { color: Math.random() * 0xffffff })
-      .add(Position)
-      .add(SmoothPosition)
-      .add(Velocity, { factor: 3 })
-      .add(ThirdPersonController);
-
     const { input } = gameWorld.resources.get(Input);
     const frameInfo = gameWorld.resources.get(FrameInfo);
     const gameConfig = gameWorld.resources.get(GameConfig);
@@ -122,9 +109,6 @@ export default function App(): ReactElement {
       },
       onFixedUpdate(): void {
         gameFixedUpdate();
-      },
-      onDispose(): void {
-        cube.dispose();
       },
     };
   }, []);

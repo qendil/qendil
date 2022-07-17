@@ -1,10 +1,38 @@
-import type { EcsManager } from "@qendil/client-common/ecs";
+import type { EcsEntity, EcsManager } from "@qendil/client-common/ecs";
+import { Mesh } from "./components/mesh";
+import { Position } from "./components/position";
+import { SmoothPosition } from "./components/smooth-position";
+import { ThirdPersonController } from "./components/third-person-controller";
 
 // TODO: Make this easily extendable
-type WorkerClientMessage = { type: "pong" } | { type: "log"; message: string };
-type ClientWorkerMessage = { type: "ping" } | { type: "disconnect" };
+type WorkerClientMessage =
+  | {
+      type: "spawnPlayer";
+      id: number;
+      mesh: { color: number };
+      position: { x: number; y: number; z: number };
+    }
+  | {
+      type: "updateEntityPosition";
+      id: number;
+      position: { x: number; y: number; z: number };
+    }
+  | {
+      type: "spawnEntity";
+      id: number;
+      position: { x: number; y: number; z: number };
+      mesh: { color: number };
+    }
+  | { type: "pong" }
+  | { type: "log"; message: string };
 
-type PostMessageCallback = (
+type ClientWorkerMessage =
+  | { type: "playerReady" }
+  | { type: "updatePlayerVelocity"; x: number; y: number }
+  | { type: "ping" }
+  | { type: "disconnect" };
+
+export type PostMessageCallback = (
   message: ClientWorkerMessage,
   transferable?: Transferable[]
 ) => void;
@@ -14,10 +42,12 @@ type ClientConnection = {
   dispose: () => void;
 };
 
+const workerEntities = new Map<number, EcsEntity>();
+
 function handleMessage(
   message: WorkerClientMessage,
   _postMessage: PostMessageCallback,
-  _manager: EcsManager
+  manager: EcsManager
 ): void {
   switch (message.type) {
     case "pong": {
@@ -27,6 +57,41 @@ function handleMessage(
 
     case "log": {
       console.log("World worker:", message.message);
+      break;
+    }
+
+    case "spawnPlayer": {
+      const player = manager
+        .spawn()
+        .add(Mesh, message.mesh)
+        .add(Position, message.position)
+        .add(SmoothPosition)
+        .add(ThirdPersonController);
+
+      workerEntities.set(message.id, player);
+
+      break;
+    }
+
+    case "updateEntityPosition": {
+      const entity = workerEntities.get(message.id);
+      if (entity) {
+        const position = entity.get(Position);
+        const { x, y, z } = message.position;
+        position.x = x;
+        position.y = y;
+        position.z = z;
+      }
+
+      break;
+    }
+
+    case "spawnEntity": {
+      const entity = manager
+        .spawn()
+        .add(Position, message.position)
+        .add(Mesh, message.mesh);
+      workerEntities.set(message.id, entity);
       break;
     }
 
