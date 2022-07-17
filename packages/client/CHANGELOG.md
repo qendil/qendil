@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Add manual ECS entity queries and arbitrary queries in ECS systems [\#186](https://github.com/qendil/qendil/pull/186)
 - Standalone mesh component [\#179](https://github.com/qendil/qendil/pull/179)
 - Ecs add resources [\#168](https://github.com/qendil/qendil/pull/168)
 - Ecs improvements [\#167](https://github.com/qendil/qendil/pull/167)
