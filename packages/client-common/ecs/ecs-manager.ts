@@ -126,12 +126,9 @@ export default class EcsManager {
     const entityQueries: Record<string, EcsQuery<ComponentFilterTuple>> = {};
 
     for (const key in query) {
-      if (key === "command") continue;
-      if (key === "resources") continue;
+      if (key === "command" || key === "resources") continue;
 
-      const filters = query[key] as ComponentFilterTuple | undefined;
-      if (filters === undefined) continue;
-
+      const filters = query[key] as ComponentFilterTuple;
       const entityQuery = this.watch(...filters);
       entityQueries[key] = entityQuery;
     }
