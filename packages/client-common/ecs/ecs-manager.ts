@@ -2,7 +2,6 @@ import { SetMap } from "../default-map";
 import EcsQueryBuilder from "./ecs-query-builder";
 import { EcsFilterObject } from "./ecs-component";
 import { EcsEntity } from "./ecs-entity";
-import EcsSystem from "./ecs-system";
 import EcsResourceManager from "./ecs-resource-manager";
 import { EcsResourceFilterObject } from "./ecs-resource";
 import EcsResourceQuery from "./ecs-resource-query";
@@ -14,9 +13,8 @@ import type {
 } from "./ecs-component";
 import type { EcsEntityLifecycleHooks } from "./ecs-entity";
 import type {
+  default as EcsSystem,
   EcsSystemHandle,
-  SystemQuery,
-  SystemQueryResult,
   EcsCommand,
 } from "./ecs-system";
 import type { EcsResourceConstructor } from "./ecs-resource";
@@ -126,75 +124,18 @@ export default class EcsManager {
   public addSystem<
     TFilter extends ComponentFilterTuple,
     TResourceFilter extends ResourceFilterTuple
-  >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle;
-
-  /**
-   * Create a system that operates on entities that have all of the given
-   *   components.
-   *
-   * @important
-   *  You should call `dispose()` on the returned system when you are done.
-   *
-   * @param callback - Callback that's called whenever the system is invoked
-   *  It receives and entity set as its first argument
-   *  Arguments and return value are forwarded when the system is invoked
-   * @param query - List of component filters to track
-   * @returns A system handle
-   */
-  public addSystem<
-    TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple
-  >(
-    callback: (entities: SystemQueryResult<TFilter, TResourceFilter>) => void,
-    query: SystemQuery<TFilter, TResourceFilter> | TFilter
-  ): EcsSystemHandle;
-
-  /**
-   * Create a system that operates on entities that have all of the given
-   *   components.
-   *
-   * @important
-   *  You should call `dispose()` on the returned system when you are done.
-   *
-   * @param callbackOrSystem - A EcsSystem instance or
-   *   a Callback that's called whenever the system is invoked
-   * @param filterQuery - Query filters
-   *  It receives and entity set as its first argument
-   *  Arguments and return value are forwarded when the system is invoked
-   * @returns A system handle
-   */
-  public addSystem<
-    TFilter extends ComponentFilterTuple,
-    TResourceFilter extends ResourceFilterTuple
-  >(
-    callbackOrSystem:
-      | EcsSystem<TFilter, TResourceFilter>
-      | ((query: SystemQueryResult<TFilter, TResourceFilter>) => void),
-    filterQuery?: SystemQuery<TFilter, TResourceFilter> | TFilter
-  ): EcsSystemHandle {
-    if (callbackOrSystem instanceof EcsSystem) {
-      const { handle, query } = callbackOrSystem;
-      return this.addSystem(handle, query);
-    }
+  >(system: EcsSystem<TFilter, TResourceFilter>): EcsSystemHandle {
+    const { callback, query } = system;
 
     if (this.disposed) {
       throw new Error("Cannot create a system in a disposed world.");
     }
 
-    if (filterQuery === undefined) {
-      throw new Error("Cannot create a system without a query.");
-    }
-
-    const callback = callbackOrSystem;
-    const filters = Array.isArray(filterQuery)
-      ? { entities: filterQuery }
-      : filterQuery;
-
-    const entityFilters = filters.entities ?? ([] as TFilter);
+    const entityFilters = query.entities ?? ([] as TFilter);
     const entityQuery = this.createEntityQuery(entityFilters);
     const entities = entityQuery.wrap();
 
-    const resourceFilters = filters.resources ?? ([] as TResourceFilter);
+    const resourceFilters = query.resources ?? ([] as TResourceFilter);
     const resourceQuery = this.createResourceQuery(resourceFilters);
 
     const commands: EcsCommand[] = [];
@@ -202,7 +143,7 @@ export default class EcsManager {
       commands.push(pending);
     };
 
-    const system: EcsSystemHandle = () => {
+    const handle: EcsSystemHandle = () => {
       const resources = resourceQuery.getResources();
 
       if (resources !== undefined) {
@@ -221,7 +162,7 @@ export default class EcsManager {
     };
 
     let disposed = false;
-    system.dispose = (): void => {
+    handle.dispose = (): void => {
       if (disposed) return;
 
       entityQuery.dispose();
@@ -230,7 +171,7 @@ export default class EcsManager {
       disposed = true;
     };
 
-    return system;
+    return handle;
   }
 
   /**

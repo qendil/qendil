@@ -46,17 +46,17 @@ export default class EcsSystem<
   TResourceFilter extends ResourceFilterTuple = ResourceFilterTuple
 > {
   public readonly query: SystemQuery<TFilter, TResourceFilter>;
-  public readonly handle: (
+  public readonly callback: (
     query: SystemQueryResult<TFilter, TResourceFilter>
   ) => void;
 
   public constructor(
-    handler: (query: SystemQueryResult<TFilter, TResourceFilter>) => void,
-    query: SystemQuery<TFilter, TResourceFilter> | TFilter
+    query: SystemQuery<TFilter, TResourceFilter>,
+    callback: (query: SystemQueryResult<TFilter, TResourceFilter>) => void
   ) {
-    this.query = Array.isArray(query) ? { entities: query } : query;
+    this.query = query;
 
-    this.handle = handler;
+    this.callback = callback;
   }
 }
 

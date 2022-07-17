@@ -5,6 +5,7 @@ import type { EcsComponentFilter } from "./ecs-component";
 import type { EcsEntity } from "./ecs-entity";
 import type { ComponentFilterTuple } from "./types";
 import type { EcsQuery } from "./ecs-query";
+import EcsSystem from "./ecs-system";
 
 class Position extends EcsComponent {
   public x = 0;
@@ -182,10 +183,9 @@ describe("EcsQueryBuilder", () => {
     const entity = world.spawn().add(Position);
 
     const update = world.addSystem(
-      ({ entities }) => {
+      new EcsSystem({ entities: [Position.added()] }, ({ entities }) => {
         expect([...entities.asEntities()]).toContain(entity);
-      },
-      [Position.added()]
+      })
     );
 
     update();
@@ -296,10 +296,12 @@ describe("EcsQueryBuilder", () => {
     const world = new EcsManager();
     let query: EcsEntity[] = [];
     const update = world.addSystem(
-      ({ entities }) => {
-        query = [...entities.asEntities()];
-      },
-      [Position.absent(), Velocity.absent()]
+      new EcsSystem(
+        { entities: [Position.absent(), Velocity.absent()] },
+        ({ entities }) => {
+          query = [...entities.asEntities()];
+        }
+      )
     );
 
     const entity = world.spawn().add(Position).add(Velocity);

@@ -22,7 +22,9 @@ describe("EcsManager", () => {
     // Then the queries should be disposed
 
     const world = new EcsManager();
-    world.addSystem(({ entities }) => entities, [Position]);
+    world.addSystem(
+      new EcsSystem({ entities: [Position] }, ({ entities }) => entities)
+    );
 
     /// @ts-expect-error 2341: We need to access the internal queries set
     const [query] = world.entityQueries.get(Position);
@@ -86,23 +88,8 @@ describe("EcsManager", () => {
     const world = new EcsManager();
     world.dispose();
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    expect(() => world.addSystem(() => {}, [])).toThrowError(
+    expect(() => world.addSystem(new EcsSystem({}, vi.fn()))).toThrowError(
       "Cannot create a system in a disposed world."
-    );
-  });
-
-  it("fails when attempting to create a system without a query", () => {
-    // Given a world
-    // When I try to create a system without a query
-    // Then I should get an error
-
-    const world = new EcsManager();
-
-    // @ts-expect-error 2345: This signature is not valid but possible
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    expect(() => world.addSystem(() => {})).toThrowError(
-      "Cannot create a system without a query."
     );
   });
 });
@@ -125,10 +112,9 @@ describe("EcsManager system", () => {
 
     let query: EcsEntity[] = [];
     const system = world.addSystem(
-      ({ entities }) => {
+      new EcsSystem({ entities: [Position.added()] }, ({ entities }) => {
         query = [...entities.asEntities()];
-      },
-      [Position.added()]
+      })
     );
 
     const entityA = world.spawn().add(Position);
@@ -165,12 +151,9 @@ describe("EcsManager system", () => {
 
     let query: EcsResource[] = [];
     const system = world.addSystem(
-      ({ resources }) => {
+      new EcsSystem({ resources: [A] }, ({ resources }) => {
         query = resources;
-      },
-      {
-        resources: [A],
-      }
+      })
     );
     system();
 
@@ -186,8 +169,9 @@ describe("EcsManager system", () => {
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.entityQueries.get(Position);
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.addSystem(() => {}, [Position]);
+    const system = world.addSystem(
+      new EcsSystem({ entities: [Position] }, vi.fn())
+    );
     expect(queries.size).toBe(1);
 
     system.dispose();
@@ -203,8 +187,9 @@ describe("EcsManager system", () => {
     const world = new EcsManager();
     /// @ts-expect-error 2341: We need to access the internal queries set
     const queries = world.entityQueries.get(Position);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.addSystem(() => {}, [Position]);
+    const system = world.addSystem(
+      new EcsSystem({ entities: [Position] }, vi.fn())
+    );
 
     const [query] = queries;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -221,12 +206,9 @@ describe("EcsManager system", () => {
     // Then I should have a proper game system handle
 
     let query: Array<[Position]> = [];
-    const mySystem = new EcsSystem(
-      ({ entities }) => {
-        query = [...entities];
-      },
-      [Position]
-    );
+    const mySystem = new EcsSystem({ entities: [Position] }, ({ entities }) => {
+      query = [...entities];
+    });
 
     const world = new EcsManager();
     world.spawn().add(Position);
@@ -246,14 +228,9 @@ describe("EcsManager system", () => {
     // Then I should have a proper game system handle
 
     let query: Array<[Position]> = [];
-    const mySystem = new EcsSystem(
-      ({ entities }) => {
-        query = [...entities];
-      },
-      {
-        entities: [Position],
-      }
-    );
+    const mySystem = new EcsSystem({ entities: [Position] }, ({ entities }) => {
+      query = [...entities];
+    });
 
     const world = new EcsManager();
     world.spawn().add(Position);
@@ -274,7 +251,9 @@ describe("EcsManager system", () => {
 
     const world = new EcsManager();
     const callback = vi.fn();
-    const system = world.addSystem(callback, { resources: [DummyResource] });
+    const system = world.addSystem(
+      new EcsSystem({ resources: [DummyResource] }, callback)
+    );
 
     system();
     expect(callback).not.toHaveBeenCalled();
@@ -291,8 +270,9 @@ describe("EcsManager system", () => {
 
     world.spawn().add(Position);
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.addSystem(() => {}, [Position]);
+    const system = world.addSystem(
+      new EcsSystem({ entities: [Position] }, vi.fn())
+    );
     expect(entityQueries.get(Position).size).toBe(1);
 
     system.dispose();
@@ -310,10 +290,9 @@ describe("EcsManager system", () => {
 
     resources.add(DummyResource);
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const system = world.addSystem(() => {}, {
-      resources: [DummyResource.changed()],
-    });
+    const system = world.addSystem(
+      new EcsSystem({ resources: [DummyResource.changed()] }, vi.fn())
+    );
     expect(resourceQueries.get(DummyResource).size).toBe(1);
 
     system.dispose();
@@ -326,18 +305,19 @@ describe("EcsManager system", () => {
     // Then the entities should be spawned
 
     const world = new EcsManager();
-    const spawningSystem = world.addSystem(({ command }) => {
-      command((manager) => {
-        manager.spawn().add(Position, { x: 144, y: 12 });
-      });
-    }, []);
+    const spawningSystem = world.addSystem(
+      new EcsSystem({}, ({ command }) => {
+        command((manager) => {
+          manager.spawn().add(Position, { x: 144, y: 12 });
+        });
+      })
+    );
 
     let query: Array<[Position]> = [];
     const querySystem = world.addSystem(
-      ({ entities }) => {
+      new EcsSystem({ entities: [Position] }, ({ entities }) => {
         query = [...entities];
-      },
-      [Position]
+      })
     );
 
     querySystem();
@@ -356,18 +336,19 @@ describe("EcsManager system", () => {
     // Then only 3 entities should be spawned
 
     const world = new EcsManager();
-    const spawningSystem = world.addSystem(({ command }) => {
-      command((manager) => {
-        manager.spawn().add(Position);
-      });
-    }, []);
+    const spawningSystem = world.addSystem(
+      new EcsSystem({}, ({ command }) => {
+        command((manager) => {
+          manager.spawn().add(Position);
+        });
+      })
+    );
 
     let query: EcsEntity[] = [];
     const querySystem = world.addSystem(
-      ({ entities }) => {
+      new EcsSystem({ entities: [Position] }, ({ entities }) => {
         query = [...entities.asEntities()];
-      },
-      [Position]
+      })
     );
 
     querySystem();
@@ -393,9 +374,9 @@ describe("EcsManager resources", () => {
     world.resources.add(DummyResource);
 
     const callback = vi.fn();
-    const system = world.addSystem(callback, {
-      resources: [DummyResource.changed()],
-    });
+    const system = world.addSystem(
+      new EcsSystem({ resources: [DummyResource.changed()] }, callback)
+    );
 
     system();
     expect(callback).toHaveBeenCalled();
@@ -413,9 +394,9 @@ describe("EcsManager resources", () => {
     const world = new EcsManager();
 
     const callback = vi.fn();
-    const system = world.addSystem(callback, {
-      resources: [DummyResource.changed()],
-    });
+    const system = world.addSystem(
+      new EcsSystem({ resources: [DummyResource.changed()] }, callback)
+    );
 
     // First call to the system to reset its "changed" flags
     system();
@@ -443,9 +424,9 @@ describe("EcsManager resources", () => {
     world.resources.add(DummyResource);
 
     const callback = vi.fn();
-    const system = world.addSystem(callback, {
-      resources: [DummyResource.changed()],
-    });
+    const system = world.addSystem(
+      new EcsSystem({ resources: [DummyResource.changed()] }, callback)
+    );
 
     // First call to the system to reset its "changed" flags
     system();
