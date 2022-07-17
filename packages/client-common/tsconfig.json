@@ -6,6 +6,6 @@
     "lib": ["ES2021"],
     "types": ["vitest/globals"]
   },
-  "include": ["default-map", "ecs", "setuptests.ts"],
+  "include": ["default-map", "ecs", "game-worker", "setuptests.ts"],
   "exclude": ["node_modules"]
 }

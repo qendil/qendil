@@ -37,6 +37,17 @@ import { GameConfig } from "../game/resources/game-config";
 import { WorldScene } from "../game/resources/world-scene";
 
 import type { ReactElement } from "react";
+import { initWorker } from "../game/init-worker";
+
+initWorker(() => {
+  // Nothing to do
+})
+  .then(() => {
+    console.log("Worker loaded");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 const gameWorld = new EcsManager();
 

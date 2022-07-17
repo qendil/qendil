@@ -17,9 +17,11 @@
     "lint:staged": "zx ../../scripts/typecheck.mjs && lint-staged && vitest run --changed"
   },
   "exports": {
-    "./service-worker": "./src/service-worker/index.ts"
+    "./service-worker": "./src/service-worker/index.ts",
+    "./game-shared-worker": "./src/game-shared-worker/index.ts"
   },
   "dependencies": {
+    "@qendil/client-common": "workspace:*",
     "workbox-precaching": "^6.5.3",
     "workbox-routing": "^6.5.3"
   },
