@@ -1,31 +1,23 @@
 import type { EcsEntity } from "./ecs-entity";
-import type {
-  ComponentFilterTuple,
-  ComponentInstances,
-  ComponentTuple,
-} from "./types";
+import type EcsQueryBuilder from "./ecs-query-builder";
+import type { ComponentFilterTuple, ComponentInstances } from "./types";
 
 /**
  * A self-updating query that tracks all entities that match with the query's
  *  component filters.
  */
-export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
-  protected readonly entities: Set<EcsEntity>;
-  protected readonly components: ComponentTuple<TFilter>;
+export class EcsQuery<TFilter extends ComponentFilterTuple> {
+  private readonly builder: EcsQueryBuilder<TFilter>;
 
-  protected constructor(
-    entities: Set<EcsEntity>,
-    components: ComponentTuple<TFilter>
-  ) {
-    this.entities = entities;
-    this.components = components;
+  public constructor(builder: EcsQueryBuilder<TFilter>) {
+    this.builder = builder;
   }
 
   /**
    * Get the components of the query's entities.
    */
   public *[Symbol.iterator](): IterableIterator<ComponentInstances<TFilter>> {
-    for (const entity of this.entities) {
+    for (const entity of this.builder) {
       yield this.getComponents(entity);
     }
   }
@@ -36,7 +28,7 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
   public *withEntities(): IterableIterator<
     [EcsEntity, ...ComponentInstances<TFilter>]
   > {
-    for (const entity of this.entities) {
+    for (const entity of this.builder) {
       yield [entity, ...this.getComponents(entity)];
     }
   }
@@ -45,7 +37,7 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
    * Get only the entities in the query.
    */
   public *asEntities(): IterableIterator<EcsEntity> {
-    yield* this.entities;
+    yield* this.builder;
   }
 
   /**
@@ -55,14 +47,14 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
    * @returns `true` if the entity is in the query
    */
   public has(entity: EcsEntity): boolean {
-    return this.entities.has(entity);
+    return this.builder.has(entity);
   }
 
   /**
    * Get the number of entities in the query.
    */
   public get size(): number {
-    return this.entities.size;
+    return this.builder.size;
   }
 
   /**
@@ -73,7 +65,7 @@ export abstract class EcsQuery<TFilter extends ComponentFilterTuple> {
    * @returns The component instances of that entity
    */
   private getComponents(entity: EcsEntity): ComponentInstances<TFilter> {
-    return this.components.map((component) =>
+    return this.builder.components.map((component) =>
       entity.get(component)
     ) as ComponentInstances<TFilter>;
   }

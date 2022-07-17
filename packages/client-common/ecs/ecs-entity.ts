@@ -32,17 +32,17 @@ export type EcsEntityLifecycleHooks = {
  * @important You should call `dispose()` on the returned entity when you
  *  are done with it, to remove it from the world.
  */
-export abstract class EcsEntity {
+export class EcsEntity {
   public readonly id: number;
-  protected readonly hooks: EcsEntityLifecycleHooks;
-  protected disposed = false;
+  private readonly hooks: EcsEntityLifecycleHooks;
+  private disposed = false;
 
-  protected readonly components = new Map<
+  private readonly components = new Map<
     EcsComponentConstructor,
     EcsComponent
   >();
 
-  protected constructor(id: number, hooks: EcsEntityLifecycleHooks) {
+  public constructor(id: number, hooks: EcsEntityLifecycleHooks) {
     this.id = id;
     this.hooks = hooks;
   }

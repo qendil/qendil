@@ -11,7 +11,6 @@ import type {
   EcsComponentConstructor,
   EcsComponentFilter,
 } from "./ecs-component";
-import type { EcsEntityLifecycleHooks } from "./ecs-entity";
 import type {
   default as EcsSystem,
   EcsSystemHandle,
@@ -23,15 +22,6 @@ import type { EcsResourceConstructor } from "./ecs-resource";
 import type { ComponentFilterTuple, ResourceFilterTuple } from "./types";
 import type { EcsSystemRunner } from "./ecs-system-runner";
 import type { EcsQuery } from "./ecs-query";
-
-/**
- * Unexposed wrapper that implements GameEntity
- */
-class GameEntityWrapper extends EcsEntity {
-  public constructor(id: number, hooks: EcsEntityLifecycleHooks) {
-    super(id, hooks);
-  }
-}
 
 /**
  * Stores and exposes operations on entities, components, and systems.
@@ -102,7 +92,7 @@ export default class EcsManager {
       throw new Error("Cannot spawn an entity in a disposed world.");
     }
 
-    const entity = new GameEntityWrapper(this.nextEntityID++, {
+    const entity = new EcsEntity(this.nextEntityID++, {
       onDispose: this._disposeEntity.bind(this),
       onComponentAdded: this._entityComponentAdded.bind(this),
       onComponentRemoved: this._entityComponentRemoved.bind(this),

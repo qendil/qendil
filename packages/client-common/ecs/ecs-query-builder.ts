@@ -10,20 +10,6 @@ import type { EcsEntity } from "./ecs-entity";
 import type { ComponentFilterTuple, ComponentTuple } from "./types";
 
 /**
- * Internal wrapper over the EntityQuery wrapper
- */
-class EcsQueryWrapper<
-  TFilter extends ComponentFilterTuple
-> extends EcsQuery<TFilter> {
-  public constructor(
-    entities: Set<EcsEntity>,
-    components: ComponentTuple<TFilter>
-  ) {
-    super(entities, components);
-  }
-}
-
-/**
  * Builds and maintains a query of component filters.
  */
 export default class EcsQueryBuilder<
@@ -115,7 +101,7 @@ export default class EcsQueryBuilder<
    *  and a function to dispose it
    */
   public wrap(): EcsQuery<TFilter> {
-    return new EcsQueryWrapper(this, this.components);
+    return new EcsQuery(this);
   }
 
   /**
