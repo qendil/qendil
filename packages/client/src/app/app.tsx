@@ -2,16 +2,17 @@ import coreInit, { makeGreeting } from "@qendil/core";
 import { EcsManager } from "@qendil/client-common/ecs";
 import classNames from "classnames";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import useServiceWorker from "../hooks/use-service-worker";
 import useGameView from "../hooks/use-game-view";
-import useWasm from "../hooks/use-wasm";
+import useAsync from "../hooks/use-async";
 import useOnscreenJoystick from "../hooks/use-onscreen-joystick";
 
 import classes from "./app.module.css";
 import commonClasses from "../style/common.module.css";
 
+import type { EcsSystemRunner } from "@qendil/client-common/ecs";
 import {
   Mesh,
   MeshAttachToScene,
@@ -39,33 +40,32 @@ import { WorldScene } from "../game/resources/world-scene";
 import type { ReactElement } from "react";
 import { initWorker } from "../game/init-worker";
 
-initWorker(() => {
-  // Nothing to do
-})
-  .then(() => {
-    console.log("Worker loaded");
-  })
-  .catch((error) => {
-    console.log(error);
+const initGameWorld = async (): Promise<
+  [EcsManager, EcsSystemRunner, EcsSystemRunner]
+> => {
+  await initWorker(() => {
+    // Nothing to do... yet!
   });
 
-const gameWorld = new EcsManager();
+  const gameWorld = new EcsManager();
 
-const gameUpdate = gameWorld
-  .addRunner()
-  .add(UpdateInputConfig)
-  .add(MeshAttachToScene)
-  .add(SmoothPositionInit)
-  .add(SmoothPositionUpdate)
-  .add(SmoothPositionAnimate)
-  .add(ThirdPersonControlSystem)
-  .add(MeshPositionSystem)
-  .add(MeshColor)
-  .add(MeshSmoothPositionSystem);
+  const gameUpdate = gameWorld
+    .addRunner()
+    .add(UpdateInputConfig)
+    .add(MeshAttachToScene)
+    .add(SmoothPositionInit)
+    .add(SmoothPositionUpdate)
+    .add(SmoothPositionAnimate)
+    .add(ThirdPersonControlSystem)
+    .add(MeshPositionSystem)
+    .add(MeshColor)
+    .add(MeshSmoothPositionSystem);
+  const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
 
-const gameFixedUpdate = gameWorld.addRunner().add(VelocitySystem);
+  gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
 
-gameWorld.resources.add(Input).add(FrameInfo).add(GameConfig).add(WorldScene);
+  return [gameWorld, gameUpdate, gameFixedUpdate];
+};
 
 const handleGreeting = (): void => {
   // eslint-disable-next-line no-alert
@@ -83,53 +83,58 @@ export default function App(): ReactElement {
     </div>
   );
 
+  const [gameWorld, gameUpdate, gameFixedUpdate] = useAsync(initGameWorld);
+
   const [onScreenJoystick, showJoystick, bindInput] = useOnscreenJoystick();
 
   useEffect(() => {
     const { input } = gameWorld.resources.get(Input);
     bindInput(input);
-  }, [bindInput]);
+  }, [bindInput, gameWorld.resources]);
 
-  const WorldView = useGameView(({ scene, makePerspectiveCamera }) => {
-    const camera = makePerspectiveCamera();
-    camera.position.z = 5;
+  const WorldView = useGameView(
+    ({ scene, makePerspectiveCamera }) => {
+      const camera = makePerspectiveCamera();
+      camera.position.z = 5;
 
-    const cube = gameWorld
-      .spawn()
-      .add(Mesh, { color: Math.random() * 0xffffff })
-      .add(Position)
-      .add(SmoothPosition)
-      .add(Velocity, { factor: 3 })
-      .add(ThirdPersonController);
+      const cube = gameWorld
+        .spawn()
+        .add(Mesh, { color: Math.random() * 0xffffff })
+        .add(Position)
+        .add(SmoothPosition)
+        .add(Velocity, { factor: 3 })
+        .add(ThirdPersonController);
 
-    const { input } = gameWorld.resources.get(Input);
-    const frameInfo = gameWorld.resources.get(FrameInfo);
-    const gameConfig = gameWorld.resources.get(GameConfig);
-    const { scene: worldScene } = gameWorld.resources.get(WorldScene);
+      const { input } = gameWorld.resources.get(Input);
+      const frameInfo = gameWorld.resources.get(FrameInfo);
+      const gameConfig = gameWorld.resources.get(GameConfig);
+      const { scene: worldScene } = gameWorld.resources.get(WorldScene);
 
-    scene.add(worldScene);
+      scene.add(worldScene);
 
-    return {
-      camera,
-      fixedUpdateRate: gameConfig.fixedUpdateRate,
-      onSetup(renderer): void {
-        renderer.setClearColor(0x8a326c);
-      },
-      onUpdate(frametime): void {
-        frameInfo.frametime = frametime;
+      return {
+        camera,
+        fixedUpdateRate: gameConfig.fixedUpdateRate,
+        onSetup(renderer): void {
+          renderer.setClearColor(0x8a326c);
+        },
+        onUpdate(frametime): void {
+          frameInfo.frametime = frametime;
 
-        gameUpdate();
+          gameUpdate();
 
-        input.update();
-      },
-      onFixedUpdate(): void {
-        gameFixedUpdate();
-      },
-      onDispose(): void {
-        cube.dispose();
-      },
-    };
-  }, []);
+          input.update();
+        },
+        onFixedUpdate(): void {
+          gameFixedUpdate();
+        },
+        onDispose(): void {
+          cube.dispose();
+        },
+      };
+    },
+    [gameFixedUpdate, gameUpdate, gameWorld]
+  );
 
   const worldView = (
     <WorldView
@@ -139,13 +144,23 @@ export default function App(): ReactElement {
     />
   );
 
-  useWasm(coreInit);
+  useAsync(coreInit);
   const wasmTest = (
-    <div>
-      <button type="button" onClick={handleGreeting}>
-        Test
-      </button>
-    </div>
+    <button type="button" onClick={handleGreeting}>
+      Test
+    </button>
+  );
+
+  const [counter, setCounter] = useState(0);
+
+  const handleCounterClick = (): void => {
+    setCounter((previous) => previous + 1);
+  };
+
+  const counterButton = (
+    <button type="button" onClick={handleCounterClick}>
+      Counter: {counter}
+    </button>
   );
 
   return (
@@ -157,6 +172,7 @@ export default function App(): ReactElement {
       >
         {updatePrompt}
         {wasmTest}
+        {counterButton}
       </div>
       {onScreenJoystick}
     </div>

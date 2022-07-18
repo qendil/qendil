@@ -5,7 +5,9 @@ const loadedWasmFiles = new WeakMap<() => Promise<unknown>, unknown>();
  * @param initializer - The wasm initializer function
  * @returns The result of the initializer
  */
-export default function useWasm<T = unknown>(initializer: () => Promise<T>): T {
+export default function useAsync<T = unknown>(
+  initializer: () => Promise<T>
+): T {
   if (loadedWasmFiles.has(initializer)) {
     return loadedWasmFiles.get(initializer) as T;
   }

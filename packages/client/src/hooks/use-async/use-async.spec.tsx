@@ -1,9 +1,9 @@
-import useWasm from "./use-wasm";
+import useAsync from "./use-async";
 import { act, renderHook } from "@testing-library/react";
 import { Suspense } from "react";
 
-describe("useWasm hook", () => {
-  it("prevents component from rendering until the wasm initializer resolves", async () => {
+describe("useAsync hook", () => {
+  it("prevents component from rendering until the async initializer resolves", async () => {
     // Given a component that uses useWasm
     // When I try to render the component
     // Then the suspense fallback should render instead
@@ -13,7 +13,7 @@ describe("useWasm hook", () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     const dummyInitializer = vi.fn(async () => 42);
 
-    const { result } = renderHook(() => useWasm(dummyInitializer), {
+    const { result } = renderHook(() => useAsync(dummyInitializer), {
       wrapper: ({ children }) => <Suspense>{children}</Suspense>,
     });
 
@@ -36,7 +36,7 @@ describe("useWasm hook", () => {
       // Resolves to undefined
     });
 
-    const { result } = renderHook(() => useWasm(dummyInitializer), {
+    const { result } = renderHook(() => useAsync(dummyInitializer), {
       wrapper: ({ children }) => <Suspense>{children}</Suspense>,
     });
 
