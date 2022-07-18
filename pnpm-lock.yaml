@@ -96,7 +96,7 @@ importers:
       vite: ^2.9.14
       vite-plugin-html: ^3.2.0
       vite-plugin-pwa: ^0.12.3
-      vite-plugin-react-remove-attributes: ^1.0.2
+      vite-plugin-react-remove-attributes: ^1.0.3
       vite-plugin-sentry: ^1.1.1
       vitest: ^0.18.1
       workbox-window: ^6.5.3
@@ -126,7 +126,7 @@ importers:
       vite: 2.9.14
       vite-plugin-html: 3.2.0_vite@2.9.14
       vite-plugin-pwa: 0.12.3_ziluxo2lw7ix6oitfjk2wljgoi
-      vite-plugin-react-remove-attributes: 1.0.2_vite@2.9.14
+      vite-plugin-react-remove-attributes: 1.0.3_vite@2.9.14
       vite-plugin-sentry: 1.1.1_vite@2.9.14
       workbox-window: 6.5.3
     optionalDependencies:
@@ -9665,8 +9665,8 @@ packages:
       - supports-color
     dev: false
 
-  /vite-plugin-react-remove-attributes/1.0.2_vite@2.9.14:
-    resolution: {integrity: sha512-4OjE7Q0ik1H9N9WEAIcAnMWc49udO4qRbxr4sVdjdeuapvpoCPYtrDcrDzeabOoiB/th/hZdQM45QWtrRx3cFg==}
+  /vite-plugin-react-remove-attributes/1.0.3_vite@2.9.14:
+    resolution: {integrity: sha512-f+ox+GFeqyBHzOe94Tcf1knFXEYWMhOGH04glIZRoXoIXQJD23Z1KFgQ7/JwOoLydsvQTlGzUJ/BpLeL7lh2LQ==}
     peerDependencies:
       vite: ^2.4.4
     dependencies:
