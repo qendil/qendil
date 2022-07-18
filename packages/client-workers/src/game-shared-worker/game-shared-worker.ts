@@ -9,6 +9,27 @@ declare let self: SharedWorkerGlobalScope;
 
 const gameWorker = new GameWorker();
 
+/**
+ * Represents a worker client
+ */
+class Client extends WorkerClient {
+  public constructor(
+    private readonly port: MessagePort,
+    manager: GameWorker,
+    postMessage: PostMessageCallback
+  ) {
+    super(manager, postMessage);
+  }
+
+  public dispose(): void {
+    super.dispose();
+
+    // Close the port when this client is disposed
+    this.port.close();
+  }
+}
+
+// Handle new worker connections
 self.addEventListener("connect", (connectEvent) => {
   const [port] = connectEvent.ports;
   if (!port) return;
@@ -24,7 +45,7 @@ self.addEventListener("connect", (connectEvent) => {
     }
   };
 
-  const client = new WorkerClient(postMessage);
+  const client = new Client(port, gameWorker, postMessage);
   gameWorker.addClient(client);
 
   port.addEventListener(

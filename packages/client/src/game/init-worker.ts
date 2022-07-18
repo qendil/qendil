@@ -1,15 +1,38 @@
+import { DEFAULT_CLIENT_TIMEOUT } from "@qendil/client-common/game-worker";
+import { WorkerOp } from "@qendil/client-common/game-worker/worker-op";
+
 import type {
+  ClientWorkerMessage,
   WorkerClientMessage,
-  PostMessageCallback,
 } from "@qendil/client-common/game-worker";
 
-type GameWorker = {
+/**
+ * Definition of a function to send messages to the worker
+ */
+export type PostMessageCallback = (
+  message: ClientWorkerMessage,
+  transferable?: Transferable[]
+) => void;
+
+/**
+ * Definition of a Game worker interface.
+ */
+export type GameWorker = {
   postMessage: PostMessageCallback;
   dispose: () => void;
 };
 
-type GameWorkerCallback = (message: WorkerClientMessage) => void;
+/**
+ * Definition of a function to handle received worker messages.
+ */
+export type GameWorkerCallback = (message: WorkerClientMessage) => void;
 
+/**
+ * Initialize the Game's shared worker.
+ *
+ * @param callback - Callback to call when receiving a new message
+ * @returns A promise resolving to the GameWorker a worker interface
+ */
 async function initSharedWorker(
   callback: GameWorkerCallback
 ): Promise<GameWorker> {
@@ -25,10 +48,26 @@ async function initSharedWorker(
 
     const { port } = worker;
 
+    const serverTimeoutMs = DEFAULT_CLIENT_TIMEOUT;
+    let timeoutPingHandler: ReturnType<typeof setTimeout> | undefined;
+
+    const resetTimeoutPing = (): void => {
+      if (timeoutPingHandler !== undefined) {
+        clearTimeout(timeoutPingHandler);
+      }
+
+      setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        postMessage([WorkerOp.Ping]);
+      }, serverTimeoutMs / 2);
+    };
+
     const postMessage: PostMessageCallback = (
       message,
       transferable?: Transferable[]
     ): void => {
+      resetTimeoutPing();
+
       if (transferable) {
         port.postMessage(message, transferable);
       } else {
@@ -45,13 +84,24 @@ async function initSharedWorker(
       port.removeEventListener("message", messageHandler);
     };
 
+    window.addEventListener("beforeunload", () => {
+      postMessage([WorkerOp.Disconnect]);
+      port.close();
+    });
+
     port.addEventListener("message", messageHandler);
     port.start();
+    resetTimeoutPing();
 
     resolve({ postMessage, dispose });
   });
 }
 
+/**
+ *
+ * @param callback - The callback to call when receiving a message
+ * @returns A promise resolving to a worker interface
+ */
 export async function initWorker(
   callback: GameWorkerCallback
 ): Promise<GameWorker> {
