@@ -19,7 +19,7 @@ importers:
       eslint-plugin-react-hooks: ^4.6.0
       eslint-plugin-testing-library: ^5.5.1
       eslint-plugin-tsdoc: ^0.2.16
-      eslint-plugin-unicorn: ^43.0.1
+      eslint-plugin-unicorn: ^43.0.2
       husky: ^8.0.1
       libxmljs: ^0.19.10
       lint-staged: ^13.0.3
@@ -50,7 +50,7 @@ importers:
       eslint-plugin-react-hooks: 4.6.0_eslint@8.20.0
       eslint-plugin-testing-library: 5.5.1_he2ccbldppg44uulnyq4rwocfa
       eslint-plugin-tsdoc: 0.2.16
-      eslint-plugin-unicorn: 43.0.1_eslint@8.20.0
+      eslint-plugin-unicorn: 43.0.2_eslint@8.20.0
       lint-staged: 13.0.3
       prettier: 2.7.1
       typescript: 4.7.4
@@ -4913,8 +4913,8 @@ packages:
       '@microsoft/tsdoc-config': 0.16.1
     dev: true
 
-  /eslint-plugin-unicorn/43.0.1_eslint@8.20.0:
-    resolution: {integrity: sha512-wYvF6q0RRTKw6gzbKy5bbazWUrBEPIto2S9U6eSF+tsHgtgE+CwQ6Bww1W2Ie9TRED01QkZRN79c5aVMFgrFYw==}
+  /eslint-plugin-unicorn/43.0.2_eslint@8.20.0:
+    resolution: {integrity: sha512-DtqZ5mf/GMlfWoz1abIjq5jZfaFuHzGBZYIeuJfEoKKGWRHr2JiJR+ea+BF7Wx2N1PPRoT/2fwgiK1NnmNE3Hg==}
     engines: {node: '>=14.18'}
     peerDependencies:
       eslint: '>=8.18.0'
