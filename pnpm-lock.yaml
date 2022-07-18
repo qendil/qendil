@@ -79,7 +79,7 @@ importers:
       c8: ^7.11.3
       classnames: ^2.3.1
       cordova: ^11.0.0
-      cordova-android: ^10.1.2
+      cordova-android: ^11.0.0
       cordova-electron: ^3.1.0
       cordova-ios: ^6.2.0
       cordova-plugin-statusbar: ^3.0.0
@@ -131,7 +131,7 @@ importers:
       workbox-window: 6.5.3
     optionalDependencies:
       cordova: 11.0.0
-      cordova-android: 10.1.2
+      cordova-android: 11.0.0
       cordova-electron: 3.1.0
       cordova-ios: 6.2.0
       cordova-plugin-statusbar: 3.0.0
@@ -3508,9 +3508,9 @@ packages:
     dev: false
     optional: true
 
-  /cordova-android/10.1.2:
-    resolution: {integrity: sha512-F28+NvgKO4ZhKFkqctCOh62mhVoNyUuRQh/F/nqp+Sti4ODv2rUa6UeW18khhdYTjlDeihHQsPqxvB7mI6fVYA==}
-    engines: {node: '>=12.0.0'}
+  /cordova-android/11.0.0:
+    resolution: {integrity: sha512-ZhvSF5BYY8gmrAu1PtMPdHFsRoom/emT4OtTcecmh3Zj22900y4Golg5whhBPcYcTPC7BU6PG/EmG9BBHcX9tQ==}
+    engines: {node: '>=14.0.0'}
     requiresBuild: true
     dependencies:
       android-versions: 1.7.0
@@ -9613,7 +9613,7 @@ packages:
     dependencies:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
-      extsprintf: 1.3.0
+      extsprintf: 1.4.1
     dev: false
     optional: true
 
