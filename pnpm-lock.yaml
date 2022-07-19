@@ -74,7 +74,7 @@ importers:
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
       '@types/testing-library__jest-dom': ^5.14.5
-      '@types/three': ^0.141.0
+      '@types/three': ^0.142.0
       '@vitejs/plugin-react': ^1.3.2
       c8: ^7.11.3
       classnames: ^2.3.1
@@ -113,7 +113,7 @@ importers:
       '@types/node': 17.0.38
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
-      '@types/three': 0.141.0
+      '@types/three': 0.142.0
       '@vitejs/plugin-react': 1.3.2
       classnames: 2.3.1
       git-rev: 0.2.1
@@ -2105,8 +2105,8 @@ packages:
       '@types/jest': 28.1.2
     dev: true
 
-  /@types/three/0.141.0:
-    resolution: {integrity: sha512-OJdKDgTPVBUgc+s74DYoy4aLznbFFC38Xm4ElmU1YwGNgR7GGFVvFCX7lpVgOsT6S1zSJtGdajTsOYE8/xY9nA==}
+  /@types/three/0.142.0:
+    resolution: {integrity: sha512-YNVnlqthfgqsxKuSNbT/G2r+ha/6x+aJm7kvjT+sxa4jUROw/KOPm5xzGj33sk1+Librg6NwH/wJ6LCDX33UZg==}
     dependencies:
       '@types/webxr': 0.4.0
     dev: false
