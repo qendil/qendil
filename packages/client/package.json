@@ -58,7 +58,7 @@
     "vite-plugin-pwa": "^0.12.3",
     "vite-plugin-react-remove-attributes": "^1.0.3",
     "vite-plugin-sentry": "^1.1.1",
-    "workbox-window": "^6.5.3"
+    "workbox-window": "^6.5.4"
   },
   "devDependencies": {
     "@testing-library/dom": "^8.16.0",
