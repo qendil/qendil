@@ -74,7 +74,7 @@ importers:
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
       '@types/testing-library__jest-dom': ^5.14.5
-      '@types/three': ^0.142.0
+      '@types/three': ^0.143.0
       '@vitejs/plugin-react': ^1.3.2
       c8: ^7.12.0
       classnames: ^2.3.1
@@ -91,7 +91,7 @@ importers:
       postcss-nesting: ^10.1.10
       react: ^18.2.0
       react-dom: ^18.2.0
-      three: ^0.142.0
+      three: ^0.143.0
       typescript: ^4.7.4
       vite: ^2.9.14
       vite-plugin-html: ^3.2.0
@@ -113,7 +113,7 @@ importers:
       '@types/node': 17.0.38
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
-      '@types/three': 0.142.0
+      '@types/three': 0.143.0
       '@vitejs/plugin-react': 1.3.2
       classnames: 2.3.1
       git-rev: 0.2.1
@@ -121,7 +121,7 @@ importers:
       postcss-nesting: 10.1.10_postcss@8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      three: 0.142.0
+      three: 0.143.0
       typescript: 4.7.4
       vite: 2.9.14
       vite-plugin-html: 3.2.0_vite@2.9.14
@@ -2112,8 +2112,8 @@ packages:
       '@types/jest': 28.1.2
     dev: true
 
-  /@types/three/0.142.0:
-    resolution: {integrity: sha512-YNVnlqthfgqsxKuSNbT/G2r+ha/6x+aJm7kvjT+sxa4jUROw/KOPm5xzGj33sk1+Librg6NwH/wJ6LCDX33UZg==}
+  /@types/three/0.143.0:
+    resolution: {integrity: sha512-c5PonXOt8xk5q4ygmyjOX4Ec+FA7gwfdcMT/PveE9xrJs/0DDcf2lJkWrhEcmvx2ZefQCQBcogABnGqB0P4OsA==}
     dependencies:
       '@types/webxr': 0.4.0
     dev: false
@@ -9053,8 +9053,8 @@ packages:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
     dev: true
 
-  /three/0.142.0:
-    resolution: {integrity: sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg==}
+  /three/0.143.0:
+    resolution: {integrity: sha512-oKcAGYHhJ46TGEuHjodo2n6TY2R6lbvrkp+feKZxqsUL/WkH7GKKaeu6RHeyb2Xjfk2dPLRKLsOP0KM2VgT8Zg==}
     dev: false
 
   /through/2.3.8:
